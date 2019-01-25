@@ -27,6 +27,14 @@ public class CodeMsg {
     public static CodeMsg SUCCESS_MSG = new CodeMsg(SUCCESS, SUCCESS_STR);
     public static CodeMsg SERVER_ERROR_MSG = new CodeMsg(SERVER_ERROR, SERVER_ERROR_STR);
 
+    //Redis error 5002XX
+    private static final int REDIS_ERROR = 500200;
+    private static final String REDIS_ERROR_STR = "REDIS ERROR";
+    private static final int REDIS_NOT_FOUND_ERROR = 500201;
+    private static final String REDIS_NOT_FOUND_ERROR_STR = "REDIS VALUE NOT FOUND ERROR";
+    public static CodeMsg REDIS_ERROR_MSG = new CodeMsg(REDIS_ERROR, REDIS_ERROR_STR);
+    public static CodeMsg REDIS_VALUE_NOT_FOUND_MSG = new CodeMsg(REDIS_NOT_FOUND_ERROR, REDIS_NOT_FOUND_ERROR_STR);
+
     private CodeMsg(int code, String msg){
         this.code = code;
         this.msg = msg;

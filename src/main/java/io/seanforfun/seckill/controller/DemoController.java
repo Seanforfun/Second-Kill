@@ -1,6 +1,7 @@
 package io.seanforfun.seckill.controller;
 
 import io.seanforfun.seckill.domain.User;
+import io.seanforfun.seckill.redis.RedisService;
 import io.seanforfun.seckill.result.CodeMsg;
 import io.seanforfun.seckill.result.Result;
 import io.seanforfun.seckill.service.UserService;
@@ -23,6 +24,8 @@ public class DemoController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private RedisService redisService;
 
     @RequestMapping("/")
     @ResponseBody
@@ -46,5 +49,17 @@ public class DemoController {
     @ResponseBody
     public Result<Boolean> getUser(){
         return Result.success(userService.tx());
+    }
+
+    @RequestMapping("/redis/get")
+    @ResponseBody
+    public Result<User> redisGet(){
+        User user = redisService.get("user1", User.class);
+        return user == null ? Result.error(CodeMsg.REDIS_VALUE_NOT_FOUND_MSG) : Result.success(user);
+    }
+
+    @RequestMapping("/redis/put/{key}/")
+    public <T> Result<Boolean> redisPut(String key, T value ){
+        this.redisService.set(, , )
     }
 }
