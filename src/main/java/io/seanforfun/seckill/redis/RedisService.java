@@ -2,11 +2,9 @@ package io.seanforfun.seckill.redis;
 
 import com.alibaba.fastjson.JSON;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
 
 /**
  * @author: Seanforfun
@@ -20,19 +18,6 @@ public class RedisService {
     @Autowired
     private JedisPool jedisPool;
 
-    @Autowired
-    private RedisConfig redisConfig;
-
-    @Bean
-    public JedisPool jedisPoolFactory(){
-        JedisPoolConfig poolConfig = new JedisPoolConfig();
-        poolConfig.setMaxIdle(redisConfig.getMaxIdle());
-        poolConfig.setMaxTotal(redisConfig.getMaxActive());
-        poolConfig.setMaxWaitMillis(redisConfig.getMaxWait() * 1000);
-        JedisPool pool = new JedisPool(poolConfig, redisConfig.getHost(), redisConfig.getPort(), redisConfig.getTimeout() * 1000, redisConfig.getPassword());
-        return pool;
-    }
-
     public <T> T get(String key, Class<T> clazz){
         Jedis jedis = null;
         try {
@@ -44,11 +29,11 @@ public class RedisService {
         }
     }
 
-    public <T> boolean set(String key, T value, Class<T> clazz){
+    public <T> boolean set(String key, T value){
         Jedis jedis = null;
         try {
             jedis = jedisPool.getResource();
-            String str = beanToString(value, clazz);
+            String str = beanToString(value);
             if(str == null){
                 return false;
             }
@@ -59,14 +44,14 @@ public class RedisService {
         }
     }
 
-    private <T> String beanToString(T value, Class<T> clazz){
-        if(value == null || clazz != value.getClass()){
+    private <T> String beanToString(T value){
+        if(value == null || value.getClass() != value.getClass()){
             return null;
-        }else if(clazz == int.class || clazz == Integer.class){
+        }else if(value.getClass() == int.class || value.getClass() == Integer.class){
             return "" + value;
-        }else if(clazz == String.class){
+        }else if(value.getClass() == String.class){
             return (String) value;
-        }else if(clazz == long.class || clazz == Long.class){
+        }else if(value.getClass() == long.class || value.getClass() == Long.class){
             return "" + value;
         }else{
             return JSON.toJSONString(value);

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -16,6 +17,7 @@ import java.time.Duration;
  * @version: 0.0.1
  */
 @Component
+@Configuration
 @ConfigurationProperties(prefix = "redis")
 @Slf4j
 public class RedisConfig {

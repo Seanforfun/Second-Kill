@@ -8,6 +8,7 @@ import io.seanforfun.seckill.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -53,13 +54,17 @@ public class DemoController {
 
     @RequestMapping("/redis/get")
     @ResponseBody
-    public Result<User> redisGet(){
-        User user = redisService.get("user1", User.class);
+    public Result<String> redisGet(){
+        String user = redisService.get("hahaha", String.class);
         return user == null ? Result.error(CodeMsg.REDIS_VALUE_NOT_FOUND_MSG) : Result.success(user);
     }
 
-    @RequestMapping("/redis/put/{key}/")
-    public <T> Result<Boolean> redisPut(String key, T value ){
-        this.redisService.set(, , )
+    @RequestMapping("/redis/put/{key}/{value}")
+    @ResponseBody
+    public <T> Result<String> redisPut(@PathVariable(value = "key") String key,
+                                        @PathVariable(value = "value") T value ){
+        this.redisService.set(key, value);
+        String ret = redisService.get(key, String.class);
+        return ret == null ? Result.error(CodeMsg.REDIS_VALUE_NOT_FOUND_MSG) : Result.success(ret);
     }
 }
