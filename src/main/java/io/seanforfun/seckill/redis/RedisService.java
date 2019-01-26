@@ -9,7 +9,7 @@ import redis.clients.jedis.JedisPool;
 /**
  * @author: Seanforfun
  * @date: Created in 2019/1/25 11:51
- * @description: ${description}
+ * @description: This file is another encapsulation of Jedis.
  * @modified:
  * @version: 0.0.1
  */
@@ -18,18 +18,19 @@ public class RedisService {
     @Autowired
     private JedisPool jedisPool;
 
-    public <T> T get(String key, Class<T> clazz){
+    public <T> T get(KeyPrefix prefix, String key, Class<T> clazz){
         Jedis jedis = null;
         try {
             jedis = this.jedisPool.getResource();
-            String string  =jedis.get(key);
+            String realKey = prefix.getPrefix();
+            String string  =jedis.get(realKey);
             return stringToBean(string, clazz);
         }finally {
             returnToPool(jedis);
         }
     }
 
-    public <T> boolean set(String key, T value){
+    public <T> boolean set(KeyPrefix prefix, String key, T value){
         Jedis jedis = null;
         try {
             jedis = jedisPool.getResource();
@@ -37,7 +38,12 @@ public class RedisService {
             if(str == null){
                 return false;
             }
-            jedis.set(key, str);
+            String realKey = prefix.getPrefix();
+            if(prefix.expireSeconds() == BasePrefix.NEVER_EXPIRE){
+                jedis.set(realKey, str);
+            }else{
+                jedis.setex(realKey, prefix.expireSeconds(), str);
+            }
             return true;
         }finally {
             returnToPool(jedis);
@@ -57,6 +63,40 @@ public class RedisService {
             return JSON.toJSONString(value);
         }
     }
+
+    public Long inc(KeyPrefix prefix, String key){
+        Jedis jedis = null;
+        try{
+            jedis = jedisPool.getResource();
+            String realKey = prefix.getPrefix();
+            return jedis.incr(realKey);
+        }finally {
+            returnToPool(jedis);
+        }
+    }
+
+    public Long decr(KeyPrefix prefix, String key){
+        Jedis jedis = null;
+        try {
+            jedis = jedisPool.getResource();
+            String realKey = prefix.getPrefix();
+            return jedis.decr(realKey);
+        }finally {
+            returnToPool(jedis);
+        }
+    }
+
+    public boolean exists(KeyPrefix prefix, String key){
+        Jedis jedis = null;
+        try {
+            jedis = jedisPool.getResource();
+            String realName = prefix.getPrefix();
+            return jedis.exists(realName);
+        }finally {
+            returnToPool(jedis);
+        }
+    }
+
 
     private <T> T stringToBean(String string, Class<T> clazz) {
         if(string == null || string.length() <= 0 || clazz == null){
