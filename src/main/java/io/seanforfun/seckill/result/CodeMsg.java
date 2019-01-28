@@ -41,15 +41,24 @@ public class CodeMsg {
     public static CodeMsg REDIS_ERROR_MSG = new CodeMsg(REDIS_ERROR, REDIS_ERROR_STR);
     public static CodeMsg REDIS_VALUE_NOT_FOUND_MSG = new CodeMsg(REDIS_NOT_FOUND_ERROR, REDIS_NOT_FOUND_ERROR_STR);
 
-    // Login error 5003XX
+    // Login/Register error 5003XX
     private static final int USERNAME_NOT_EXIST_ERROR = 500300;
     private static final String USERNAME_NOT_EXIST_ERROR_STR = "USERNAME IS NOT FOUND";
     private static final int INCORRECT_PASSWORD_ERROR = 500301;
     private static final String INCORRECT_PASSWORD_ERROR_STR = "PASSWORD IS INCORRECT";
+    private static final int USER_NOT_ACTIVATED_ERROR = 500302;
+    private static final String USER_NOT_ACTIVATED_ERROR_STR = "USER IS NOT ACTIVATED";
+    private static final int INCORRECT_ZIP_ERROR = 500303;
+    private static final String INCORRECT_ZIP_ERROR_STR = "INCORRECT ZIP FORMAT";
+    private static final int EXISTING_USERNAME_ERROR = 500304;
+    private static final String EXISTING_USERNAME_ERROR_STR = "USERNAME DUPLICATE";
 
 
     public static CodeMsg USERNAME_NOT_EXIST_ERROR_MSG = new CodeMsg(USERNAME_NOT_EXIST_ERROR, USERNAME_NOT_EXIST_ERROR_STR);
     public static CodeMsg INCORRECT_PASSWORD_ERROR_MSG = new CodeMsg(INCORRECT_PASSWORD_ERROR, INCORRECT_PASSWORD_ERROR_STR);
+    public static CodeMsg USER_NOT_ACTIVATED_ERROR_MSG = new CodeMsg(USER_NOT_ACTIVATED_ERROR, USER_NOT_ACTIVATED_ERROR_STR);
+    public static CodeMsg INCORRECT_ZIP_ERROR_MSG = new CodeMsg(INCORRECT_ZIP_ERROR, INCORRECT_ZIP_ERROR_STR);
+    public static CodeMsg EXISTING_USERNAME_ERROR_MSG = new CodeMsg(EXISTING_USERNAME_ERROR, EXISTING_USERNAME_ERROR_STR);
 
     private CodeMsg(int code, String msg){
         this.code = code;

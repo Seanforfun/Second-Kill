@@ -21,11 +21,14 @@ public interface UserDao {
     @Select("Select * from user where id = #{id}")
     User getById(@Param("id") long id);
 
-    @Select("Select id, username, password, salt from user where username = #{username}")
+    @Select("Select id, username, password, salt, admin, activated from user where username = #{username}")
     User getUserInfoByLoginVo(LoginVo loginVo);
 
     @Select("Select id, username, password, salt from user where username = #{username}")
     User getUserIDPasswordByUserName(@Param("username") String username);
+
+    @Select("Select count(id) from user where username = #{username}")
+    Long getUserNumByUsername(@Param("username") String username);
 
     /**
      * Update
@@ -36,6 +39,11 @@ public interface UserDao {
     /**
      * Insert
      */
+    @Insert("Insert into user (username, password, salt, admin, country, state, zip, email, " +
+            "activated, registerTime, lastLoginTime, lastModifiedTime) + values " +
+            "(#{username}, #{password}, #{salt}, #{admin}, #{country}, #{state}," +
+            " #{zip}, #{email}, #{activated}, #{registerTime}, #{lastLoginTime}, #{lastModifiedTime})")
+    void saveRegisterUser(User user);
 
 
     /**

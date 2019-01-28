@@ -24,11 +24,14 @@ public class LoginService implements LoginEbi {
     private UserDao userDao;
 
     @Transactional
-    public boolean login(LoginVo loginVo){
+    public User login(LoginVo loginVo){
         User userWithPassAndSalt = userDao.getUserInfoByLoginVo(loginVo);
         if(userWithPassAndSalt == null || userWithPassAndSalt.getSalt() == null ||
                 userWithPassAndSalt.getPassword() == null || userWithPassAndSalt.getId() == null){
             throw new GlobalException(CodeMsg.USERNAME_NOT_EXIST_ERROR_MSG);
+        }
+        if(userWithPassAndSalt.getActivated() == User.NOT_ACTIVATED){
+            throw new GlobalException(CodeMsg.USER_NOT_ACTIVATED_ERROR_MSG);
         }
         String httpPass = loginVo.getPassword();
 
@@ -38,7 +41,7 @@ public class LoginService implements LoginEbi {
         }
         updateLoginTime(userWithPassAndSalt);
         // TODO: Need to save the user information into session.
-        return true;
+        return userWithPassAndSalt;
     }
 
     private boolean updateLoginTime(User user){

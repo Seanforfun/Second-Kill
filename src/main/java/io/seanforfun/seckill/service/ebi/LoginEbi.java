@@ -1,5 +1,6 @@
 package io.seanforfun.seckill.service.ebi;
 
+import io.seanforfun.seckill.entity.domain.User;
 import io.seanforfun.seckill.entity.vo.LoginVo;
 
 /**
@@ -16,5 +17,5 @@ public interface LoginEbi {
      * @return true if login successfully, else false.
      * @throws Exception
      */
-    boolean login(LoginVo loginVo) throws Exception;
+    User login(LoginVo loginVo) throws Exception;
 }
