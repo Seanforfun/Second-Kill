@@ -25,7 +25,7 @@ public class LoginService implements LoginEbi {
 
     @Transactional
     public boolean login(LoginVo loginVo){
-        User userWithPassAndSalt = userDao.getUserIDPasswordByUserName(loginVo.getUsername());
+        User userWithPassAndSalt = userDao.getUserInfoByLoginVo(loginVo);
         if(userWithPassAndSalt == null || userWithPassAndSalt.getSalt() == null ||
                 userWithPassAndSalt.getPassword() == null || userWithPassAndSalt.getId() == null){
             throw new GlobalException(CodeMsg.USERNAME_NOT_EXIST_ERROR_MSG);
@@ -33,10 +33,11 @@ public class LoginService implements LoginEbi {
         String httpPass = loginVo.getPassword();
 
         String finalPass = MD5Utils.httpPassToDbPass(httpPass, userWithPassAndSalt.getSalt());
-        if(!finalPass.equals(userWithPassAndSalt.getPassword())){
+        if(!passwordCheck(userWithPassAndSalt.getPassword(), finalPass)){
             throw new GlobalException(CodeMsg.INCORRECT_PASSWORD_ERROR_MSG);
         }
         updateLoginTime(userWithPassAndSalt);
+        // TODO: Need to save the user information into session.
         return true;
     }
 
@@ -47,5 +48,9 @@ public class LoginService implements LoginEbi {
         Long currentTime = System.currentTimeMillis();
         userDao.updateLoginTime(user.getId(), currentTime);
         return true;
+    }
+
+    private static boolean passwordCheck(String dbPassword, String httpPassword){
+        return dbPassword.equals(httpPassword);
     }
 }

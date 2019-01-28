@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 
@@ -18,18 +19,25 @@ import javax.validation.Valid;
  * @version: 0.0.1
  */
 @Controller
-@RequestMapping("/login")
-public class LoginController {
+@RequestMapping("/user")
+public class UserController {
 
     @Autowired
     private LoginService loginService;
 
     @RequestMapping("/tologin")
-    public String toLogin(){
-        return "login";
+    public ModelAndView toLogin(ModelAndView mv){
+        mv.setViewName("/pages/login.html");
+        return mv;
     }
 
-    @RequestMapping()
+    @RequestMapping("/toRegister")
+    public ModelAndView toRegister(ModelAndView mv){
+        mv.setViewName("/pages/register.html");
+        return mv;
+    }
+
+    @RequestMapping("/login")
     @ResponseBody
     public Result<Boolean> login(@Valid LoginVo loginVo){
         loginService.login(loginVo);

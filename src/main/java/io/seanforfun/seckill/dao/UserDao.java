@@ -1,6 +1,7 @@
 package io.seanforfun.seckill.dao;
 
 import io.seanforfun.seckill.entity.domain.User;
+import io.seanforfun.seckill.entity.vo.LoginVo;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
@@ -14,12 +15,30 @@ import org.springframework.stereotype.Repository;
 @Mapper
 @Repository
 public interface UserDao {
+    /**
+     * Select
+     */
     @Select("Select * from user where id = #{id}")
     User getById(@Param("id") long id);
 
-    @Select("Select password, salt from user where username = #{username}")
+    @Select("Select id, username, password, salt from user where username = #{username}")
+    User getUserInfoByLoginVo(LoginVo loginVo);
+
+    @Select("Select id, username, password, salt from user where username = #{username}")
     User getUserIDPasswordByUserName(@Param("username") String username);
 
+    /**
+     * Update
+     */
     @Update("Update user set lastLoginTime = #{currentTime} where id = #{id}")
     void updateLoginTime(@Param("id") Long id, @Param("currentTime") Long currentTime);
+
+    /**
+     * Insert
+     */
+
+
+    /**
+     * Delete
+     */
 }
