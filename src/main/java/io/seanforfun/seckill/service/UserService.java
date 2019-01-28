@@ -1,10 +1,8 @@
 package io.seanforfun.seckill.service;
 
 import io.seanforfun.seckill.dao.UserDao;
-import io.seanforfun.seckill.domain.User;
+import io.seanforfun.seckill.entity.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,16 +23,4 @@ public class UserService {
         return userDao.getById(id);
     }
 
-    public boolean tx() {
-        User user1 = new User();
-        user1.setId(2L);
-        user1.setName("222");
-        userDao.insert(user1);
-
-        User user2 = new User();
-        user2.setId(1L);
-        user2.setName("1111");
-        userDao.insert(user2);
-        return true;
-    }
 }

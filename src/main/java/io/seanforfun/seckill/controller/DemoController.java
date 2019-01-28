@@ -1,6 +1,5 @@
 package io.seanforfun.seckill.controller;
 
-import io.seanforfun.seckill.domain.User;
 import io.seanforfun.seckill.redis.RedisService;
 import io.seanforfun.seckill.result.CodeMsg;
 import io.seanforfun.seckill.result.Result;
@@ -8,7 +7,6 @@ import io.seanforfun.seckill.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -44,27 +42,5 @@ public class DemoController {
     public String thymeleaf(Model model){
         model.addAttribute("name", "Sean");
         return "hello";
-    }
-
-    @RequestMapping("/user")
-    @ResponseBody
-    public Result<Boolean> getUser(){
-        return Result.success(userService.tx());
-    }
-
-    @RequestMapping("/redis/get")
-    @ResponseBody
-    public Result<String> redisGet(){
-        String user = redisService.get("hahaha", String.class);
-        return user == null ? Result.error(CodeMsg.REDIS_VALUE_NOT_FOUND_MSG) : Result.success(user);
-    }
-
-    @RequestMapping("/redis/put/{key}/{value}")
-    @ResponseBody
-    public <T> Result<String> redisPut(@PathVariable(value = "key") String key,
-                                        @PathVariable(value = "value") T value ){
-        this.redisService.set(key, value);
-        String ret = redisService.get(key, String.class);
-        return ret == null ? Result.error(CodeMsg.REDIS_VALUE_NOT_FOUND_MSG) : Result.success(ret);
     }
 }

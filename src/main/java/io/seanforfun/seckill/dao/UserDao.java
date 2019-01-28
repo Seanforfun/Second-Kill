@@ -1,10 +1,7 @@
 package io.seanforfun.seckill.dao;
 
-import io.seanforfun.seckill.domain.User;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import io.seanforfun.seckill.entity.domain.User;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -20,6 +17,9 @@ public interface UserDao {
     @Select("Select * from user where id = #{id}")
     User getById(@Param("id") long id);
 
-    @Insert("Insert into user (id, name) values (#{id}, #{name})")
-    int insert(User user);
+    @Select("Select password, salt from user where username = #{username}")
+    User getUserIDPasswordByUserName(@Param("username") String username);
+
+    @Update("Update user set lastLoginTime = #{currentTime} where id = #{id}")
+    void updateLoginTime(@Param("id") Long id, @Param("currentTime") Long currentTime);
 }

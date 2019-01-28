@@ -13,12 +13,19 @@ import org.apache.commons.codec.digest.DigestUtils;
 public class MD5Utils {
     private static final String FIX_SALT = "ILOVEIRENE";
 
-    private String md5(String password){
-        return DigestUtils.md2Hex(password);
+    private static String md5(String password){
+        return DigestUtils.md5Hex(password);
     }
 
     public static String passToHttpPass(String password){
-        // TODO Need to fill this ustils.
-        return null;
+        return md5(password + FIX_SALT);
+    }
+
+    public static String httpPassToDbPass(String password, String salt){
+        return md5(password + salt);
+    }
+
+    public static String passToDbPass(String password, String salt){
+        return httpPassToDbPass(passToHttpPass(password), salt);
     }
 }
