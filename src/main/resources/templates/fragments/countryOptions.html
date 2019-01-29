@@ -17,7 +17,7 @@
         <div class="col-md-5 mb-3" th:fragment="countryOptions">
             <label for="country">Country/Region</label>
             <select class="custom-select d-block w-100" id="country" onchange="changeState(this.value)" required>
-                <option value="">Choose...</option>
+                <option value="CHOOSE">Choose...</option>
                 <option value="CA" selected="selected">Canada</option>
                 <option value="US">United States</option>
             </select>
@@ -49,7 +49,7 @@
         </div>
         <div class="col-md-3 mb-3" th:fragment="zipOptions">
             <label for="zip">Zip</label>
-            <input type="text" class="form-control" id="zip" placeholder="" required>
+            <input type="text" class="form-control" id="zip" placeholder="Uppercase zip code"  required>
             <div class="invalid-feedback">
                 Zip code required.
             </div>
