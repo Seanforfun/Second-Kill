@@ -1,6 +1,7 @@
 package io.seanforfun.seckill.entity.vo;
 
 import io.seanforfun.seckill.validator.isEmail;
+import io.seanforfun.seckill.validator.isUsername;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
@@ -20,8 +21,12 @@ import javax.validation.constraints.NotNull;
 @NotNull
 @ToString
 public class RegisterVo {
-    @Length(min = 1)
+    @isUsername
     private String username;
+    @Length(min = 1)
+    private String firstname;
+    @Length(min = 1)
+    private String lastname;
     @Length(min = 6)
     private String password;
     private String country;

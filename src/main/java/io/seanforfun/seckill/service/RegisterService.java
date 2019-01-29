@@ -27,32 +27,18 @@ public class RegisterService implements RegisterEbi {
 
     @Override
     @Transactional
-    public boolean registerUser(RegisterVo registerVo) {
-        String username = registerVo.getUsername();
-        if(userDao.getUserNumByUsername(username) > 0){
-            throw new GlobalException(CodeMsg.EXISTING_USERNAME_ERROR_MSG);
-        }
-        User registerUser = new User();
-        registerUser.setUsername(username);
-        registerUser.setActivated(User.NOT_ACTIVATED);
-        registerUser.setAdmin(User.NOT_ADMIN);
-        registerUser.setCountry(registerVo.getCountry());
-        registerUser.setState(registerVo.getState());
-        registerUser.setZip(registerVo.getZip());
-        ZipValidator validator = ZipValidator.ZIP_VALIDATOR_MAP.get(registerVo.getCountry());
-        if(!validator.validate(registerVo.getZip())){
+    public boolean registerUser(User user) {
+        String username = user.getUsername();
+        ZipValidator validator = ZipValidator.ZIP_VALIDATOR_MAP.get(user.getCountry());
+        if(!validator.validate(user.getZip())){
             throw new GlobalException(CodeMsg.INCORRECT_ZIP_ERROR_MSG);
         }
-        registerUser.setEmail(registerVo.getEmail());
-        String randomSalt = RandomStringUtils.random(10, "ABCDEFGHIJKLMN");
-        String dbPassword = MD5Utils.httpPassToDbPass(registerVo.getPassword(), randomSalt);
-        registerUser.setSalt(randomSalt);
-        registerUser.setPassword(dbPassword);
-        registerUser.setLastLoginTime(0L);
-        registerUser.setLastModifiedTime(0L);
-        registerUser.setRegisterTime(System.currentTimeMillis());
-        System.out.println(registerUser.toString());
-        userDao.saveRegisterUser(registerUser);
+        userDao.saveRegisterUser(user);
         return true;
+    }
+
+    @Override
+    public boolean validUsername(String username){
+        return userDao.getUserNumByUsername(username) == 0;
     }
 }

@@ -39,7 +39,12 @@ public interface UserDao {
     /**
      * Insert
      */
-    @Insert("Insert into user (username, password, salt, admin, country, state, zip, email, activated, registerTime, lastLoginTime, lastModifiedTime) values (#{username}, #{password}, #{salt}, #{admin}, #{country}, #{state},#{zip}, #{email}, #{activated}, #{registerTime}, #{lastLoginTime}, #{lastModifiedTime})")
+    @Insert("Insert into user (username, password, salt, admin, " +
+            "country, state, zip, email, activated, registerTime, " +
+            "lastLoginTime, lastModifiedTime, firstname, lastname) values" +
+            " (#{username}, #{password}, #{salt}, #{admin}, #{country}," +
+            " #{state},#{zip}, #{email}, #{activated}, #{registerTime}, " +
+            "#{lastLoginTime}, #{lastModifiedTime}, #{firstname}, #{lastname})")
     void saveRegisterUser(User user);
 
 

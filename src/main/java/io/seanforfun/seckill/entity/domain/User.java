@@ -26,6 +26,8 @@ public class User {
     private static final String ACTIVATED_STR = "ACTIVATED";
     private static final String NOT_ACTIVATED_STR = "NOT_ACTIVATED";
 
+    public static final Long NOT_USED = 0L;
+
     private static final Map<Integer,String> ACTIVATE_MAP = new HashMap<>();
 
     static{
@@ -40,6 +42,10 @@ public class User {
     private Long id;
     @Setter
     private String username;
+    @Setter
+    private String firstname;
+    @Setter
+    private String lastname;
     @Setter
     private String password;
     @Setter
