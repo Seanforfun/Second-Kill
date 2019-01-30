@@ -50,12 +50,15 @@ public class CodeMsg {
     private static final String USER_NOT_ACTIVATED_ERROR_STR = "USER IS NOT ACTIVATED";
     private static final int INCORRECT_ZIP_ERROR = 500303;
     private static final String INCORRECT_ZIP_ERROR_STR = "INCORRECT ZIP FORMAT";
+    private static final int USER_NOT_LOGIN_ERROR = 500304;
+    private static final String USER_NOT_LOGIN_ERROR_STR = "USER NOT LOGIN";
 
 
     public static CodeMsg USERNAME_NOT_EXIST_ERROR_MSG = new CodeMsg(USERNAME_NOT_EXIST_ERROR, USERNAME_NOT_EXIST_ERROR_STR);
     public static CodeMsg INCORRECT_PASSWORD_ERROR_MSG = new CodeMsg(INCORRECT_PASSWORD_ERROR, INCORRECT_PASSWORD_ERROR_STR);
     public static CodeMsg USER_NOT_ACTIVATED_ERROR_MSG = new CodeMsg(USER_NOT_ACTIVATED_ERROR, USER_NOT_ACTIVATED_ERROR_STR);
     public static CodeMsg INCORRECT_ZIP_ERROR_MSG = new CodeMsg(INCORRECT_ZIP_ERROR, INCORRECT_ZIP_ERROR_STR);
+    public static CodeMsg USER_NOT_LOGIN_ERROR_MSG = new CodeMsg(USER_NOT_LOGIN_ERROR, USER_NOT_LOGIN_ERROR_STR);
 
     private CodeMsg(int code, String msg){
         this.code = code;

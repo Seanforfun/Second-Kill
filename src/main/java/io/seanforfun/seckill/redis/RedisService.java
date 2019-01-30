@@ -22,7 +22,7 @@ public class RedisService {
         Jedis jedis = null;
         try {
             jedis = this.jedisPool.getResource();
-            String realKey = prefix.getPrefix();
+            String realKey = prefix.getPrefix() + key;
             String string  =jedis.get(realKey);
             return stringToBean(string, clazz);
         }finally {
@@ -38,7 +38,7 @@ public class RedisService {
             if(str == null){
                 return false;
             }
-            String realKey = prefix.getPrefix();
+            String realKey = prefix.getPrefix() + key;
             if(prefix.expireSeconds() == BasePrefix.NEVER_EXPIRE){
                 jedis.set(realKey, str);
             }else{
@@ -68,7 +68,7 @@ public class RedisService {
         Jedis jedis = null;
         try{
             jedis = jedisPool.getResource();
-            String realKey = prefix.getPrefix();
+            String realKey = prefix.getPrefix() + key;
             return jedis.incr(realKey);
         }finally {
             returnToPool(jedis);
@@ -79,7 +79,7 @@ public class RedisService {
         Jedis jedis = null;
         try {
             jedis = jedisPool.getResource();
-            String realKey = prefix.getPrefix();
+            String realKey = prefix.getPrefix() + key;
             return jedis.decr(realKey);
         }finally {
             returnToPool(jedis);
@@ -90,8 +90,22 @@ public class RedisService {
         Jedis jedis = null;
         try {
             jedis = jedisPool.getResource();
-            String realName = prefix.getPrefix();
+            String realName = prefix.getPrefix() + key;
             return jedis.exists(realName);
+        }finally {
+            returnToPool(jedis);
+        }
+    }
+
+    public Long delete(KeyPrefix prefix, String key){
+        Jedis jedis = null;
+        try {
+            jedis = jedisPool.getResource();
+            String realKey = prefix.getPrefix() + key;
+            if(jedis.exists(realKey)){
+                return jedis.del(realKey);
+            }
+            return -1L;
         }finally {
             returnToPool(jedis);
         }

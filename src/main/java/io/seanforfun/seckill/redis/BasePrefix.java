@@ -12,7 +12,7 @@ public abstract class BasePrefix implements KeyPrefix {
     private int expireSecond;
     private String prefix;
 
-    public static final int NEVER_EXPIRE = 0;
+    public static final int NEVER_EXPIRE = -1;
 
     public BasePrefix(int expireSecond, String prefix) {
         this.expireSecond = expireSecond;

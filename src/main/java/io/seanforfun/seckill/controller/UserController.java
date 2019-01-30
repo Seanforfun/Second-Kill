@@ -5,16 +5,24 @@ import io.seanforfun.seckill.entity.domain.User;
 import io.seanforfun.seckill.entity.domain.UserFactory;
 import io.seanforfun.seckill.entity.vo.LoginVo;
 import io.seanforfun.seckill.entity.vo.RegisterVo;
+import io.seanforfun.seckill.result.CodeMsg;
 import io.seanforfun.seckill.result.Result;
 import io.seanforfun.seckill.service.LoginService;
 import io.seanforfun.seckill.service.RegisterService;
+import io.seanforfun.seckill.service.ebi.LoginEbi;
 import io.seanforfun.seckill.utils.MD5Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 /**
@@ -29,7 +37,7 @@ import javax.validation.Valid;
 public class UserController {
 
     @Autowired
-    private LoginService loginService;
+    private LoginEbi loginService;
     @Autowired
     private RegisterService registerService;
 
@@ -53,9 +61,21 @@ public class UserController {
      */
     @RequestMapping("/login")
     @ResponseBody
-    public Result<User> login(@Valid LoginVo loginVo){
-        User loginUser = loginService.login(loginVo);
+    public Result<User> login(@Valid LoginVo loginVo, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        User loginUser = loginService.login(request, response, loginVo);
         return Result.success(loginUser);
+    }
+
+    @RequestMapping("/logout")
+    public Result<Boolean> logout(@CookieValue(value = User.USER_TOKEN, required = false) String userToken,
+                                  @RequestParam(value = User.USER_TOKEN, required = false) String paramToken,
+                                  HttpSession session, ModelAndView mv) throws Exception {
+        if(StringUtils.isEmpty(userToken) && StringUtils.isEmpty(paramToken)){
+            return Result.error(CodeMsg.USER_NOT_LOGIN_ERROR_MSG);
+        }
+        String token = StringUtils.isEmpty(userToken) ? paramToken : userToken;
+        loginService.logout(token, session);
+        return Result.success(true);
     }
 
     @RequestMapping("/register")

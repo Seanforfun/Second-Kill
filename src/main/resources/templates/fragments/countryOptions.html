@@ -1,4 +1,5 @@
 <!DOCTYPE HTML>
+<!-- Custom styles for this template-->
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta charset="UTF-8">
@@ -11,14 +12,14 @@
         <script type="text/javascript" th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
         <script type="text/javascript" th:src="@{/js/form-validation.js}"></script>
         <link rel="stylesheet" type="text/css" th:href="@{/css/form-validation.css}" />
+        <link href="/css/sb-admin-2.min.css" rel="stylesheet">
     </head>
 
     <body>
         <div class="col-md-5 mb-3" th:fragment="countryOptions">
-            <label for="country">Country/Region</label>
-            <select class="custom-select d-block w-100" id="country" onchange="changeState(this.value)" required>
-                <option value="CHOOSE">Choose...</option>
-                <option value="CA" selected="selected">Canada</option>
+            <select class="custom-select form-control" id="country" onchange="changeState(this.value)" required>
+                <option value=""  selected="selected">Choose Country/Region</option>
+                <option value="CA">Canada</option>
                 <option value="US">United States</option>
             </select>
             <div class="invalid-feedback">
@@ -26,9 +27,8 @@
             </div>
         </div>
         <div id="stateDiv"  class="col-md-4 mb-3" th:fragment="stateOptions">
-            <label for="state">State</label>
-            <select class="custom-select d-block w-100" id="state" required>
-                <option value="">Choose...</option>
+            <select class="custom-select d-block w-100 form-control-user" id="state" required>
+                <option value=""  selected="selected">Choose state</option>
                 <option value="AB">Alberta</option>
                 <option value="BC">British Columbia</option>
                 <option value="MB">Manitoba</option>
@@ -48,8 +48,7 @@
             </div>
         </div>
         <div class="col-md-3 mb-3" th:fragment="zipOptions">
-            <label for="zip">Zip</label>
-            <input type="text" class="form-control" id="zip" placeholder="Uppercase zip code"  required>
+            <input type="text" class="form-control form-control-user" id="zip" placeholder="Uppercase Postal code"  required>
             <div class="invalid-feedback">
                 Zip code required.
             </div>

@@ -1,6 +1,7 @@
 package io.seanforfun.seckill.entity.domain;
 
 import io.seanforfun.seckill.utils.FormatUtils;
+import io.seanforfun.seckill.utils.MD5Utils;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,6 +21,7 @@ import java.util.Map;
 @Getter
 @ToString
 public class User {
+    // User status related.
     public static final int ACTIVATED = 0;
     public static final int NOT_ACTIVATED = 1;
 
@@ -37,6 +39,15 @@ public class User {
 
     public static final boolean IS_ADMIN = true;
     public static final boolean NOT_ADMIN = false;
+
+    // User login related
+    public static final String USER_TOKEN = "USER_TOKEN";
+    public static final String USER_LOGIN = "USER_LOGIN";
+
+    private static final String USER_LOGIN_SALT = "KOBE";
+
+    public static final String USER_REMEMBER_ME = "REMEMBER_ME";
+    public static final String USER_REMEMBER_ME_TOKEN = "REMEMBER_ME_TOKEN";
 
     @Setter
     private Long id;
@@ -89,5 +100,14 @@ public class User {
     public void setActivated(int activated){
         this.activated = activated;
         this.activatedVo = ACTIVATE_MAP.get(activated);
+    }
+
+    public String userLoginSession(String username, String salt){
+        return MD5Utils.userLoginSession(username, salt, USER_LOGIN_SALT);
+    }
+
+    public boolean checkUserLogin(String token, String username, String salt){
+        String validToken = userLoginSession(username, salt);
+        return validToken.equals(token);
     }
 }

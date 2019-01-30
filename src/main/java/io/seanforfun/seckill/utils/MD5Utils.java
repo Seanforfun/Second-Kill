@@ -28,4 +28,8 @@ public class MD5Utils {
     public static String passToDbPass(String password, String salt){
         return httpPassToDbPass(passToHttpPass(password), salt);
     }
+
+    public static String userLoginSession(String username, String salt, String fixedLoginSalt){
+        return md5(username + salt + fixedLoginSalt);
+    }
 }
