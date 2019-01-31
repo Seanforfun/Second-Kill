@@ -34,6 +34,12 @@ public class UserFactory {
         return user;
     }
 
+    public User produceEmptyUser(){
+        User user = new User();
+        userAware(user);
+        return user;
+    }
+
     /**
      * Setup parameters for users(Same for both admin and user)
      * @param user

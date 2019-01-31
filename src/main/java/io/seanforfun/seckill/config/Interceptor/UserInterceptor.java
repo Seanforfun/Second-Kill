@@ -1,7 +1,6 @@
 package io.seanforfun.seckill.config.Interceptor;
 
 import io.seanforfun.seckill.entity.domain.User;
-import io.seanforfun.seckill.service.UserService;
 import io.seanforfun.seckill.service.ebi.UserEbi;
 import io.seanforfun.seckill.utils.CookieUtils;
 import org.apache.commons.lang3.StringUtils;

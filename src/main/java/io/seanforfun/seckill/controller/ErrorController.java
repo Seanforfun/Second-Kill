@@ -1,11 +1,20 @@
 package io.seanforfun.seckill.controller;
 
+import io.seanforfun.seckill.entity.domain.User;
+import io.seanforfun.seckill.result.CodeMsg;
+import io.seanforfun.seckill.result.Result;
+import io.seanforfun.seckill.service.ebi.LoginEbi;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -19,9 +28,17 @@ import javax.validation.constraints.NotNull;
 @RequestMapping("/error")
 public class ErrorController {
 
+    @Autowired
+    private LoginEbi loginService;
+
     @RequestMapping("/toError")
-    public ModelAndView toError(@NotNull String msg, ModelAndView mv){
-        mv.addObject("msg", msg);
+    public ModelAndView toError(@CookieValue(value = User.USER_TOKEN, required = false) String userToken,
+                                @RequestParam(value = User.USER_TOKEN, required = false) String paramToken,
+                                HttpSession session, HttpServletRequest request, ModelAndView mv) throws Exception {
+        if(!StringUtils.isEmpty(userToken) || !StringUtils.isEmpty(paramToken)){
+            String token = StringUtils.isEmpty(userToken) ? paramToken : userToken;
+            loginService.logout(token, session, request);
+        }
         mv.setViewName("/pages/404.html");
         return mv;
     }

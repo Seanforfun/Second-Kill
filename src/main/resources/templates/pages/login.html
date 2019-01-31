@@ -1,51 +1,87 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
 
-    <head>
-        <title>Login</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<head>
+    <title>Login</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
-        <!-- jquery -->
-        <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
-        <!-- bootstrap -->
-        <link rel="stylesheet" type="text/css" th:href="@{/bootstrap/css/bootstrap.min.css}" />
-        <script type="text/javascript" th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
-        <!-- jquery-validator -->
-        <script type="text/javascript" th:src="@{/jquery-validation/jquery.validate.min.js}"></script>
-        <!-- layer -->
-        <script type="text/javascript" th:src="@{/layer/layer.js}"></script>
-        <!-- md5.js -->
-        <script type="text/javascript" th:src="@{/js/md5.min.js}"></script>
-        <!-- common.js -->
-        <script type="text/javascript" th:src="@{/js/common.js}"></script>
-        <!-- Custom style for login.html-->
-        <link th:href="@{/css/signin.css}" rel="stylesheet"/>
-    </head>
+    <!-- jquery -->
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+    <!-- bootstrap -->
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap/css/bootstrap.min.css}" />
+    <script type="text/javascript" th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+    <!-- jquery-validator -->
+    <script type="text/javascript" th:src="@{/jquery-validation/jquery.validate.min.js}"></script>
+    <!-- layer -->
+    <script type="text/javascript" th:src="@{/layer/layer.js}"></script>
+    <!-- md5.js -->
+    <script type="text/javascript" th:src="@{/js/md5.min.js}"></script>
+    <!-- common.js -->
+    <script type="text/javascript" th:src="@{/js/common.js}"></script>
+    <!-- Custom style for login.html-->
+    <link th:href="@{/css/signin.css}" rel="stylesheet"/>
+    <!-- Custom css for this template-->
+    <th:block th:replace="fragments/cssinclude::cssinclude"></th:block>
+</head>
 
-    <body class="text-center">
-        <form id="loginForm"  class="form-signin" method="POST">
-            <img class="mb-4" src="/assets/logo/logo.png" alt="" width="72" height="72">
-            <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-            <label for="username" class="sr-only">Username</label>
-            <input type="text" id="username" class="form-control" placeholder="Username" required autofocus>
-            <label for="password" class="sr-only">Password</label>
-            <input type="password" id="password" class="form-control" placeholder="Password" minlength="6" maxlength="100" required>
-            <div class="checkbox mb-3">
-                <label>
-                    <input id="rememberme"  type="checkbox" value="remember-me"> Remember me
-                </label>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <button th:id="register_button" class="btn btn-lg btn-primary btn-block" onclick="register(); return false;">Register</button>
+<body class="text-center">
+
+    <div class="container">
+
+        <!-- Outer Row -->
+        <div class="row justify-content-center">
+            <div class="col-xl-10 col-lg-12 col-md-9">
+                <div class="row">
+                    <div class="col-xl-10 col-lg-12 col-md-9">
+                        <div class="text-center">
+                            <div class="error mx-auto" data-text="LOGIN">LOGIN</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <button id="login_button"  class="btn btn-lg btn-primary btn-block" type="submit" onclick="login(); return false;">Sign in</button>
+                <div class="card o-hidden border-0 shadow-lg my-5">
+                    <div class="card-body p-0">
+                        <!-- Nested Row within Card Body -->
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="p-5">
+                                    <form id="loginForm"  class="form-signin" method="POST">
+                                        <!--<img class="mb-4" src="/assets/logo/logo.png" alt="" width="72" height="72">-->
+                                        <h1 class="h3 mb-3 font-weight-normal">Please login</h1>
+                                        <label for="username" class="sr-only">Username</label>
+                                        <input type="text" id="username" class="form-control" placeholder="Username" required autofocus>
+                                        <label for="password" class="sr-only">Password</label>
+                                        <input type="password" id="password" class="form-control" placeholder="Password" minlength="6" maxlength="100" required>
+                                        <div class="checkbox mb-3">
+                                            <label>
+                                                <input id="rememberme"  type="checkbox" value="remember-me"> Remember me
+                                            </label>
+                                            <div class="text-center">
+                                                <a th:href="@{/user/toForgetPassword}">&larr; Forget password?</a>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <button th:id="register_button" class="btn btn-lg btn-primary btn-block" onclick="register(); return false;">Register</button>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <button id="login_button"  class="btn btn-lg btn-primary btn-block" type="submit" onclick="login(); return false;">Sign in</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
             </div>
+
+        </div>
+        <div class="text-center">
             <div th:replace="fragments/foot :: copyright"></div>
-        </form>
-    </body>
+        </div>
+    </div>
+</body>
 
     <script>
         function register() {

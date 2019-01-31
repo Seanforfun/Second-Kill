@@ -2,7 +2,9 @@ package io.seanforfun.seckill.service.ebi;
 
 import io.seanforfun.seckill.entity.domain.User;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * @author: Seanforfun
@@ -28,4 +30,25 @@ public interface UserEbi {
      * @return
      */
     boolean userInRedisSession(String token);
+
+    /**
+     * Check if current user exists in the database.
+     * @param user
+     * @return
+     */
+    boolean exists(User user);
+
+    /**
+     * Check if current user has logged out. true for logout.
+     * @param user
+     * @param request
+     * @param session
+     */
+    boolean checkLogout(User user, HttpServletRequest request, HttpSession session);
+
+    /**
+     * Upadate user password with username and email.
+     * @param user
+     */
+    void updateUserPassword(User user);
 }

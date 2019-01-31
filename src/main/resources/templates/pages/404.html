@@ -21,7 +21,7 @@
   <!-- Page Wrapper -->
   <div id="wrapper">
 
-    <th:block th:replace="fragments/sideBar::sidebar"></th:block>
+    <!--<th:block th:replace="fragments/sideBar::sidebar"></th:block>-->
 
     <!-- Content Wrapper -->
     <div id="content-wrapper" class="d-flex flex-column">
@@ -40,7 +40,7 @@
             <div class="error mx-auto" data-text="404">404</div>
             <p class="lead text-gray-800 mb-5"><th:block th:text="${msg}"></th:block></p>
             <p class="text-gray-500 mb-0">It looks like you found a glitch in the matrix...</p>
-            <a href="index.html">&larr; Back to Dashboard</a>
+            <a th:href="@{/user/tologin}">&larr; Back to Login</a>
           </div>
 
         </div>
@@ -53,7 +53,7 @@
       <footer class="sticky-footer bg-white">
         <div class="container my-auto">
           <div class="copyright text-center my-auto">
-            <span>Copyright &copy; Botao 2019-2019</span>
+            <span>Copyright &copy; Botao Xiao 2018-2019</span>
           </div>
         </div>
       </footer>

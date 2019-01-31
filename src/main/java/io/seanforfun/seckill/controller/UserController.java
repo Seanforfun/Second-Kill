@@ -1,15 +1,16 @@
 package io.seanforfun.seckill.controller;
 
-import com.sun.org.apache.bcel.internal.generic.RETURN;
 import io.seanforfun.seckill.entity.domain.User;
 import io.seanforfun.seckill.entity.domain.UserFactory;
+import io.seanforfun.seckill.entity.vo.ForgetPasswordVo;
 import io.seanforfun.seckill.entity.vo.LoginVo;
 import io.seanforfun.seckill.entity.vo.RegisterVo;
 import io.seanforfun.seckill.result.CodeMsg;
 import io.seanforfun.seckill.result.Result;
-import io.seanforfun.seckill.service.LoginService;
 import io.seanforfun.seckill.service.RegisterService;
+import io.seanforfun.seckill.service.UserService;
 import io.seanforfun.seckill.service.ebi.LoginEbi;
+import io.seanforfun.seckill.service.ebi.UserEbi;
 import io.seanforfun.seckill.utils.MD5Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -38,8 +39,12 @@ public class UserController {
 
     @Autowired
     private LoginEbi loginService;
+
     @Autowired
     private RegisterService registerService;
+
+    @Autowired
+    private UserEbi userService;
 
     /**
      * Path re-directory
@@ -53,6 +58,12 @@ public class UserController {
     @RequestMapping("/toRegister")
     public ModelAndView toRegister(ModelAndView mv){
         mv.setViewName("/pages/register.html");
+        return mv;
+    }
+
+    @RequestMapping("/toForgetPassword")
+    public ModelAndView toForgetPassword(ModelAndView mv){
+        mv.setViewName("/pages/forgetpassword.html");
         return mv;
     }
 
@@ -70,7 +81,7 @@ public class UserController {
     @ResponseBody
     public Result<Boolean> logout(@CookieValue(value = User.USER_TOKEN, required = false) String userToken,
                                   @RequestParam(value = User.USER_TOKEN, required = false) String paramToken,
-                                  HttpSession session, HttpServletRequest request, ModelAndView mv) throws Exception {
+                                  HttpSession session, HttpServletRequest request) throws Exception {
         if(StringUtils.isEmpty(userToken) && StringUtils.isEmpty(paramToken)){
             return Result.error(CodeMsg.USER_NOT_LOGIN_ERROR_MSG);
         }
@@ -94,6 +105,29 @@ public class UserController {
         user.setPassword(dbPassword);
         registerService.registerUser(user);
         return Result.success(true);
+    }
+
+    @RequestMapping("/resetPassword")
+    @ResponseBody
+    public Result<Boolean> changePassword(ForgetPasswordVo forgetPasswordVo, HttpServletRequest request, HttpSession session){
+        String username = forgetPasswordVo.getUsername();
+        String email = forgetPasswordVo.getEmail();
+        User user = UserFactory.USER_FACTORY.produceEmptyUser();
+        user.setUsername(username);
+        user.setEmail(email);
+        String httpPass = user.getPassword();
+        String salt = user.getSalt();
+        String dbPass = MD5Utils.httpPassToDbPass(httpPass, salt);
+        user.setPassword(dbPass);
+        if( userService.exists(user)){
+            if(!userService.checkLogout(user, request, session)){
+                return Result.error(CodeMsg.USER_NOT_LOGOUT_ERROR_MSG);
+            }
+            userService.updateUserPassword(user);
+        }else{
+            return Result.error(CodeMsg.USER_NOT_FOUND_ERROR_MSG);
+        }
+        return  Result.success(true);
     }
 
 }

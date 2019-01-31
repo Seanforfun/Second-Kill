@@ -52,6 +52,10 @@ public class CodeMsg {
     private static final String INCORRECT_ZIP_ERROR_STR = "INCORRECT ZIP FORMAT";
     private static final int USER_NOT_LOGIN_ERROR = 500304;
     private static final String USER_NOT_LOGIN_ERROR_STR = "USER NOT LOGIN";
+    private static final int USER_NOT_FOUND_ERROR = 500305;
+    private static final String USER_NOT_FOUND_ERROR_STR = "USER NOT FOUND";
+    private static final int USER_NOT_LOGOUT_ERROR = 500306;
+    private static final String USER_NOT_LOGOUT_ERROR_STR = "USER NOT LOG OUT";
 
 
     public static CodeMsg USERNAME_NOT_EXIST_ERROR_MSG = new CodeMsg(USERNAME_NOT_EXIST_ERROR, USERNAME_NOT_EXIST_ERROR_STR);
@@ -59,6 +63,8 @@ public class CodeMsg {
     public static CodeMsg USER_NOT_ACTIVATED_ERROR_MSG = new CodeMsg(USER_NOT_ACTIVATED_ERROR, USER_NOT_ACTIVATED_ERROR_STR);
     public static CodeMsg INCORRECT_ZIP_ERROR_MSG = new CodeMsg(INCORRECT_ZIP_ERROR, INCORRECT_ZIP_ERROR_STR);
     public static CodeMsg USER_NOT_LOGIN_ERROR_MSG = new CodeMsg(USER_NOT_LOGIN_ERROR, USER_NOT_LOGIN_ERROR_STR);
+    public static CodeMsg USER_NOT_FOUND_ERROR_MSG = new CodeMsg(USER_NOT_FOUND_ERROR, USER_NOT_FOUND_ERROR_STR);
+    public static CodeMsg USER_NOT_LOGOUT_ERROR_MSG = new CodeMsg(USER_NOT_LOGOUT_ERROR, USER_NOT_LOGOUT_ERROR_STR);
 
     private CodeMsg(int code, String msg){
         this.code = code;

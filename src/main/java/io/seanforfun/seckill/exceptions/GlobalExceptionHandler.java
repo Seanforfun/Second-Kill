@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -23,7 +25,7 @@ import java.util.List;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = Exception.class)
-    public Result<String> exceptionHandler(HttpServletRequest request, Exception e){
+    public Result<String> exceptionHandler(HttpServletRequest request, HttpServletResponse response, Exception e) throws IOException {
         e.printStackTrace();
         if(e instanceof GlobalException){
             GlobalException exception = (GlobalException)e;
@@ -35,6 +37,7 @@ public class GlobalExceptionHandler {
             String errorMsg = error.getDefaultMessage();
             return Result.error(CodeMsg.BIND_ERROR_MSG.fillArgs(errorMsg));
         }else{
+            response.sendRedirect("/error/toError");
             return Result.error(CodeMsg.SERVER_ERROR_MSG);
         }
     }
