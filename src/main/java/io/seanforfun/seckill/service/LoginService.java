@@ -28,7 +28,7 @@ import javax.servlet.http.HttpSession;
  * @version: 0.0.1
  */
 @Service
-public class LoginService implements LoginEbi {
+public class LoginService extends UserService implements LoginEbi  {
 
     @Autowired
     private UserDao userDao;
@@ -55,11 +55,11 @@ public class LoginService implements LoginEbi {
         updateLoginTime(user);
 
         // Set user login status to Session
-        String userLoginSession = user.userLoginSession(user.getUsername(), user.getSalt());
+        String userLoginSession = User.userLoginSession();
         HttpSession session = request.getSession();
         session.setAttribute(User.USER_LOGIN, userLoginSession);
 
-        // Set remember me logic
+        // Set remember me logic.
         if(loginVo.isRememberMe()){
             session.setAttribute(User.USER_REMEMBER_ME, User.USER_REMEMBER_ME_TOKEN);
         }else{
@@ -70,11 +70,7 @@ public class LoginService implements LoginEbi {
 
         // Create a distributed session for user if select remember me.
         String token = UUIDUtils.uuid();
-        redisService.set(UserKey.userToken, token,  user);
-        Cookie cookie = new Cookie(User.USER_TOKEN, token);
-        cookie.setMaxAge(UserKey.userToken.expireSeconds());
-        cookie.setPath("/");
-        response.addCookie(cookie);
+        updateUserSession(token, user, response);
         return user;
     }
 

@@ -92,7 +92,6 @@ public class UserController {
         user.setZip(registerVo.getZip());
         String dbPassword = MD5Utils.httpPassToDbPass(registerVo.getPassword(), user.getSalt());
         user.setPassword(dbPassword);
-        System.out.println(user.toString());
         registerService.registerUser(user);
         return Result.success(true);
     }

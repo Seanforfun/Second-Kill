@@ -40,7 +40,7 @@
                     <button th:id="register_button" class="btn btn-lg btn-primary btn-block" onclick="register(); return false;">Register</button>
                 </div>
                 <div class="col-md-6">
-                    <button id="login_button"  class="btn btn-lg btn-primary btn-block" type="submit" onclick="login()">Sign in</button>
+                    <button id="login_button"  class="btn btn-lg btn-primary btn-block" type="submit" onclick="login(); return false;">Sign in</button>
                 </div>
             </div>
             <div th:replace="fragments/foot :: copyright"></div>
@@ -65,6 +65,7 @@
             var password = md5(saltedPass);
 
             var username = $("#username").val();
+            var isChecked = $('#rememberme').prop('checked');
 
             if(username == null || username == "" || username.length == 0 || username == undefined){
                 layer.closeAll();
@@ -82,7 +83,7 @@
                 data: {
                     username : $("#username").val(),
                     password: password,
-                    rememberme: $("#rememberme").val()
+                    rememberMe: isChecked
                 },
                 success: function (data) {
                     layer.closeAll();

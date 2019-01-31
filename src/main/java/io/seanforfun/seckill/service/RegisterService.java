@@ -28,7 +28,6 @@ public class RegisterService implements RegisterEbi {
     @Override
     @Transactional
     public boolean registerUser(User user) {
-        String username = user.getUsername();
         ZipValidator validator = ZipValidator.ZIP_VALIDATOR_MAP.get(user.getCountry());
         if(!validator.validate(user.getZip())){
             throw new GlobalException(CodeMsg.INCORRECT_ZIP_ERROR_MSG);

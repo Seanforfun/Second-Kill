@@ -9,6 +9,4 @@ package io.seanforfun.seckill.service.ebi;
  */
 public interface ManageEbi {
 
-
-
 }

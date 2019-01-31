@@ -32,4 +32,8 @@ public class MD5Utils {
     public static String userLoginSession(String username, String salt, String fixedLoginSalt){
         return md5(username + salt + fixedLoginSalt);
     }
+
+    public static String userLoginSession(String fixedLoginSalt){
+        return md5(fixedLoginSalt);
+    }
 }

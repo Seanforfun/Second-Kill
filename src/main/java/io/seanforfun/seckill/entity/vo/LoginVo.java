@@ -34,13 +34,6 @@ public class LoginVo {
     private String password;
 
     @Getter
+    @Setter
     private boolean rememberMe;
-
-    public void setRememberMe(String rememberMe){
-        if(!StringUtils.isEmpty(rememberMe) && rememberMe.equals("remember-me")){
-            this.rememberMe = true;
-        }else{
-            this.rememberMe = false;
-        }
-    }
 }

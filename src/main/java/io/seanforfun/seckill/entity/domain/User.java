@@ -103,15 +103,12 @@ public class User {
         this.activatedVo = ACTIVATE_MAP.get(activated);
     }
 
-    public String userLoginSession(String username, String salt){
-        return MD5Utils.userLoginSession(username, salt, USER_LOGIN_SALT);
+    public static String userLoginSession(){
+        return MD5Utils.userLoginSession(USER_LOGIN_SALT);
     }
 
-    public boolean checkUserLogin(String token){
-        if(StringUtils.isEmpty(username) || StringUtils.isEmpty(salt)){
-            return false;
-        }
-        String validToken = userLoginSession(username, salt);
+    public static boolean checkUserLogin(String token){
+        String validToken = userLoginSession();
         return validToken.equals(token);
     }
 }
