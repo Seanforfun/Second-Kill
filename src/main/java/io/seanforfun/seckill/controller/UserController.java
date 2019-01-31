@@ -67,14 +67,15 @@ public class UserController {
     }
 
     @RequestMapping("/logout")
+    @ResponseBody
     public Result<Boolean> logout(@CookieValue(value = User.USER_TOKEN, required = false) String userToken,
                                   @RequestParam(value = User.USER_TOKEN, required = false) String paramToken,
-                                  HttpSession session, ModelAndView mv) throws Exception {
+                                  HttpSession session, HttpServletRequest request, ModelAndView mv) throws Exception {
         if(StringUtils.isEmpty(userToken) && StringUtils.isEmpty(paramToken)){
             return Result.error(CodeMsg.USER_NOT_LOGIN_ERROR_MSG);
         }
         String token = StringUtils.isEmpty(userToken) ? paramToken : userToken;
-        loginService.logout(token, session);
+        loginService.logout(token, session, request);
         return Result.success(true);
     }
 

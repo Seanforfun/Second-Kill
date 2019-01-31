@@ -4,6 +4,7 @@ import io.seanforfun.seckill.utils.FormatUtils;
 import io.seanforfun.seckill.utils.MD5Utils;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -106,7 +107,10 @@ public class User {
         return MD5Utils.userLoginSession(username, salt, USER_LOGIN_SALT);
     }
 
-    public boolean checkUserLogin(String token, String username, String salt){
+    public boolean checkUserLogin(String token){
+        if(StringUtils.isEmpty(username) || StringUtils.isEmpty(salt)){
+            return false;
+        }
         String validToken = userLoginSession(username, salt);
         return validToken.equals(token);
     }

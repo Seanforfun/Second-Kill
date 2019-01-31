@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<!-- Custom styles for this template-->
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>countrys</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <!-- jquery -->
+        <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+        <!-- bootstrap -->
+        <link rel="stylesheet" type="text/css" th:href="@{/bootstrap/css/bootstrap.min.css}" />
+        <script type="text/javascript" th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+        <script type="text/javascript" th:src="@{/js/form-validation.js}"></script>
+        <link rel="stylesheet" type="text/css" th:href="@{/css/form-validation.css}" />
+        <link href="/css/sb-admin-2.min.css" rel="stylesheet">
+    </head>
+
+    <body>
+        <div class="col-md-5 mb-3" th:fragment="countryOptions">
+            <select class="custom-select form-control" id="country" onchange="changeState(this.value)" required>
+                <option value=""  selected="selected">Choose Country/Region</option>
+                <option value="CA">Canada</option>
+                <option value="US">United States</option>
+            </select>
+            <div class="invalid-feedback">
+                Please select a valid country.
+            </div>
+        </div>
+        <div id="stateDiv"  class="col-md-4 mb-3" th:fragment="stateOptions">
+            <select class="custom-select d-block w-100 form-control-user" id="state" required>
+                <option value=""  selected="selected">Choose state</option>
+                <option value="AB">Alberta</option>
+                <option value="BC">British Columbia</option>
+                <option value="MB">Manitoba</option>
+                <option value="NB">New Brunswick</option>
+                <option value="NL">Newfoundland and Labrador</option>
+                <option value="NS">Nova Scotia</option>
+                <option value="ON">Ontario</option>
+                <option value="PE">Prince Edward Island</option>
+                <option value="QC">Quebec</option>
+                <option value="SK">Saskatchewan</option>
+                <option value="NT">Northwest Territories</option>
+                <option value="NU">Nunavut</option>
+                <option value="YT">Yukon</option>
+            </select>
+            <div class="invalid-feedback">
+                Please provide a valid state.
+            </div>
+        </div>
+        <div class="col-md-3 mb-3" th:fragment="zipOptions">
+            <input type="text" class="form-control form-control-user" id="zip" placeholder="Uppercase Postal code"  required>
+            <div class="invalid-feedback">
+                Zip code required.
+            </div>
+        </div>
+    </body>
+</html>

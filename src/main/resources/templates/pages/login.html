@@ -54,19 +54,27 @@
         }
 
         function login() {
-            $("#loginForm").validate({
-                submitHandler: function () {
-                    doLogin();
-                }
-            })
+            doLogin();
         }
-        
+
         function doLogin() {
             g_showLoading();
 
             var inputPass = $("#password").val();
             var saltedPass = "" + inputPass + g_passsword_salt;
             var password = md5(saltedPass);
+
+            var username = $("#username").val();
+
+            if(username == null || username == "" || username.length == 0 || username == undefined){
+                layer.closeAll();
+                return false;
+            }
+
+            if(inputPass == null || inputPass == "" || inputPass.length == 0 || inputPass == undefined){
+                layer.closeAll();
+                return false;
+            }
 
             $.ajax({
                 url: "/user/login",
@@ -89,7 +97,7 @@
                     layer.closeAll();
                     layer.msg("LOGIN FAILED, PLEASE TRY AGAIN");
                 }
-            })
+            });
         }
     </script>
 </html>

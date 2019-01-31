@@ -32,5 +32,5 @@ public interface LoginEbi {
      * @param session Single end session for current connection.
      * @throws Exception
      */
-    void logout(String token, HttpSession session) throws Exception;
+    void logout(String token, HttpSession session, HttpServletRequest request) throws Exception;
 }

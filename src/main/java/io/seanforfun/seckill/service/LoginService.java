@@ -79,9 +79,14 @@ public class LoginService implements LoginEbi {
     }
 
     @Override
-    public void logout(String token, HttpSession session) throws Exception {
+    public void logout(String token, HttpSession session, HttpServletRequest request) throws Exception {
+
         session.invalidate();
         redisService.delete(UserKey.userToken, token);
+        Cookie[] cookies = request.getCookies();
+        for(Cookie cookie : cookies){
+            cookie.setMaxAge(0);
+        }
     }
 
     private boolean updateLoginTime(User user){

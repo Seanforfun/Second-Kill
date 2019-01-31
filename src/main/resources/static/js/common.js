@@ -19,7 +19,7 @@ Date.prototype.format = function (format) {
         "d+": this.getDate(),  
         "h+": this.getHours(),  
         "m+": this.getMinutes(),  
-        "s+": this.getSeconds(),  
+        "s+": this.getSeconds()
     };  
     if (/(y+)/.test(format))  
         format = format.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));  

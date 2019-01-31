@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>footer</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <!-- jquery -->
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+    <!-- bootstrap -->
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap/css/bootstrap.min.css}" />
+    <script type="text/javascript" th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+</head>
+
+<body>
+    <th:block th:fragment="footer">
+        <div class="my-5 pt-5 text-muted text-center text-small">
+            <p class="mb-1">&copy; 2018-2019 Botao Xiao</p>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="copyright">
+        <p class="mt-5 mb-3 text-muted">&copy; 2018-2019 Botao Xiao</p>
+    </th:block>
+</body>
+</html>

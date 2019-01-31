@@ -1,0 +1,95 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <title>Login</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+        <!-- jquery -->
+        <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+        <!-- bootstrap -->
+        <link rel="stylesheet" type="text/css" th:href="@{/bootstrap/css/bootstrap.min.css}" />
+        <script type="text/javascript" th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+        <!-- jquery-validator -->
+        <script type="text/javascript" th:src="@{/jquery-validation/jquery.validate.min.js}"></script>
+        <!-- layer -->
+        <script type="text/javascript" th:src="@{/layer/layer.js}"></script>
+        <!-- md5.js -->
+        <script type="text/javascript" th:src="@{/js/md5.min.js}"></script>
+        <!-- common.js -->
+        <script type="text/javascript" th:src="@{/js/common.js}"></script>
+        <!-- Custom style for login.html-->
+        <link th:href="@{/css/signin.css}" rel="stylesheet"/>
+    </head>
+
+    <body class="text-center">
+        <form id="loginForm"  class="form-signin" method="POST">
+            <img class="mb-4" src="/assets/logo/logo.png" alt="" width="72" height="72">
+            <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+            <label for="username" class="sr-only">Username</label>
+            <input type="text" id="username" class="form-control" placeholder="Username" required autofocus>
+            <label for="password" class="sr-only">Password</label>
+            <input type="password" id="password" class="form-control" placeholder="Password" minlength="6" maxlength="100" required>
+            <div class="checkbox mb-3">
+                <label>
+                    <input id="rememberme"  type="checkbox" value="remember-me"> Remember me
+                </label>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <button th:id="register_button" class="btn btn-lg btn-primary btn-block" onclick="register(); return false;">Register</button>
+                </div>
+                <div class="col-md-6">
+                    <button id="login_button"  class="btn btn-lg btn-primary btn-block" type="submit" onclick="login()">Sign in</button>
+                </div>
+            </div>
+            <div th:replace="fragments/foot :: copyright"></div>
+        </form>
+    </body>
+
+    <script>
+        function register() {
+            layer.msg("LOADING TO REGISTER PAGE");
+            window.location.href="/user/toRegister";
+        }
+
+        function login() {
+            $("#loginForm").validate({
+                submitHandler: function () {
+                    doLogin();
+                }
+            })
+        }
+        
+        function doLogin() {
+            g_showLoading();
+
+            var inputPass = $("#password").val();
+            var saltedPass = "" + inputPass + g_passsword_salt;
+            var password = md5(saltedPass);
+
+            $.ajax({
+                url: "/user/login",
+                type: "POST",
+                data: {
+                    username : $("#username").val(),
+                    password: password,
+                    rememberme: $("#rememberme").val()
+                },
+                success: function (data) {
+                    layer.closeAll();
+                    if (data.code == 0) {
+                        layer.msg("LOGIN SUCCESS, REDIRECTING TO MAIN PAGE");
+                        window.location.href="/manage/toManage";
+                    }else{
+                        layer.msg(data.msg);
+                    }
+                },
+                error: function (data) {
+                    layer.closeAll();
+                    layer.msg("LOGIN FAILED, PLEASE TRY AGAIN");
+                }
+            })
+        }
+    </script>
+</html>

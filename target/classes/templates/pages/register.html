@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <!-- jquery -->
+    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
+    <!-- bootstrap -->
+    <link rel="stylesheet" type="text/css" th:href="@{/bootstrap/css/bootstrap.min.css}" />
+    <script type="text/javascript" th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
+    <!-- jquery-validator -->
+    <script type="text/javascript" th:src="@{/jquery-validation/jquery.validate.min.js}"></script>
+    <!-- layer -->
+    <script type="text/javascript" th:src="@{/layer/layer.js}"></script>
+    <!-- md5.js -->
+    <script type="text/javascript" th:src="@{/js/md5.min.js}"></script>
+    <!-- common.js -->
+    <script type="text/javascript" th:src="@{/js/common.js}"></script>
+    <!-- Custom css and js file for register.html-->
+    <script type="text/javascript" th:src="@{/js/form-validation.js}"></script>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/form-validation.css}" />
+
+</head>
+<body class="bg-gradient-primary">
+    <div class="container">
+        <div class="card-body p-0">
+            <div class="py-5 text-center">
+                <img class="d-block mx-auto mb-4" src="/assets/logo/logo.png" alt="" width="72" height="72">
+                <h2>Register form</h2>
+                <p class="lead">Please complete the following form for registration.</p>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12 order-md-1">
+                    <h4 class="mb-3">Personal Information</h4>
+                    <form id="registerForm"  class="needs-validation" novalidate>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="firstName">First name</label>
+                                <input type="text" class="form-control" id="firstName" placeholder="" value="" required>
+                                <div class="invalid-feedback">
+                                    Valid first name is required.
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="lastName">Last name</label>
+                                <input type="text" class="form-control" id="lastName" placeholder="" value="" required>
+                                <div class="invalid-feedback">
+                                    Valid last name is required.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="username">Username</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="username" placeholder="Username(Minimum 6 Characters)" minlength="6" required>
+                                <div class="invalid-feedback">
+                                    Valid username is required. (Must longer than 5 characters.)
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="password">Password</label>
+                                <input type="password" class="form-control" id="password" placeholder="Password(Minimum 6 Characters)" value="" minlength="6" required>
+                                <div class="invalid-feedback">
+                                    6 characters password is required.
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="repassword">Re-type password</label>
+                                <input type="password" class="form-control" id="repassword" placeholder="" value="" minlength="6" required>
+                                <div class="invalid-feedback">
+                                    6 characters Re-type password is required.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email">Email <span class="text-muted"></span></label>
+                            <input type="email" class="form-control" id="email" placeholder="you@example.com" required>
+                            <div class="invalid-feedback">
+                                Please enter a valid email address.
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div th:replace="fragments/countryOptions :: countryOptions"></div>
+                            <div th:replace="fragments/countryOptions :: stateOptions"></div>
+                            <div th:replace="fragments/countryOptions :: zipOptions"></div>
+                        </div>
+
+                        <hr class="mb-4">
+                        <button class="btn btn-primary btn-lg btn-block" type="submit" onclick="doRegister(); return false;">Continue to register</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:replace="fragments/foot :: footer"></div>
+</body>
+
+<script>
+    var canSubmit = true;
+
+    function checkEmpty(data, error, length) {
+        if (length != null){
+            if (data == null || data == '' ||data == undefined || data.length < length){
+                layer.closeAll();
+                layer.msg(error, {
+                    time: 5000
+                });
+                canSubmit = false;
+                return false;
+            }
+            return true;
+        }else{
+            if (data == null || data == '' || data == undefined){
+                layer.closeAll();
+                layer.msg(error, {
+                    time: 5000
+                });
+                canSubmit = false;
+                return false;
+            }
+            return true;
+        }
+    }
+
+    function checkForm() {
+        canSubmit = true;
+        var firstname = $("#firstName").val();
+        var lastname = $("#lastName").val();
+        if (!checkEmpty(firstname, "EMPTY FIRSTNAME", null)){
+            canSubmit = false;
+            return;
+        }
+        if (!checkEmpty(lastname, "EMPTY LASTNAME", null)){
+            canSubmit = false;
+            return;
+        }
+        var username = $("#username").val();
+        if (!checkEmpty(username, "INVALID USERNAME", 6)){
+            canSubmit = false;
+            return;
+        }
+        var inputPass = $("#password").val();
+        var repassword = $("#repassword").val();
+        if (!checkEmpty(inputPass, "INVALID PASSWORD", null)){
+            canSubmit = false;
+            return;
+        }
+        if(inputPass != repassword){
+            layer.closeAll();
+            layer.msg("PASSWORD MIS-MATCH");
+            return;
+        }
+        var email = $("#email").val();
+        if (!checkEmpty(email, "EMPTY E-MAIL", null)){
+            canSubmit = false;
+            return;
+        }
+        var country = $("#country").val();
+        if (!checkEmpty(country, "EMPTY COUNTRY", null)){
+            canSubmit = false;
+            return;
+        }
+        var state = $("#state").val();
+        if (!checkEmpty(state, "EMPTY STATE", null)){
+            canSubmit = false;
+            return;
+        }
+        var zip = $("#zip").val();
+        if (!checkEmpty(zip, "EMPTY ZIP", null)){
+            canSubmit = false;
+            return;
+        }
+    }
+
+    function doRegister() {
+        g_showLoading();
+        checkForm();
+        if(!canSubmit){
+            return;
+        }
+        var inputPass = $("#password").val();
+        var saltedPass = "" + inputPass + g_passsword_salt;
+        var password = md5(saltedPass);
+        var firstname = $("#firstName").val();
+        var lastname = $("#lastName").val();
+        var username = $("#username").val();
+        $.ajax({
+            url: "/user/register",
+            method: "POST",
+            data:{
+                firstname: firstname,
+                lastname: lastname,
+                username: username,
+                password: password,
+                country: $("#country").val(),
+                state: $("#state").val(),
+                zip: $("#zip").val(),
+                email:$("#email").val()
+            },
+            success: function (data) {
+                layer.closeAll();
+                if(data.code == 0){
+                    layer.msg("REGISTER SUCCESS, PLEASE WAIT FOR ADMIN'S APPROVAL");
+                    window.location.href = "/user/tologin";
+                }else{
+                    layer.msg(data.msg, {
+                        time: 5000
+                    });
+                }
+            },
+            error: function (data) {
+                layer.closeAll();
+                layer.msg("REGISTER FAILED, PLEASE TRY AGAIN", {
+                    time: 5000
+                });
+            }
+        })
+    }
+
+    function changeState(country) {
+        var options;
+        switch (country) {
+            case 'CA':
+                options = "<select class='custom-select d-block w-100' id='state' required>" +
+                    "<option value=''>Choose...</option>" +
+                    "<option value='AB'>Alberta</option>" +
+                    " <option value='BC'>British Columbia</option>" +
+                    "<option value='MB'>Manitoba</option>" +
+                    "<option value='NB'>New Brunswick</option>" +
+                    "<option value='NL'>Newfoundland and Labrador</option>" +
+                    "<option value='NS'>Nova Scotia</option>" +
+                    "<option value='ON'>Ontario</option>" +
+                    "<option value='PE'>Prince Edward Island</option>" +
+                    "<option value='QC'>Quebec</option>" +
+                    "<option value='SK'>Saskatchewan</option>" +
+                    "<option value='NT'>Northwest Territories</option>" +
+                    "<option value='NU'>Nunavut</option>" +
+                    " <option value='YT'>Yukon</option>" +
+                    "</select>";
+                break;
+            case 'US':
+                options = "<select class='custom-select d-block w-100' id='state' required>" +
+                    '<option value="">Choose...</option>' +
+                    '<option value="AL">Alabama</option>' +
+                    '<option value="AK">Alaska</option>' +
+                    '<option value="AZ">Arizona</option>' +
+                    '<option value="AR">Arkansas</option>' +
+                    '<option value="CA">California</option>' +
+                    '<option value="CO">Colorado</option>' +
+                    '<option value="CT">Connecticut</option>' +
+                    '<option value="DE">Delaware</option>' +
+                    '<option value="DC">District Of Columbia</option>' +
+                    '<option value="FL">Florida</option>' +
+                    '<option value="GA">Georgia</option>' +
+                    '<option value="HI">Hawaii</option>' +
+                    '<option value="ID">Idaho</option>' +
+                    '<option value="IL">Illinois</option>' +
+                    '<option value="IN">Indiana</option>' +
+                    '<option value="IA">Iowa</option>' +
+                    '<option value="KS">Kansas</option>' +
+                    '<option value="KY">Kentucky</option>' +
+                    '<option value="LA">Louisiana</option>' +
+                    '<option value="ME">Maine</option>' +
+                    '<option value="MD">Maryland</option>' +
+                    '<option value="MA">Massachusetts</option>' +
+                    '<option value="MI">Michigan</option>' +
+                    '<option value="MN">Minnesota</option>' +
+                    '<option value="MS">Mississippi</option>' +
+                    '<option value="MO">Missouri</option>' +
+                    '<option value="MT">Montana</option>' +
+                    '<option value="NE">Nebraska</option>' +
+                    '<option value="NV">Nevada</option>' +
+                    '<option value="NH">New Hampshire</option>' +
+                    '<option value="NJ">New Jersey</option>' +
+                    '<option value="NM">New Mexico</option>' +
+                    '<option value="NY">New York</option>' +
+                    '<option value="NC">North Carolina</option>' +
+                    '<option value="ND">North Dakota</option>' +
+                    '<option value="OH">Ohio</option>' +
+                    '<option value="OK">Oklahoma</option>' +
+                    '<option value="OR">Oregon</option>' +
+                    '<option value="PA">Pennsylvania</option>' +
+                    '<option value="RI">Rhode Island</option>' +
+                    '<option value="SC">South Carolina</option>' +
+                    '<option value="SD">South Dakota</option>' +
+                    '<option value="TN">Tennessee</option>' +
+                    '<option value="TX">Texas</option>' +
+                    '<option value="UT">Utah</option>' +
+                    '<option value="VT">Vermont</option>' +
+                    '<option value="VA">Virginia</option>' +
+                    '<option value="WA">Washington</option>' +
+                    '<option value="WV">West Virginia</option>' +
+                    '<option value="WI">Wisconsin</option>' +
+                    '<option value="WY">Wyoming</option>' +
+                    '</select>';
+                break;
+            default:
+                options = "<select class='custom-select d-block w-100' id='state' required>" +
+                    '<option value="">Choose...</option>' +
+                    '</select>';
+                break;
+
+        }
+        $opt = $(options);
+        $("#state").remove();
+        $("#stateDiv").append($opt)
+    }
+</script>
+</html>
