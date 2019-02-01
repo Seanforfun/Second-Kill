@@ -1,5 +1,6 @@
 package io.seanforfun.seckill.utils;
 
+import io.seanforfun.seckill.entity.domain.User;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.Cookie;
@@ -29,6 +30,16 @@ public class CookieUtils {
             }
         }
         return null;
+    }
+
+    /**
+     * @return Return a cookie for UserToken expiration.
+     */
+    public static Cookie createExpireUserCookie(){
+        Cookie cookie = new Cookie(User.USER_TOKEN, null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        return cookie;
     }
 
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.NotNull;
 
@@ -34,10 +35,11 @@ public class ErrorController {
     @RequestMapping("/toError")
     public ModelAndView toError(@CookieValue(value = User.USER_TOKEN, required = false) String userToken,
                                 @RequestParam(value = User.USER_TOKEN, required = false) String paramToken,
-                                HttpSession session, HttpServletRequest request, ModelAndView mv) throws Exception {
+                                HttpSession session, HttpServletRequest request, HttpServletResponse response,
+                                ModelAndView mv) throws Exception {
         if(!StringUtils.isEmpty(userToken) || !StringUtils.isEmpty(paramToken)){
             String token = StringUtils.isEmpty(userToken) ? paramToken : userToken;
-            loginService.logout(token, session, request);
+            loginService.logout(token, session, request, response);
         }
         mv.setViewName("/pages/404.html");
         return mv;

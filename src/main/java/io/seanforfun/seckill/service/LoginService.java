@@ -9,6 +9,7 @@ import io.seanforfun.seckill.redis.RedisService;
 import io.seanforfun.seckill.redis.UserKey;
 import io.seanforfun.seckill.result.CodeMsg;
 import io.seanforfun.seckill.service.ebi.LoginEbi;
+import io.seanforfun.seckill.utils.CookieUtils;
 import io.seanforfun.seckill.utils.MD5Utils;
 import io.seanforfun.seckill.utils.UUIDUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,14 +76,11 @@ public class LoginService extends UserService implements LoginEbi  {
     }
 
     @Override
-    public void logout(String token, HttpSession session, HttpServletRequest request) throws Exception {
-
+    public void logout(String token, HttpSession session, HttpServletRequest request, HttpServletResponse response) throws Exception {
         session.invalidate();
         redisService.delete(UserKey.userToken, token);
-        Cookie[] cookies = request.getCookies();
-        for(Cookie cookie : cookies){
-            cookie.setMaxAge(0);
-        }
+        Cookie cookie = CookieUtils.createExpireUserCookie();
+        response.addCookie(cookie);
     }
 
     private boolean updateLoginTime(User user){

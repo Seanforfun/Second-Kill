@@ -15,10 +15,7 @@ import io.seanforfun.seckill.utils.MD5Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -62,7 +59,16 @@ public class UserController {
     }
 
     @RequestMapping("/toForgetPassword")
-    public ModelAndView toForgetPassword(ModelAndView mv){
+    public ModelAndView toForgetPassword(@CookieValue(value = User.USER_TOKEN, required = false) String cookieToken,
+                                         @RequestAttribute(value = User.USER_TOKEN, required = false) String requestToken,
+                                         HttpSession session,
+                                         HttpServletRequest request,
+                                         HttpServletResponse response,
+                                         ModelAndView mv) throws Exception {
+        if(!StringUtils.isEmpty(cookieToken) || !StringUtils.isEmpty(requestToken)){
+            String token = StringUtils.isEmpty(cookieToken) ? requestToken : cookieToken;
+            loginService.logout(token, session, request, response);
+        }
         mv.setViewName("/pages/forgetpassword.html");
         return mv;
     }
@@ -81,12 +87,13 @@ public class UserController {
     @ResponseBody
     public Result<Boolean> logout(@CookieValue(value = User.USER_TOKEN, required = false) String userToken,
                                   @RequestParam(value = User.USER_TOKEN, required = false) String paramToken,
-                                  HttpSession session, HttpServletRequest request) throws Exception {
+                                  HttpSession session, HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
         if(StringUtils.isEmpty(userToken) && StringUtils.isEmpty(paramToken)){
             return Result.error(CodeMsg.USER_NOT_LOGIN_ERROR_MSG);
         }
         String token = StringUtils.isEmpty(userToken) ? paramToken : userToken;
-        loginService.logout(token, session, request);
+        loginService.logout(token, session, request, response);
         return Result.success(true);
     }
 
@@ -115,7 +122,7 @@ public class UserController {
         User user = UserFactory.USER_FACTORY.produceEmptyUser();
         user.setUsername(username);
         user.setEmail(email);
-        String httpPass = user.getPassword();
+        String httpPass = forgetPasswordVo.getPassword();
         String salt = user.getSalt();
         String dbPass = MD5Utils.httpPassToDbPass(httpPass, salt);
         user.setPassword(dbPass);

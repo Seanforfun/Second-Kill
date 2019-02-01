@@ -1,5 +1,6 @@
 package io.seanforfun.seckill.entity.domain;
 
+import io.seanforfun.seckill.utils.SnowFlakeUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 
 /**
@@ -30,6 +31,7 @@ public class UserFactory {
     public User produceUser(){
         User user = new User();
         user.setAdmin(User.NOT_ADMIN);
+        user.setId(SnowFlakeUtils.getSnowFlakeId());
         userAware(user);
         return user;
     }
