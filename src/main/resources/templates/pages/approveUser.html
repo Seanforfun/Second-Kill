@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+  <th:block th:replace="fragments/meta::meta"></th:block>
+
+  <title>User approval</title>
+
+  <!-- Custom fonts for this template -->
+  <th:block th:replace="fragments/cssinclude::cssinclude"></th:block>
+
+  <!-- Custom styles for this page -->
+  <link th:href="@{/vendor/datatables/dataTables.bootstrap4.min.css}" rel="stylesheet">
+
+</head>
+
+<body id="page-top">
+
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+    <!-- Sidebar -->
+      <th:block th:replace="fragments/sideBar::sidebar"></th:block>
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+      <!-- Main Content -->
+      <div id="content">
+
+        <!-- Topbar -->
+          <th:block th:replace="fragments/topBar::topBar"></th:block>
+
+        <!-- Begin Page Content -->
+        <div class="container-fluid">
+
+          <!-- Page Heading -->
+          <h1 class="h3 mb-2 text-gray-800">Admin Management</h1>
+
+          <!-- DataTales Example -->
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Pending Users</h6>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                  <thead>
+                    <tr>
+                      <th>Username</th>
+                      <th>Firstname</th>
+                      <th>Lastname</th>
+                      <th>Email</th>
+                      <th>Register Date</th>
+                      <th>Operation</th>
+                    </tr>
+                  </thead>
+                  <tfoot>
+                    <tr>
+                        <th>Username</th>
+                        <th>Firstname</th>
+                        <th>Lastname</th>
+                        <th>Email</th>
+                        <th>Register Date</th>
+                        <th>Operation</th>
+                    </tr>
+                  </tfoot>
+                  <tbody>
+                    <tr th:each="user:${userVo.user}">
+                          <td th:text="${user.username}"></td>
+                          <td th:text="${user.firstname}"></td>
+                          <td th:text="${user.lastname}"></td>
+                          <td th:text="${user.email}"></td>
+                          <td th:text="${user.registerTimeVo}"></td>
+                          <td>
+                              <a th:href="@{'/admin/approve/' + ${user.id}}" class="btn btn-primary btn-icon-split">
+                                <span class="icon text-white-50">
+                                  <i class="fas fa-check"></i>
+                                </span>
+                                <span class="text">Approve</span>
+                             </a>
+
+                              <a th:href="@{'/admin/reject/' + ${user.id}}" class="btn btn-danger btn-icon-split">
+                                    <span class="icon text-white-50">
+                                      <i class="fas fa-trash"></i>
+                                    </span>
+                                  <span class="text">Reject</span>
+                              </a>
+
+                              <a th:href="@{'/admin/info/' + ${user.id}}" class="btn btn-success btn-icon-split">
+                                    <span class="icon text-white-0">
+                                      <i class="fas fa-info-circle"></i>
+                                    </span>
+                                     <span class="text">Detail</span>
+                              </a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <!-- /.container-fluid -->
+
+      </div>
+      <!-- End of Main Content -->
+
+      <!-- Footer -->
+        <th:block th:replace="fragments/foot::costom"></th:block>
+      <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+  <!-- Logout Modal-->
+  <th:block th:replace="fragments/logout::logout"></th:block>
+
+  <!-- Bootstrap core JavaScript-->
+  <th:block th:replace="fragments/jsinclude::jsinclude"></th:block>
+
+  <!-- Page level plugins -->
+  <script th:src="@{/vendor/datatables/jquery.dataTables.min.js}"></script>
+  <script th:src="@{/vendor/datatables/dataTables.bootstrap4.min.js}"></script>
+
+  <!-- Page level custom scripts -->
+  <script th:src="@{/js/datatables-demo.js}"></script>
+
+</body>
+
+</html>

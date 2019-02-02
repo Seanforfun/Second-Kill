@@ -25,6 +25,7 @@ public class User {
     // User status related.
     public static final int ACTIVATED = 0;
     public static final int NOT_ACTIVATED = 1;
+    public static final int REJECTED = 2;
 
     private static final String ACTIVATED_STR = "ACTIVATED";
     private static final String NOT_ACTIVATED_STR = "NOT_ACTIVATED";
@@ -74,16 +75,17 @@ public class User {
     private String email;
 
     private int activated;
+
     private Long registerTime;
     private Long lastLoginTime;
     private Long lastModifiedTime;
 
     private String activatedVo;
-    private String registerTimeVo;
     private String lastLoginTimeVo;
+    private String registerTimeVo;
     private String lastModifiedTimeVo;
 
-    public void setRegisterTime(long registerTime){
+    public void setRegisterTime(long registerTime) {
         this.registerTime = registerTime;
         this.registerTimeVo = FormatUtils.formatDateTime(registerTime);
     }

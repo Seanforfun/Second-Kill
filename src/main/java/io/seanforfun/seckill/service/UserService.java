@@ -3,6 +3,7 @@ package io.seanforfun.seckill.service;
 import com.sun.org.apache.bcel.internal.generic.RETURN;
 import io.seanforfun.seckill.dao.UserDao;
 import io.seanforfun.seckill.entity.domain.User;
+import io.seanforfun.seckill.entity.vo.UserVo;
 import io.seanforfun.seckill.redis.RedisService;
 import io.seanforfun.seckill.redis.UserKey;
 import io.seanforfun.seckill.service.ebi.UserEbi;
@@ -16,6 +17,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 /**
  * @author: Seanforfun
@@ -34,23 +36,33 @@ public class UserService implements UserEbi {
     private UserDao userDao;
 
     @Override
-    public User getUserByToken(HttpServletResponse response, String token) throws Exception {
+    public User getUserById(Long id) {
         User user = null;
-        if(!StringUtils.isEmpty(token)){
-            user = redisService.get(UserKey.userToken, token, User.class);
+        if(id == null){
+            return user;
         }
-        updateUserSession(token, user, response);
+        user = redisGetUserById(id);
+        if(user != null) {
+            return user;
+        }
+        user = dbGetUserById(id);
+        redisService.set(UserKey.getKeyForId, "" + id, user);
         return user;
     }
 
     @Override
-    public boolean userInRedisSession(String token) {
-        return redisService.exists(UserKey.userToken, token);
+    public User getUserByToken(HttpServletResponse response, String token) throws Exception {
+        User user = null;
+        if(!StringUtils.isEmpty(token)){
+            user = redisService.get(UserKey.userToken, token, User.class);
+            updateUserSession(token, user, response);
+        }
+        return user;
     }
 
     @Override
     public boolean exists(User user) {
-        return userDao.getUserNumberByUsernameAndEmail(user) > 0;
+        return userDao.getUserIdByUsername(user) != null;
     }
 
     @Override
@@ -69,11 +81,70 @@ public class UserService implements UserEbi {
         userDao.updateUserPasswordAndSalt(user);
     }
 
+    @Override
+    public int getUnapprovedUserNumber() {
+        return userDao.getUserNumberByUserStatus(User.NOT_ACTIVATED);
+    }
+
+    @Override
+    public List<User> getUnapprovedUserListByPage(UserVo userVo) {
+        Integer numPerPage = userVo.getNumPerPage();
+        Integer currentPageNum = userVo.getCurrentPageNum();
+        Integer currentPageIndex = (currentPageNum - 1) * numPerPage;
+        List<User> users = userDao.getUserListByUserStatus(User.NOT_ACTIVATED, currentPageIndex, userVo.getNumPerPage());
+        return users;
+    }
+
+    @Override
+    public List<User> getUnapprovedUserList(UserVo userVo) {
+        return userDao.getAllInactiveUserByStatus(User.NOT_ACTIVATED);
+    }
+
+    @Override
+    @Transactional
+    public void updateUserActivateStatus(User user, int newStatus) {
+        user.setActivated(newStatus);
+        //Step 1 : Update database status;
+        userDao.updateUserActivateStatus(user.getId(), newStatus);
+        // Step 2: Update redis by id;
+        redisService.set(UserKey.getKeyForId, "" + user.getId(), user);
+    }
+
+    @Override
+    @Transactional
+    public void setAdminStatus(User user, boolean adminStatus) {
+        user.setAdmin(adminStatus);
+        //Step 1 : Update database status;
+        userDao.updateUserAdminStatus(user.getId(), adminStatus);
+        // Step 2: Update redis by id;
+        redisService.set(UserKey.getKeyForId, "" + user.getId(), user);
+    }
+
     protected void updateUserSession(String token, User user, HttpServletResponse response){
         redisService.set(UserKey.userToken, token,  user);
         Cookie cookie = new Cookie(User.USER_TOKEN, token);
         cookie.setMaxAge(UserKey.userToken.expireSeconds());
         cookie.setPath("/");
         response.addCookie(cookie);
+    }
+
+    /**
+     * Redis methods.
+     */
+    private User redisGetUserById(Long id){
+        User user = redisService.get(UserKey.getKeyForId, "" + id, User.class);
+        return user;
+    }
+
+    @Override
+    public boolean userInRedisSession(String token) {
+        return redisService.exists(UserKey.userToken, token);
+    }
+
+    /**
+     * DB methods
+     */
+    private User dbGetUserById(Long id){
+        return userDao.getById(id);
     }
 }

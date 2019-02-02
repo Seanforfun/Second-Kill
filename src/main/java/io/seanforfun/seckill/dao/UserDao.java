@@ -5,6 +5,8 @@ import io.seanforfun.seckill.entity.vo.LoginVo;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @author: Seanforfun
  * @date: Created in 2019/1/24 12:45
@@ -33,6 +35,22 @@ public interface UserDao {
     @Select("Select count(id) from user where username = #{username} and email = #{email}")
     Long getUserNumberByUsernameAndEmail(User user);
 
+    @Select("Select id from user where username = #{username}")
+    Long getUserIdByUsername(User user);
+
+    // Inactivated users
+    @Select("Select count(id) from user where activated = #{status}")
+    int getUserNumberByUserStatus(@Param("status") int status);
+
+    @Select("Select id, username, firstname, lastname, email, registertime from user where activated = #{status} " +
+            " order by registerTime asc limit #{currentIndex}, #{perpage}")
+    List<User> getUserListByUserStatus(@Param("status") int status,
+                                       @Param("currentIndex") int currentIndex,
+                                       @Param("perpage") int perpage);
+
+    @Select("Select id, username, firstname, lastname, email, registertime from user where activated = #{status} " +
+            " order by registerTime asc")
+    List<User> getAllInactiveUserByStatus(int notActivated);
     /**
      * Update
      */
@@ -41,6 +59,12 @@ public interface UserDao {
 
     @Update("Update user set password = #{password}, salt = #{salt} where username = #{username} and email = #{email}")
     void updateUserPasswordAndSalt(User user);
+
+    @Update("Update user set activated = #{status} where id = #{id}")
+    void updateUserActivateStatus(@Param("id") Long id, @Param("status") int newStatus);
+
+    @Update("Update user set admin = #{adminStatus} where id = #{id}")
+    void updateUserAdminStatus(@Param("id") Long id, @Param("adminStatus") boolean adminStatus);
 
     /**
      * Insert
@@ -52,7 +76,6 @@ public interface UserDao {
             " #{state},#{zip}, #{email}, #{activated}, #{registerTime}, " +
             "#{lastLoginTime}, #{lastModifiedTime}, #{firstname}, #{lastname})")
     void saveRegisterUser(User user);
-
 
     /**
      * Delete

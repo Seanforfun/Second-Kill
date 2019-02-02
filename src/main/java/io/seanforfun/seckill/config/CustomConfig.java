@@ -41,7 +41,7 @@ public class CustomConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(loginInterceptor).addPathPatterns("/manage/**");
+        registry.addInterceptor(loginInterceptor).addPathPatterns("/manage/**", "/admin/**");
         registry.addInterceptor(rememberMeInterceptor).addPathPatterns("/user/tologin");
     }
 

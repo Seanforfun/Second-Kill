@@ -9,7 +9,7 @@ import java.lang.annotation.*;
  * @modified:
  * @version: 0.01
  */
-@Target(ElementType.METHOD)
+@Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Inherited

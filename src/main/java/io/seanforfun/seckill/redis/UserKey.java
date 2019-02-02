@@ -19,7 +19,7 @@ public class UserKey extends BasePrefix {
         super(expireSecond, prefix);
     }
 
-    public static final UserKey getKeyForId = new UserKey("id");
-    public static final UserKey getKeyForName = new UserKey("name");
+    public static final UserKey getKeyForId = new UserKey(USER_EXPIRE_SECONDS, "id");
+    public static final UserKey getKeyForName = new UserKey(USER_EXPIRE_SECONDS, "name");
     public static final UserKey userToken = new UserKey(USER_EXPIRE_SECONDS,"tk");
 }

@@ -126,7 +126,7 @@ public class UserController {
         String salt = user.getSalt();
         String dbPass = MD5Utils.httpPassToDbPass(httpPass, salt);
         user.setPassword(dbPass);
-        if( userService.exists(user)){
+        if(userService.exists(user)){
             if(!userService.checkLogout(user, request, session)){
                 return Result.error(CodeMsg.USER_NOT_LOGOUT_ERROR_MSG);
             }

@@ -44,7 +44,7 @@ public class LoginService extends UserService implements LoginEbi  {
                 user.getPassword() == null || user.getId() == null){
             throw new GlobalException(CodeMsg.USERNAME_NOT_EXIST_ERROR_MSG);
         }
-        if(user.getActivated() == User.NOT_ACTIVATED){
+        if(user.getActivated() != User.ACTIVATED){
             throw new GlobalException(CodeMsg.USER_NOT_ACTIVATED_ERROR_MSG);
         }
         String httpPass = loginVo.getPassword();

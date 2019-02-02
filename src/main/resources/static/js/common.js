@@ -30,3 +30,26 @@ Date.prototype.format = function (format) {
     }  
     return format;  
 };
+
+function logout() {
+    $.ajax({
+        url: "/user/logout",
+        method: "POST",
+        data: {},
+        success: function (data) {
+            if(data.code == 0){
+                window.location.href = "/user/tologin";
+            }else{
+                //TODO Protection method, user is not login but doing some service
+                window.location.href = "/user/tologin";
+            }
+        },
+        error: function (data) {
+            $.post("/error/toError",
+                {
+                    msg: "Wow, something bad happened."
+                }
+            )
+        }
+    });
+};
