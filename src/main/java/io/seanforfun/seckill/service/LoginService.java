@@ -1,6 +1,5 @@
 package io.seanforfun.seckill.service;
 
-import com.sun.deploy.net.HttpResponse;
 import io.seanforfun.seckill.dao.UserDao;
 import io.seanforfun.seckill.entity.domain.User;
 import io.seanforfun.seckill.entity.vo.LoginVo;
