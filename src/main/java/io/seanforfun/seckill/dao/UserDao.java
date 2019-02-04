@@ -45,8 +45,8 @@ public interface UserDao {
     @Select("Select id, username, firstname, lastname, email, registertime from user where activated = #{status} " +
             " order by registerTime asc limit #{currentIndex}, #{perpage}")
     List<User> getUserListByUserStatus(@Param("status") int status,
-                                       @Param("currentIndex") int currentIndex,
-                                       @Param("perpage") int perpage);
+                                       @Param("currentIndex") Long currentIndex,
+                                       @Param("perpage") Long perpage);
 
     @Select("Select id, username, firstname, lastname, email, registertime from user where activated = #{status} " +
             " order by registerTime asc")

@@ -19,18 +19,18 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 public class PaginationBean {
-    private Integer currentPageNum;
-    private Integer numPerPage;
-    private Integer totalPageNum;
+    private Long currentPageNum;
+    private Long numPerPage;
+    private Long totalPageNum;
 
     /**
      * Get total number of pages.
      * @param totalNum total number of object.
      * @param numPerPage    Number of object in single page.
      */
-    public void calculationMaxPage(Integer totalNum,
-                                   Integer numPerPage) {
-        Integer totelPage = totalNum/numPerPage;
+    public void calculationMaxPage(Long totalNum,
+                                   Long numPerPage) {
+        Long totelPage = totalNum/numPerPage;
         totelPage = (totalNum%numPerPage == 0) ? totelPage:totelPage+1;
         this.setTotalPageNum(totelPage);
     }

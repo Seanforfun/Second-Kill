@@ -1,6 +1,7 @@
 package io.seanforfun.seckill.utils;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -26,5 +27,10 @@ public class FormatUtils {
     public static final String formatDateTime(long time) {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return df.format(new Date(time));
+    }
+
+    public static final String formatPrice(double price){
+        DecimalFormat df = new DecimalFormat("#.00");
+        return df.format(price);
     }
 }

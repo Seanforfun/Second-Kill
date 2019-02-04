@@ -88,9 +88,9 @@ public class UserService implements UserEbi {
 
     @Override
     public List<User> getUnapprovedUserListByPage(UserVo userVo) {
-        Integer numPerPage = userVo.getNumPerPage();
-        Integer currentPageNum = userVo.getCurrentPageNum();
-        Integer currentPageIndex = (currentPageNum - 1) * numPerPage;
+        Long numPerPage = userVo.getNumPerPage();
+        Long currentPageNum = userVo.getCurrentPageNum();
+        Long currentPageIndex = (currentPageNum - 1) * numPerPage;
         List<User> users = userDao.getUserListByUserStatus(User.NOT_ACTIVATED, currentPageIndex, userVo.getNumPerPage());
         return users;
     }
