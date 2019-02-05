@@ -7,17 +7,8 @@
 
     <title>User approval</title>
 
-    <!-- jquery -->
-    <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
     <!-- bootstrap -->
     <link rel="stylesheet" type="text/css" th:href="@{/bootstrap/css/bootstrap.min.css}" />
-    <script type="text/javascript" th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
-    <!-- jquery-validator -->
-    <script type="text/javascript" th:src="@{/jquery-validation/jquery.validate.min.js}"></script>
-    <!-- layer -->
-    <script type="text/javascript" th:src="@{/layer/layer.js}"></script>
-    <!-- md5.js -->
-    <script type="text/javascript" th:src="@{/js/md5.min.js}"></script>
     <!-- common.js -->
     <script type="text/javascript" th:src="@{/js/common.js}"></script>
     <!-- Custom css and js file for register.html-->
@@ -153,14 +144,23 @@
 
                                                 <hr class="mb-4">
                                                 <div class="row">
-                                                    <div class="col-md-4">
-                                                        <a class="btn btn-outline-primary btn-block" th:href="@{'/admin/approve/' + ${userInstance.id}}">Approve</a>
+                                                    <div class="col-md-6">
                                                     </div>
-                                                    <div class="col-md-4">
-                                                        <a class="btn btn-outline-danger btn-block" th:href="@{'/admin/reject/' + ${userInstance.id}}">Reject</a>
+                                                    <div class="col-md-3">
+                                                        <a th:href="'mailto:' + ${userInstance.email}" class="btn btn-outline-primary  btn-block">
+                                                            <span class="icon text-white-0">
+                                                              <i class="fas fa-at"></i>
+                                                            </span>
+                                                            <span class="text">E-mail</span>
+                                                        </a>
                                                     </div>
-                                                    <div class="col-md-4">
-                                                        <a class="btn btn-outline-success btn-block" th:href="@{'/admin/admin/' + ${userInstance.id}}">Admin</a>
+                                                    <div class="col-md-3">
+                                                        <a th:href="@{'/admin/message/' + ${userInstance.id}}" class="btn btn-outline-danger  btn-block">
+                                                            <span class="icon text-white-0">
+                                                              <i class="far fa-envelope"></i>
+                                                            </span>
+                                                            <span class="text">Message</span>
+                                                        </a>
                                                     </div>
                                                 </div>
                                             </form>
@@ -194,9 +194,6 @@
 <a class="scroll-to-top rounded" href="#page-top">
     <i class="fas fa-angle-up"></i>
 </a>
-
-<!-- Logout Modal-->
-<th:block th:replace="fragments/logout::logout"></th:block>
 
 <!-- Logout Modal-->
 <th:block th:replace="fragments/logout::logout"></th:block>

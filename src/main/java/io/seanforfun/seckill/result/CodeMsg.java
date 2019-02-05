@@ -1,5 +1,6 @@
 package io.seanforfun.seckill.result;
 
+import com.sun.org.apache.bcel.internal.classfile.Code;
 import com.sun.org.apache.bcel.internal.generic.NEW;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -65,6 +66,12 @@ public class CodeMsg {
     public static CodeMsg USER_NOT_LOGIN_ERROR_MSG = new CodeMsg(USER_NOT_LOGIN_ERROR, USER_NOT_LOGIN_ERROR_STR);
     public static CodeMsg USER_NOT_FOUND_ERROR_MSG = new CodeMsg(USER_NOT_FOUND_ERROR, USER_NOT_FOUND_ERROR_STR);
     public static CodeMsg USER_NOT_LOGOUT_ERROR_MSG = new CodeMsg(USER_NOT_LOGOUT_ERROR, USER_NOT_LOGOUT_ERROR_STR);
+
+    // Message error 5004XX
+    private static final int SEND_TO_YOURSELF_ERROR = 500400;
+    private static final String SEND_TO_YOURSELF_ERROR_STR = "CANNOT SEND MESSAGE TO YOURSELF";
+
+    public static CodeMsg SEND_TO_YOURSELF_ERROR_MSG = new CodeMsg(SEND_TO_YOURSELF_ERROR, SEND_TO_YOURSELF_ERROR_STR);
 
     private CodeMsg(int code, String msg){
         this.code = code;

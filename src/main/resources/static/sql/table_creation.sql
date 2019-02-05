@@ -44,3 +44,14 @@ CREATE TABLE vehicle_detail(
 	seatingposition TINYINT,
 	doors TINYINT
 );
+
+# Message table
+CREATE TABLE message(
+	id BIGINT NOT NULL PRIMARY KEY,
+	fromUser BIGINT NOT NULL,
+	toUser BIGINT NOT NULL,
+	title TEXT NOT NULL,
+	msg TEXT NOT NULL,
+	hasRead BOOLEAN NOT NULL,
+	sendTime BIGINT NOT NULL
+);

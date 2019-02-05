@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -23,7 +24,7 @@ import java.util.List;
  * @modified:
  * @version: 0.0.1
  */
-@Controller
+@RestController
 @RequestMapping("/admin")
 @Access(authority = "ADMIN")
 public class AdminController {
@@ -50,7 +51,7 @@ public class AdminController {
 
     @RequestMapping("/approve/{id}")
     @ResponseBody
-    public ModelAndView adminApprove(@PathVariable(name = "id", required = true) Long id, ModelAndView mv){
+    public ModelAndView adminApprove(@PathVariable(name = "id") Long id, ModelAndView mv){
         AdminService.activateUser(id);
         mv.setViewName("redirect:/admin/userApproval");
         return mv;
@@ -66,10 +67,8 @@ public class AdminController {
 
     @RequestMapping("/info/{id}")
     @ResponseBody
-    public ModelAndView adminUserInfo(@PathVariable(name = "id", required = true) Long id, ModelAndView mv, User user){
-        User detailUser = userService.getUserById(id);
-        mv.addObject("userInstance", detailUser);
-        mv.addObject("user", user);
+    public ModelAndView adminUserInfo(@PathVariable(name = "id") Long id, ModelAndView mv, User user){
+        getUserDetail(mv, id, user);
         mv.setViewName("/pages/userInfo.html");
         return mv;
     }
@@ -114,7 +113,6 @@ public class AdminController {
         User detailUser = userService.getUserById(id);
         mv.addObject("userInstance", detailUser);
         mv.addObject("user", admin);
-        mv.setViewName("/pages/userInfo.html");
         return mv;
     }
 }

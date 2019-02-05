@@ -5,13 +5,13 @@
 
     <th:block th:replace="fragments/meta::meta"></th:block>
 
-    <title>User approval</title>
+    <title>Send Message</title>
 
+    <!-- Custom fonts for this template -->
     <!-- jquery -->
     <script type="text/javascript" th:src="@{/js/jquery.min.js}"></script>
     <!-- bootstrap -->
     <link rel="stylesheet" type="text/css" th:href="@{/bootstrap/css/bootstrap.min.css}" />
-    <script type="text/javascript" th:src="@{/bootstrap/js/bootstrap.min.js}"></script>
     <!-- jquery-validator -->
     <script type="text/javascript" th:src="@{/jquery-validation/jquery.validate.min.js}"></script>
     <!-- layer -->
@@ -23,8 +23,8 @@
     <!-- Custom css and js file for register.html-->
     <script type="text/javascript" th:src="@{/js/form-validation.js}"></script>
     <link rel="stylesheet" type="text/css" th:href="@{/css/form-validation.css}" />
-    <!-- Custom fonts for this template -->
     <th:block th:replace="fragments/cssinclude::cssinclude"></th:block>
+    <th:block th:replace="fragments/textEditor::textEditorCSS"></th:block>
 
 </head>
 
@@ -62,12 +62,14 @@
                                     <div class="col-lg-12">
                                         <div class="p-5">
                                             <form id="registerForm"  class="needs-validation" novalidate>
+                                                <input type="hidden" class="form-control" id="fromUser" th:value="${user.id}" required>
+                                                <input type="hidden" class="form-control" id="toUser" th:value="${toUserId}" required>
                                                 <input type="text" class="form-control" id="title" placeholder="Title" required>
                                                 <hr/>
 
                                                     <!--Textarea with icon prefix-->
                                                 <div class="form-group">
-                                                    <textarea class="form-control" id="exampleFormControlTextarea1" placeholder="Message Content" rows="6"></textarea>
+                                                    <textarea class="form-control" id="msgBody" placeholder="Message Content" rows="10"></textarea>
                                                 </div>
 
                                                 <hr class="mb-4">
@@ -75,14 +77,13 @@
                                                     <div class="col-md-9">
                                                     </div>
                                                     <div class="col-md-3">
-                                                        <a class="btn btn-outline-primary btn-block" style="float:right" th:href="@{/admin/approve/}">Send Message</a>
+                                                        <button id="sendBtn"  onclick="sendMessage(); return false;" class="btn btn-outline-danger  btn-block">
+                                                            <span class="icon text-white-0">
+                                                              <i class="far fa-envelope"></i>
+                                                            </span>
+                                                            <span class="text">Send Message</span>
+                                                        </button>
                                                     </div>
-                                                    <!--<div class="col-md-4">-->
-                                                        <!--<a class="btn btn-outline-danger btn-block" th:href="@{'/admin/reject/' + ${userInstance.id}}">Reject</a>-->
-                                                    <!--</div>-->
-                                                    <!--<div class="col-md-4">-->
-                                                        <!--<a class="btn btn-outline-success btn-block" th:href="@{'/admin/admin/' + ${userInstance.id}}">Admin</a>-->
-                                                    <!--</div>-->
                                                 </div>
                                             </form>
                                         </div>
@@ -118,11 +119,55 @@
 
 <!-- Logout Modal-->
 <th:block th:replace="fragments/logout::logout"></th:block>
-
-<!-- Logout Modal-->
-<th:block th:replace="fragments/logout::logout"></th:block>
 <!-- Bootstrap core JavaScript-->
 <th:block th:replace="fragments/jsinclude::jsinclude"></th:block>
+<th:block th:replace="fragments/textEditor::textEditorJS"></th:block>
 
 </body>
+<script>
+    function sendMessage() {
+        g_showLoading();
+        var title = $("#title").val();
+        var msg = $("#msgBody").val();
+        if(title == null || title.length == 0 || title == undefined){
+            layer.closeAll();
+            layer.msg("TITLE CANNOT BE EMPTY");
+            return;
+        }
+
+        if(msg == null || msg.length == 0 || msg == undefined){
+            layer.closeAll();
+            layer.msg("MESSAGE CANNOT BE EMPTY");
+            return;
+        }
+
+        $.ajax({
+            url: "/message/send",
+            method: "POST",
+            data:{
+                fromUser: $("#fromUser").val(),
+                toUser: $("#toUser").val(),
+                title: title,
+                msg: msg
+            },
+            success: function (data) {
+                layer.closeAll();
+                if(data.code == 0){
+                    layer.msg("SEND MESSAGE SUCCESS");
+                    window.location.href = "/admin/userList";
+                }else{
+                    layer.msg(data.msg, {
+                        time: 5000
+                    });
+                }
+            },
+            error: function (data) {
+                layer.closeAll();
+                layer.msg("SEND MESSAGE, PLEASE TRY AGAIN", {
+                    time: 5000
+                });
+            }
+        })
+    }
+</script>
 </html>
