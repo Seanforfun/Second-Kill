@@ -1,5 +1,6 @@
 package io.seanforfun.seckill.controller;
 
+import io.seanforfun.seckill.entity.domain.Message;
 import io.seanforfun.seckill.entity.domain.User;
 import io.seanforfun.seckill.entity.domain.VehicleDetail;
 import io.seanforfun.seckill.entity.vo.VehicleVo;
@@ -41,12 +42,11 @@ public class VehicleController {
 
     @RequestMapping(value = {"/list"})
     @ResponseBody
-    public ModelAndView listVehicles(ModelAndView mv, User user){
+    public ModelAndView listVehicles(ModelAndView mv, User user, List<Message> messages){
         // Get Vehicles from db or redis.
         List<VehicleDetail> instockVehicles = vehicleService.getInstockVehicles();
         vehicleVo.setVehicles(instockVehicles);
         mv.addObject("vehicleVo", vehicleVo);
-        mv.addObject("user", user);
         // Redirect to listing page and show all vehicles.
         mv.setViewName("/pages/vehicle/vehicleList.html");
         return mv;
@@ -54,11 +54,10 @@ public class VehicleController {
 
     @RequestMapping("/sold")
     @ResponseBody
-    public ModelAndView soldVehicles(ModelAndView mv, User user){
+    public ModelAndView soldVehicles(ModelAndView mv, User user, List<Message> messages){
         List<VehicleDetail> soldVehicles = vehicleService.getSoldVehicles();
         vehicleVo.setVehicles(soldVehicles);
         mv.addObject("vehicleVo", vehicleVo);
-        mv.addObject("user", user);
         // Redirect to listing page and show all vehicles.
         mv.setViewName("/pages/vehicle/vehicleList.html");
         return mv;

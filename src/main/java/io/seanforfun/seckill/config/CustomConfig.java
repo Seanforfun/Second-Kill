@@ -2,6 +2,7 @@ package io.seanforfun.seckill.config;
 
 import io.seanforfun.seckill.config.Interceptor.LoginInterceptor;
 import io.seanforfun.seckill.config.Interceptor.RememberMeInterceptor;
+import io.seanforfun.seckill.config.resolver.MessageResolver;
 import io.seanforfun.seckill.config.resolver.UserResolver;
 import io.seanforfun.seckill.entity.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,9 @@ public class CustomConfig implements WebMvcConfigurer {
     @Autowired
     private UserResolver userResolver;
 
+    @Autowired
+    private MessageResolver messageResolver;
+
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/").setViewName("forward:/user/tologin");
@@ -48,5 +52,6 @@ public class CustomConfig implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(userResolver);
+        resolvers.add(messageResolver);
     }
 }

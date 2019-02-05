@@ -45,6 +45,8 @@ public class UserResolver implements HandlerMethodArgumentResolver {
             return null;
         }
         String token = StringUtils.isEmpty(requestToken) ? cookieToken : requestToken;
-        return userService.getUserByToken(response, token);
+        User userByToken = userService.getUserByToken(response, token);
+        modelAndViewContainer.addAttribute("user", userByToken);
+        return userByToken;
     }
 }

@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
+import java.util.List;
+
 /**
  * @author: Seanforfun
  * @date: Created in 2019/1/25 11:51
@@ -24,7 +26,25 @@ public class RedisService {
             jedis = this.jedisPool.getResource();
             String realKey = prefix.getPrefix() + key;
             String string  =jedis.get(realKey);
+            if (string == null ){
+                return null;
+            }
             return stringToBean(string, clazz);
+        }finally {
+            returnToPool(jedis);
+        }
+    }
+
+    public <T> List<T> getList(KeyPrefix prefix, String key, Class<T> clazz){
+        Jedis jedis = null;
+        try {
+            jedis = this.jedisPool.getResource();
+            String realKey = prefix.getPrefix() + key;
+            String string  =jedis.get(realKey);
+            if (string == null ){
+                return null;
+            }
+            return JSON.parseArray(string,clazz);
         }finally {
             returnToPool(jedis);
         }

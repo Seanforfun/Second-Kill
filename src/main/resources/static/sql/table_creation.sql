@@ -53,5 +53,6 @@ CREATE TABLE message(
 	title TEXT NOT NULL,
 	msg TEXT NOT NULL,
 	hasRead BOOLEAN NOT NULL,
-	sendTime BIGINT NOT NULL
+	sendTime BIGINT NOT NULL,
+	senderName varchar(100) NOT NULL
 );

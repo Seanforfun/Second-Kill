@@ -33,8 +33,7 @@ public class MessageController {
     private MessageEbi messageService;
 
     @RequestMapping("/toMessage/{id}")
-    public ModelAndView toMessage(ModelAndView mv, @PathVariable("id") Long id, User user){
-        mv.addObject("user", user);
+    public ModelAndView toMessage(ModelAndView mv, @PathVariable("id") Long id){
         mv.setViewName("redirect: /admin/message/" + id);
         return mv;
     }
@@ -42,7 +41,7 @@ public class MessageController {
     @RequestMapping("/send")
     @ResponseBody
     public Result<Boolean> sendMessage(@Valid Message message, User user){
-        if(message.getFromUser() == user.getId()){
+        if(message.getToUser().equals(user.getId())){
             return Result.error(CodeMsg.SEND_TO_YOURSELF_ERROR_MSG);
         }
         message.setId(SnowFlakeUtils.getSnowFlakeId());

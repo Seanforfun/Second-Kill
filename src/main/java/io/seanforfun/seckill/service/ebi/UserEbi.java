@@ -1,5 +1,6 @@
 package io.seanforfun.seckill.service.ebi;
 
+import io.seanforfun.seckill.entity.domain.Message;
 import io.seanforfun.seckill.entity.domain.User;
 import io.seanforfun.seckill.entity.vo.UserVo;
 

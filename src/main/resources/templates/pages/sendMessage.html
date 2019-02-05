@@ -45,14 +45,16 @@
             <!-- Topbar -->
             <th:block th:replace="fragments/topBar::topBar"></th:block>
 
+            <!-- Outer Row -->
+            <div class="col-xl-10 col-lg-12 col-md-9">
+                <div class="row text-center justify-content-center">
+                    <!--class="error mx-auto"-->
+                    <div  class="error mx-auto" data-text="MESSAGE">MESSAGE</div>
+                </div>
+            </div>
+
             <!-- Begin Page Content -->
             <div class="container-fluid">
-
-                <div class="col-xl-10 col-lg-12 col-md-9">
-                    <div class="text-center">
-                        <div class="error mx-auto" data-text="MESSAGE">MESSAGE</div>
-                    </div>
-                </div>
                 <div class="row justify-content-center">
                     <div class="col-xl-10 col-lg-12 col-md-9">
                         <div class="card o-hidden border-0 shadow-lg my-5">
@@ -64,6 +66,7 @@
                                             <form id="registerForm"  class="needs-validation" novalidate>
                                                 <input type="hidden" class="form-control" id="fromUser" th:value="${user.id}" required>
                                                 <input type="hidden" class="form-control" id="toUser" th:value="${toUserId}" required>
+                                                <input type="hidden" class="form-control" id="senderName" th:value="${user.username}" required>
                                                 <input type="text" class="form-control" id="title" placeholder="Title" required>
                                                 <hr/>
 
@@ -76,8 +79,8 @@
                                                 <div class="row">
                                                     <div class="col-md-9">
                                                     </div>
-                                                    <div class="col-md-3">
-                                                        <button id="sendBtn"  onclick="sendMessage(); return false;" class="btn btn-outline-danger  btn-block">
+                                                    <div class="col-md-3" style="float:right">
+                                                        <button id="sendBtn" th:value="${user.id == toUserId}" onclick="sendMessage(); return false;" class="btn btn-outline-danger  btn-block">
                                                             <span class="icon text-white-0">
                                                               <i class="far fa-envelope"></i>
                                                             </span>
@@ -127,6 +130,11 @@
 <script>
     function sendMessage() {
         g_showLoading();
+        if($("#sendBtn").val() == "true"){
+            layer.closeAll();
+            layer.msg("CANNOT SEND MESSAGE TO YOURSELF");
+            return;
+        }
         var title = $("#title").val();
         var msg = $("#msgBody").val();
         if(title == null || title.length == 0 || title == undefined){
@@ -148,7 +156,8 @@
                 fromUser: $("#fromUser").val(),
                 toUser: $("#toUser").val(),
                 title: title,
-                msg: msg
+                msg: msg,
+                senderName: $("#senderName").val()
             },
             success: function (data) {
                 layer.closeAll();

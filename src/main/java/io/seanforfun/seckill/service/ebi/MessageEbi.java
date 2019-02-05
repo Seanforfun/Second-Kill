@@ -1,6 +1,9 @@
 package io.seanforfun.seckill.service.ebi;
 
 import io.seanforfun.seckill.entity.domain.Message;
+import io.seanforfun.seckill.entity.domain.User;
+
+import java.util.List;
 
 /**
  * @author: Seanforfun
@@ -16,4 +19,11 @@ public interface MessageEbi {
      * @param message
      */
     void sendMessageToUser(Message message);
+
+    /**
+     * Get user unread messages using user information.
+     * @param user
+     * @return
+     */
+    List<Message> getUserUnreadMsg(User user);
 }

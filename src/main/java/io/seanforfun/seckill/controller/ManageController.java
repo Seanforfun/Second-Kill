@@ -1,13 +1,18 @@
 package io.seanforfun.seckill.controller;
 
+import io.seanforfun.seckill.entity.domain.Message;
 import io.seanforfun.seckill.entity.domain.User;
 import io.seanforfun.seckill.redis.RedisService;
 import io.seanforfun.seckill.service.UserService;
+import io.seanforfun.seckill.service.ebi.MessageEbi;
+import io.seanforfun.seckill.service.ebi.UserEbi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.util.List;
 
 /**
  * @author: Seanforfun
@@ -24,17 +29,18 @@ public class ManageController {
     private RedisService redisService;
 
     @Autowired
-    private UserService userService;
+    private UserEbi userService;
+
+    @Autowired
+    private MessageEbi messageService;
 
     @RequestMapping("/toManage")
     @ResponseBody
-    public ModelAndView toManage(ModelAndView mv, User user) throws Exception {
+    public ModelAndView toManage(ModelAndView mv, User user, List<Message> messages) throws Exception {
         if (user == null){
             mv.setViewName("/pages/login.html");
             return mv;
         }
-        mv.addObject("user", user);
-        // Get user available actions by user information.
         mv.setViewName("/pages/manage.html");
         return mv;
     }

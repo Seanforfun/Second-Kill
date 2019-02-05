@@ -36,6 +36,8 @@ public class Message {
     private String msg;
     @Setter
     private Boolean hasRead;
+    @Setter
+    private String senderName;
 
     private Long sendTime;
 

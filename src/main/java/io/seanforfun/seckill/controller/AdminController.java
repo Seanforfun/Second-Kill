@@ -2,6 +2,7 @@ package io.seanforfun.seckill.controller;
 
 import io.seanforfun.seckill.config.ConfigBean;
 import io.seanforfun.seckill.config.annotations.Access;
+import io.seanforfun.seckill.entity.domain.Message;
 import io.seanforfun.seckill.entity.domain.User;
 import io.seanforfun.seckill.entity.vo.UserVo;
 import io.seanforfun.seckill.service.AdminService;
@@ -40,11 +41,10 @@ public class AdminController {
 
     @RequestMapping(value = {"/userApproval"})
     @ResponseBody
-    public ModelAndView adminToUserManagement(ModelAndView mv, User user){
+    public ModelAndView adminToUserManagement(ModelAndView mv, User user, List<Message> messages){
         List<User> unapprovedUserList = userService.getUnapprovedUserList(userVo);
         userVo.setUser(unapprovedUserList);
         mv.addObject("userVo", userVo);
-        mv.addObject("user", user);
         mv.setViewName("/pages/approveUser.html");
         return mv;
     }
@@ -67,7 +67,7 @@ public class AdminController {
 
     @RequestMapping("/info/{id}")
     @ResponseBody
-    public ModelAndView adminUserInfo(@PathVariable(name = "id") Long id, ModelAndView mv, User user){
+    public ModelAndView adminUserInfo(@PathVariable(name = "id") Long id, ModelAndView mv, User user, List<Message> messages){
         getUserDetail(mv, id, user);
         mv.setViewName("/pages/userInfo.html");
         return mv;
@@ -75,7 +75,7 @@ public class AdminController {
 
     @RequestMapping("/admin/{id}")
     @ResponseBody
-    public ModelAndView adminSetAdmin(@PathVariable(name = "id", required = true) Long id, ModelAndView mv, User user){
+    public ModelAndView adminSetAdmin(@PathVariable(name = "id") Long id, ModelAndView mv){
         AdminService.setAdmin(id);
         mv.setViewName("redirect:/admin/userApproval");
         return mv;
@@ -83,18 +83,17 @@ public class AdminController {
 
     @RequestMapping("/userList")
     @ResponseBody
-    public ModelAndView adminGetUserList(ModelAndView mv, User user){
+    public ModelAndView adminGetUserList(ModelAndView mv, User user, List<Message> messages){
         List<User> userList = userService.getActivatedUserList();
         userVo.setUser(userList);
         mv.addObject("userVo", userVo);
-        mv.addObject("user", user);
         mv.setViewName("/pages/activatedUserInfo.html");
         return mv;
     }
 
     @RequestMapping("/userDetail/{id}")
     @ResponseBody
-    public ModelAndView getUserDetail(User user, ModelAndView mv, @PathVariable(name = "id") Long id){
+    public ModelAndView getUserDetail(User user, ModelAndView mv, @PathVariable(name = "id") Long id, List<Message> messages){
         getUserDetail(mv, id, user);
         mv.setViewName("/pages/userDetail.html");
         return mv;
@@ -102,8 +101,7 @@ public class AdminController {
 
     @RequestMapping("/message/{id}")
     @ResponseBody
-    public ModelAndView sendMessage(@PathVariable(name = "id") Long id, ModelAndView mv, User admin){
-        mv.addObject("user", admin);
+    public ModelAndView sendMessage(@PathVariable(name = "id") Long id, ModelAndView mv, User admin, List<Message> messages){
         mv.addObject("toUserId", id);
         mv.setViewName("/pages/sendMessage.html");
         return mv;
@@ -112,7 +110,6 @@ public class AdminController {
     private ModelAndView getUserDetail(ModelAndView mv, Long id, User admin){
         User detailUser = userService.getUserById(id);
         mv.addObject("userInstance", detailUser);
-        mv.addObject("user", admin);
         return mv;
     }
 }
