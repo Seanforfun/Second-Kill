@@ -38,6 +38,10 @@ public interface UserDao {
     @Select("Select id from user where username = #{username}")
     Long getUserIdByUsername(User user);
 
+    // Activated Users
+    @Select("Select * from user where activated = #{status}")
+    List<User> getUserListByStatus(@Param("status") int activated);
+
     // Inactivated users
     @Select("Select count(id) from user where activated = #{status}")
     int getUserNumberByUserStatus(@Param("status") int status);

@@ -48,6 +48,6 @@ public class AdminService extends UserService implements AdminEbi {
     public void setAdmin(Long id) {
         User user = userService.getUserById(id);
         userService.updateUserActivateStatus(user, User.ACTIVATED);
-        userService.setAdminStatus(user, User.NOT_ADMIN);
+        userService.setAdminStatus(user, User.IS_ADMIN);
     }
 }

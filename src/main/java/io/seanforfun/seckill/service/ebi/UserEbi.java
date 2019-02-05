@@ -93,4 +93,10 @@ public interface UserEbi {
      * @param adminStatus
      */
     void setAdminStatus(User user, boolean adminStatus);
+
+    /**
+     * Get all activated users.
+     * @return
+     */
+    List<User> getActivatedUserList();
 }

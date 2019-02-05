@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import redis.clients.jedis.Jedis;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -120,6 +121,18 @@ public class UserService implements UserEbi {
         redisService.set(UserKey.getKeyForId, "" + user.getId(), user);
     }
 
+    @Override
+    public List<User> getActivatedUserList() {
+        List<User> userList = null;
+        if(userList != null){
+            userList = redisGetUserList();
+            return userList;
+        }
+        userList = userDao.getUserListByStatus(User.ACTIVATED);
+        redisService.set(UserKey.activateUserListToken, "", userList);
+        return userList;
+    }
+
     protected void updateUserSession(String token, User user, HttpServletResponse response){
         redisService.set(UserKey.userToken, token,  user);
         Cookie cookie = new Cookie(User.USER_TOKEN, token);
@@ -139,6 +152,11 @@ public class UserService implements UserEbi {
     @Override
     public boolean userInRedisSession(String token) {
         return redisService.exists(UserKey.userToken, token);
+    }
+
+    private List<User> redisGetUserList(){
+        List<User> userlist = redisService.get(UserKey.activateUserListToken, "", List.class);
+        return userlist;
     }
 
     /**

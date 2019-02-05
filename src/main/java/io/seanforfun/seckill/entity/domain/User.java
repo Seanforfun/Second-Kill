@@ -92,12 +92,12 @@ public class User {
 
     public void setLastLoginTime(long lastLoginTime){
         this.lastLoginTime = lastLoginTime;
-        this.lastLoginTimeVo = FormatUtils.formatDateTime(lastLoginTime);
+        this.lastLoginTimeVo = lastLoginTime == User.NOT_USED ? "No operation": FormatUtils.formatDateTime(lastLoginTime);
     }
 
     public void setLastModifiedTime(long lastModifiedTime){
         this.lastModifiedTime = lastModifiedTime;
-        this.lastModifiedTimeVo = FormatUtils.formatDateTime(lastModifiedTime);
+        this.lastModifiedTimeVo = lastModifiedTime == User.NOT_USED ? "No operation": FormatUtils.formatDateTime(lastModifiedTime);
     }
 
     public void setActivated(int activated){

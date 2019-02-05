@@ -81,4 +81,40 @@ public class AdminController {
         mv.setViewName("redirect:/admin/userApproval");
         return mv;
     }
+
+    @RequestMapping("/userList")
+    @ResponseBody
+    public ModelAndView adminGetUserList(ModelAndView mv, User user){
+        List<User> userList = userService.getActivatedUserList();
+        userVo.setUser(userList);
+        mv.addObject("userVo", userVo);
+        mv.addObject("user", user);
+        mv.setViewName("/pages/activatedUserInfo.html");
+        return mv;
+    }
+
+    @RequestMapping("/userDetail/{id}")
+    @ResponseBody
+    public ModelAndView getUserDetail(User user, ModelAndView mv, @PathVariable(name = "id") Long id){
+        getUserDetail(mv, id, user);
+        mv.setViewName("/pages/userDetail.html");
+        return mv;
+    }
+
+    @RequestMapping("/message/{id}")
+    @ResponseBody
+    public ModelAndView sendMessage(@PathVariable(name = "id") Long id, ModelAndView mv, User admin){
+        mv.addObject("user", admin);
+        mv.addObject("toUserId", id);
+        mv.setViewName("/pages/sendMessage.html");
+        return mv;
+    }
+
+    private ModelAndView getUserDetail(ModelAndView mv, Long id, User admin){
+        User detailUser = userService.getUserById(id);
+        mv.addObject("userInstance", detailUser);
+        mv.addObject("user", admin);
+        mv.setViewName("/pages/userInfo.html");
+        return mv;
+    }
 }

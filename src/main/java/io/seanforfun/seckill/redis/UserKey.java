@@ -22,4 +22,5 @@ public class UserKey extends BasePrefix {
     public static final UserKey getKeyForId = new UserKey(USER_EXPIRE_SECONDS, "id");
     public static final UserKey getKeyForName = new UserKey(USER_EXPIRE_SECONDS, "name");
     public static final UserKey userToken = new UserKey(USER_EXPIRE_SECONDS,"tk");
+    public static final UserKey activateUserListToken = new UserKey(USER_EXPIRE_SECONDS, "activateList");
 }
