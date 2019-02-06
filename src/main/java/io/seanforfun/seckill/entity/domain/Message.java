@@ -18,6 +18,10 @@ import javax.validation.constraints.NotNull;
 @Slf4j
 @Getter
 public class Message {
+    public static final Integer MESSAGE_UNREAD = 0;
+    public static final Integer MESSAGE_READ = 1;
+    public static final Integer MESSAGE_TRASH = 2;
+
     @Setter
     private Long id;
     @NotNull
@@ -35,7 +39,7 @@ public class Message {
     @Setter
     private String msg;
     @Setter
-    private Boolean hasRead;
+    private Integer status;
     @Setter
     private String senderName;
 

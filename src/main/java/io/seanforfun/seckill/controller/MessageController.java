@@ -2,6 +2,7 @@ package io.seanforfun.seckill.controller;
 
 import io.seanforfun.seckill.entity.domain.Message;
 import io.seanforfun.seckill.entity.domain.User;
+import io.seanforfun.seckill.exceptions.GlobalException;
 import io.seanforfun.seckill.result.CodeMsg;
 import io.seanforfun.seckill.result.Result;
 import io.seanforfun.seckill.service.MessageService;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @author: Seanforfun
@@ -45,9 +47,61 @@ public class MessageController {
             return Result.error(CodeMsg.SEND_TO_YOURSELF_ERROR_MSG);
         }
         message.setId(SnowFlakeUtils.getSnowFlakeId());
-        message.setHasRead(false);
+        message.setStatus(Message.MESSAGE_UNREAD);
         messageService.sendMessageToUser(message);
         return Result.success(true);
     }
 
+    @RequestMapping("/list")
+    @ResponseBody
+    public ModelAndView listMessage(ModelAndView mv, User user, List<Message> messages){
+        mv.setViewName("/pages/messages/messageList.html");
+        return mv;
+    }
+
+    @RequestMapping("/reply/{toId}/{messageId}")
+    @ResponseBody
+    public ModelAndView reply(ModelAndView mv, User user,
+                              List<Message> unreadMessages, @PathVariable("toId") Long toId,
+                              @PathVariable("messageId") Long messageId){
+        if(unreadMessages == null || unreadMessages.size() == 0){
+            throw new GlobalException(CodeMsg.UNREAD_MSG_ENPTY_ERROR_MSG);
+        }
+        // Update unread message list in redis.
+        Message currentMsg = messageService.redisUpdateUnreadMsgList(unreadMessages, messageId, user.getId());
+        mv.addObject("unreadMsg", unreadMessages);
+        // Update current message unread status in db.
+        messageService.setMessageRead(messageId);
+        mv.addObject("currentMsg", currentMsg);
+        mv.addObject("toUserId", toId);
+        // Record information for reply.
+        mv.setViewName("/pages/messages/sendMessage.html");
+        return mv;
+    }
+
+    @RequestMapping("/trash/{messageId}")
+    @ResponseBody
+    public Result<Boolean> trash(ModelAndView mv, User user, List<Message> unreadMsgs, @PathVariable("messageId") Long messageId){
+        if(unreadMsgs == null || unreadMsgs.size() == 0){
+            throw new GlobalException(CodeMsg.UNREAD_MSG_ENPTY_ERROR_MSG);
+        }
+        messageService.redisUpdateUnreadMsgList(unreadMsgs, messageId, user.getId());
+        messageService.trashMsg(messageId);
+        return Result.success(true);
+    }
+
+    @RequestMapping("/read/{messageId}")
+    @ResponseBody
+    public ModelAndView read(ModelAndView mv, User user, List<Message> unreadMsgs, @PathVariable("messageId") Long messageId){
+        if(unreadMsgs == null || unreadMsgs.size() == 0){
+            throw new GlobalException(CodeMsg.UNREAD_MSG_ENPTY_ERROR_MSG);
+        }
+        Message currentMsg = messageService.redisUpdateUnreadMsgList(unreadMsgs, messageId, user.getId());
+        mv.addObject("unreadMsg", unreadMsgs);
+        messageService.readMsg(messageId);
+        mv.addObject("readMsg", currentMsg);
+        mv.addObject("toUserId", currentMsg.getFromUser());
+        mv.setViewName("/pages/messages/readMessage.html");
+        return mv;
+    }
 }

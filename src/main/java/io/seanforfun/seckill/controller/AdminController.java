@@ -103,7 +103,7 @@ public class AdminController {
     @ResponseBody
     public ModelAndView sendMessage(@PathVariable(name = "id") Long id, ModelAndView mv, User admin, List<Message> messages){
         mv.addObject("toUserId", id);
-        mv.setViewName("/pages/sendMessage.html");
+        mv.setViewName("/pages/messages/sendMessage.html");
         return mv;
     }
 

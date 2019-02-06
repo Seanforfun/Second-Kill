@@ -26,4 +26,29 @@ public interface MessageEbi {
      * @return
      */
     List<Message> getUserUnreadMsg(User user);
+
+    /**
+     * Set message status to readed.
+     */
+    void setMessageRead(Long messageId);
+
+    /**
+     * Remove current message from unread message list.
+     * @param unreadMsgs
+     * @param messageId
+     * @param userId
+     */
+    Message redisUpdateUnreadMsgList(List<Message>unreadMsgs, Long messageId, Long userId);
+
+    /**
+     * Trash a message.
+     * @param messageId
+     */
+    void trashMsg(Long messageId);
+
+    /**
+     * Read a message.
+     * @param messageId
+     */
+    void readMsg(Long messageId);
 }

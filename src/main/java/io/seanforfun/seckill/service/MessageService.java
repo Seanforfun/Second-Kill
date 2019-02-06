@@ -34,6 +34,11 @@ public class MessageService implements MessageEbi {
         Long currentTime = System.currentTimeMillis();
         message.setSendTime(currentTime);
         messageDao.saveUnreadMessage(message);
+        // Update the unreadList saved in redis.
+        User toUser = new User();
+        toUser.setId(message.getToUser());
+        List<Message> toUserUnreadList = getUserUnreadMsg(toUser);
+        redisAddUnreadMessage(toUserUnreadList, message.getToUser(), message);
     }
 
     @Override
@@ -45,12 +50,47 @@ public class MessageService implements MessageEbi {
             return messages;
         }
         // Get unread messages from db
-        messages = messageDao.getMessageByUserIdAndStatus(user.getId(), false);
+        messages = messageDao.getMessageByUserIdAndStatus(user.getId(), Message.MESSAGE_UNREAD);
         if (messages == null || messages.size() == 0){
             return messages;
         }
         // Save unread messages to redis
         redisService.set(MessageKey.getUnreadMessageByUserId, user.getId() +"", messages);
         return messages;
+    }
+
+    @Override
+    public void setMessageRead(Long messageId) {
+        messageDao.setMessageStatusById(messageId, Message.MESSAGE_READ);
+    }
+
+    @Override
+    public void trashMsg(Long messageId) {
+        messageDao.setMessageStatusById(messageId, Message.MESSAGE_TRASH);
+    }
+
+    @Override
+    public void readMsg(Long messageId) {
+        messageDao.setMessageStatusById(messageId, Message.MESSAGE_READ);
+    }
+
+    @Override
+    public Message redisUpdateUnreadMsgList(List<Message> unreadMsg, Long messageId, Long userId) {
+        Message current = null;
+        for(int i = 0; i < unreadMsg.size(); i++){
+            Message msg = unreadMsg.get(i);
+            if(msg.getId().equals(messageId)){
+                current = msg;
+                unreadMsg.remove(i);
+                break;
+            }
+        }
+        redisService.set(MessageKey.getUnreadMessageByUserId, "" + userId, unreadMsg);
+        return current;
+    }
+
+    private void redisAddUnreadMessage(List<Message> unreadMsg, Long userId, Message newMsg){
+        unreadMsg.add(newMsg);
+        redisService.set(MessageKey.getUnreadMessageByUserId, "" + userId, unreadMsg);
     }
 }

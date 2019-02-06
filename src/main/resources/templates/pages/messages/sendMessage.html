@@ -67,7 +67,7 @@
                                                 <input type="hidden" class="form-control" id="fromUser" th:value="${user.id}" required>
                                                 <input type="hidden" class="form-control" id="toUser" th:value="${toUserId}" required>
                                                 <input type="hidden" class="form-control" id="senderName" th:value="${user.username}" required>
-                                                <input type="text" class="form-control" id="title" placeholder="Title" required>
+                                                <input type="text" class="form-control" id="title" placeholder="Title" th:value="${currentMsg == null} ? '': '[Re]' + ${currentMsg.title}"  required>
                                                 <hr/>
 
                                                     <!--Textarea with icon prefix-->

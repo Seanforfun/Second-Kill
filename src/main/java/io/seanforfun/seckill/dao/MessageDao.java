@@ -1,10 +1,7 @@
 package io.seanforfun.seckill.dao;
 
 import io.seanforfun.seckill.entity.domain.Message;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -22,19 +19,21 @@ public interface MessageDao {
     /**
      *  Read
      */
-    @Select("Select id, title, msg, sendTime, fromUser, senderName from Message where hasRead = #{hasRead} and toUser = #{toUser}")
-    List<Message> getMessageByUserIdAndStatus(@Param("toUser") Long id, @Param("hasRead") boolean b);
+    @Select("Select id, title, msg, sendTime, fromUser, senderName from Message where status = #{status} and toUser = #{toUser}")
+    List<Message> getMessageByUserIdAndStatus(@Param("toUser") Long id, @Param("status") Integer status);
 
     /**
      *  Update
      */
+    @Update("Update message set status = #{status} where id = #{messageId}")
+    void setMessageStatusById(@Param("messageId") Long messageId, @Param("status") Integer status);
 
     /**
      *  Insert
      */
     @Insert("Insert into message (id, fromUser, toUser, title, " +
-            "msg, hasRead, sendTime, senderName) values (#{id}, #{fromUser}, #{toUser}," +
-            " #{title}, #{msg}, #{hasRead}, #{sendTime}, #{senderName})")
+            "msg, status, sendTime, senderName) values (#{id}, #{fromUser}, #{toUser}," +
+            " #{title}, #{msg}, #{status}, #{sendTime}, #{senderName})")
     void saveUnreadMessage(Message message);
 
     /**
