@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -75,6 +76,30 @@ public class MessageService implements MessageEbi {
     }
 
     @Override
+    public List<Message> getReadedMsgs(Long id) {
+        List<Message> readedMesssages = null;
+        readedMesssages = redisService.getList(MessageKey.getReadedMessageByUserId, "" + id, Message.class);
+        if(readedMesssages != null){
+            return readedMesssages;
+        }
+        readedMesssages = messageDao.getMessageByUserIdAndStatus(id, Message.MESSAGE_READ);
+        redisService.set(MessageKey.getReadedMessageByUserId, "" + id, readedMesssages);
+        return readedMesssages;
+    }
+
+    @Override
+    public Message getMessageById(Long messageId) {
+        Message message = null;
+        message = redisService.get(MessageKey.getMessageById, "" + messageId, Message.class);
+        if(message != null){
+            return message;
+        }
+        message = messageDao.getMessageById(messageId);
+        redisService.set(MessageKey.getMessageById, "" + messageId, message);
+        return message;
+    }
+
+    @Override
     public Message redisUpdateUnreadMsgList(List<Message> unreadMsg, Long messageId, Long userId) {
         Message current = null;
         for(int i = 0; i < unreadMsg.size(); i++){
@@ -87,6 +112,29 @@ public class MessageService implements MessageEbi {
         }
         redisService.set(MessageKey.getUnreadMessageByUserId, "" + userId, unreadMsg);
         return current;
+    }
+
+    @Override
+    public void redisUpdateReadedMsgList(List<Message> readedMsgs, Long messageId, Long userId) {
+        for(int i = 0; i < readedMsgs.size(); i++){
+            Message msg = readedMsgs.get(i);
+            if(msg.getId().equals(messageId)){
+                readedMsgs.remove(i);
+                break;
+            }
+        }
+        redisService.set(MessageKey.getReadedMessageByUserId, "" + userId, readedMsgs);
+    }
+
+    @Override
+    public void redisAddReadMsgList(Message currentMsg, Long userId) {
+        List<Message> readedMessage = null;
+        readedMessage = redisService.getList(MessageKey.getReadedMessageByUserId, "" + userId, Message.class);
+        if(readedMessage == null){
+            readedMessage = new ArrayList<>();
+        }
+        readedMessage.add(currentMsg);
+        redisService.set(MessageKey.getReadedMessageByUserId, "" + userId, readedMessage);
     }
 
     private void redisAddUnreadMessage(List<Message> unreadMsg, Long userId, Message newMsg){

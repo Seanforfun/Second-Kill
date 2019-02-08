@@ -33,14 +33,6 @@ public interface MessageEbi {
     void setMessageRead(Long messageId);
 
     /**
-     * Remove current message from unread message list.
-     * @param unreadMsgs
-     * @param messageId
-     * @param userId
-     */
-    Message redisUpdateUnreadMsgList(List<Message>unreadMsgs, Long messageId, Long userId);
-
-    /**
      * Trash a message.
      * @param messageId
      */
@@ -51,4 +43,41 @@ public interface MessageEbi {
      * @param messageId
      */
     void readMsg(Long messageId);
+
+    /**
+     * Get user's readed messages
+     * @param id
+     * @return
+     */
+    List<Message> getReadedMsgs(Long id);
+
+    /**
+     * Get message by Id.
+     * @param messageId
+     * @return
+     */
+    Message getMessageById(Long messageId);
+
+    /**
+     * Remove current message from unread message list.
+     * @param unreadMsgs
+     * @param messageId
+     * @param userId
+     */
+    Message redisUpdateUnreadMsgList(List<Message>unreadMsgs, Long messageId, Long userId);
+
+    /**
+     * Update readed messages saved in redis.
+     * @param readedMsgs
+     * @param messageId
+     * @param id
+     */
+    void redisUpdateReadedMsgList(List<Message> readedMsgs, Long messageId, Long id);
+
+    /**
+     * Add message to readed list in redis.
+     * @param currentMsg
+     * @param id
+     */
+    void redisAddReadMsgList(Message currentMsg, Long id);
 }

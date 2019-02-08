@@ -3,13 +3,11 @@ package io.seanforfun.seckill.controller;
 import io.seanforfun.seckill.entity.domain.Message;
 import io.seanforfun.seckill.entity.domain.User;
 import io.seanforfun.seckill.exceptions.GlobalException;
+import io.seanforfun.seckill.redis.RedisService;
 import io.seanforfun.seckill.result.CodeMsg;
 import io.seanforfun.seckill.result.Result;
-import io.seanforfun.seckill.service.MessageService;
 import io.seanforfun.seckill.service.ebi.MessageEbi;
 import io.seanforfun.seckill.utils.SnowFlakeUtils;
-import lombok.ToString;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,6 +57,15 @@ public class MessageController {
         return mv;
     }
 
+    @RequestMapping("/readedMessages")
+    @ResponseBody
+    public ModelAndView readedMessages(ModelAndView mv, User user, List<Message> unreadMessages){
+        List<Message> readedMessages = messageService.getReadedMsgs(user.getId());
+        mv.addObject("readedMsg", readedMessages);
+        mv.setViewName("/pages/messages/readedMessageList.html");
+        return mv;
+    }
+
     @RequestMapping("/reply/{toId}/{messageId}")
     @ResponseBody
     public ModelAndView reply(ModelAndView mv, User user,
@@ -69,10 +76,25 @@ public class MessageController {
         }
         // Update unread message list in redis.
         Message currentMsg = messageService.redisUpdateUnreadMsgList(unreadMessages, messageId, user.getId());
+        currentMsg.setStatus(Message.MESSAGE_READ);
+        messageService.redisAddReadMsgList(currentMsg, user.getId());
         mv.addObject("unreadMsg", unreadMessages);
         // Update current message unread status in db.
         messageService.setMessageRead(messageId);
         mv.addObject("currentMsg", currentMsg);
+        mv.addObject("toUserId", toId);
+        // Record information for reply.
+        mv.setViewName("/pages/messages/sendMessage.html");
+        return mv;
+    }
+
+    @RequestMapping("/replyReaded/{toId}/{messageId}")
+    @ResponseBody
+    public ModelAndView replyReaded(ModelAndView mv, User user,
+                              List<Message> unreadMessages, @PathVariable("toId") Long toId,
+                              @PathVariable("messageId") Long messageId){
+        Message message = messageService.getMessageById(messageId);
+        mv.addObject("currentMsg", message);
         mv.addObject("toUserId", toId);
         // Record information for reply.
         mv.setViewName("/pages/messages/sendMessage.html");
@@ -90,6 +112,18 @@ public class MessageController {
         return Result.success(true);
     }
 
+    @RequestMapping("/trashReaded/{messageId}")
+    @ResponseBody
+    public Result<Boolean> trashReaded(ModelAndView mv, User user, List<Message> unreadMsgs, @PathVariable("messageId") Long messageId){
+        List<Message> readedMsgs = messageService.getReadedMsgs(user.getId());
+        if(readedMsgs == null || readedMsgs.size() == 0){
+            throw new GlobalException(CodeMsg.UNREAD_MSG_ENPTY_ERROR_MSG);
+        }
+        messageService.redisUpdateReadedMsgList(readedMsgs, messageId, user.getId());
+        messageService.trashMsg(messageId);
+        return Result.success(true);
+    }
+
     @RequestMapping("/read/{messageId}")
     @ResponseBody
     public ModelAndView read(ModelAndView mv, User user, List<Message> unreadMsgs, @PathVariable("messageId") Long messageId){
@@ -97,10 +131,21 @@ public class MessageController {
             throw new GlobalException(CodeMsg.UNREAD_MSG_ENPTY_ERROR_MSG);
         }
         Message currentMsg = messageService.redisUpdateUnreadMsgList(unreadMsgs, messageId, user.getId());
+        currentMsg.setStatus(Message.MESSAGE_READ);
+        messageService.redisAddReadMsgList(currentMsg, user.getId());
         mv.addObject("unreadMsg", unreadMsgs);
         messageService.readMsg(messageId);
         mv.addObject("readMsg", currentMsg);
         mv.addObject("toUserId", currentMsg.getFromUser());
+        mv.setViewName("/pages/messages/readMessage.html");
+        return mv;
+    }
+
+    @RequestMapping("readReaded/{messageId}")
+    public ModelAndView readReaded(ModelAndView mv, User user, List<Message> unreadMsgs, @PathVariable("messageId") Long messageId){
+        Message message = messageService.getMessageById(messageId);
+        mv.addObject("readMsg", message);
+        mv.addObject("toUserId", message.getFromUser());
         mv.setViewName("/pages/messages/readMessage.html");
         return mv;
     }

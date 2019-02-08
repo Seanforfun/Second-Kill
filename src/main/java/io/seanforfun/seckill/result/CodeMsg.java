@@ -71,10 +71,13 @@ public class CodeMsg {
     private static final int SEND_TO_YOURSELF_ERROR = 500400;
     private static final String SEND_TO_YOURSELF_ERROR_STR = "CANNOT SEND MESSAGE TO YOURSELF";
     private static final int UNREAD_MSG_ENPTY_ERROR = 500401;
-    private static final String UNREAD_MSG_ENPTY_ERROR_STR = "UNREAD MESSAGE SHOULD NOT BU EMPTY";
+    private static final String UNREAD_MSG_ENPTY_ERROR_STR = "UNREAD MESSAGE SHOULD NOT BE EMPTY";
+    private static final int READ_MSG_ENPTY_ERROR = 500402;
+    private static final String READ_MSG_ENPTY_ERROR_STR = "READ MESSAGE SHOULD NOT BE EMPTY";
 
     public static CodeMsg SEND_TO_YOURSELF_ERROR_MSG = new CodeMsg(SEND_TO_YOURSELF_ERROR, SEND_TO_YOURSELF_ERROR_STR);
     public static CodeMsg UNREAD_MSG_ENPTY_ERROR_MSG = new CodeMsg(UNREAD_MSG_ENPTY_ERROR, UNREAD_MSG_ENPTY_ERROR_STR);
+    public static CodeMsg READ_MSG_ENPTY_ERROR_MSG = new CodeMsg(READ_MSG_ENPTY_ERROR, READ_MSG_ENPTY_ERROR_STR);
 
     private CodeMsg(int code, String msg){
         this.code = code;

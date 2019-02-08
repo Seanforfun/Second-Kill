@@ -163,7 +163,17 @@
                 layer.closeAll();
                 if(data.code == 0){
                     layer.msg("SEND MESSAGE SUCCESS");
-                    window.location.href = "/admin/userList";
+                    var pre = document.referrer + "";
+                    alert(pre);
+                    if(pre.indexOf("/admin/userList") != -1){
+                        window.location.href = "/admin/userList";
+                    }else if(pre.indexOf("/message/readedMessages") != -1){
+                        window.location.href = "/message/readedMessages";
+                    }else if (pre.indexOf("/message/list") != -1) {
+                        window.location.href = "/message/list";
+                    }else{
+                        window.location.href = "/manage/toManage";
+                    }
                 }else{
                     layer.msg(data.msg, {
                         time: 5000

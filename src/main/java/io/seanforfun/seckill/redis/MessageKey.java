@@ -14,4 +14,6 @@ public class MessageKey extends BasePrefix {
     }
 
     public static final MessageKey getUnreadMessageByUserId = new MessageKey(THREE_MINUTES, "UnReadMsgUserId");
+    public static final MessageKey getReadedMessageByUserId = new MessageKey(THREE_MINUTES, "ReadedMsgUserId");
+    public static final MessageKey getMessageById = new MessageKey(THREE_MINUTES, "msgId");
 }

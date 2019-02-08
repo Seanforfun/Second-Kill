@@ -115,7 +115,7 @@
                             </a>
                         </th:block>
                         <th:block th:each="msg:${unreadMsg}">
-                            <a class="dropdown-item d-flex align-items-center" href="#">
+                            <a class="dropdown-item d-flex align-items-center" th:href="@{'/message/read/' + ${msg.id}}">
                                 <!--<div class="dropdown-list-image mr-3">-->
                                 <!--<img class="rounded-circle" src="https://source.unsplash.com/fn_BT9fwg_E/60x60" alt="">-->
                                 <!--<div class="status-indicator bg-success"></div>-->

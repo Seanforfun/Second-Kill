@@ -78,7 +78,7 @@
                                                     <div class="col-md-6">
                                                     </div>
                                                     <div class="col-md-3">
-                                                        <a id="trashBtn" th:href="@{'/message/reply/' + ${readMsg.fromUser} + '/' + ${readMsg.id}}" th:value="${user.id == toUserId}" onclick="sendMessage(); return false;" class="btn btn-outline-danger  btn-block">
+                                                        <a id="replyBtn" th:href="@{'/message/replyReaded/' + ${readMsg.fromUser} + '/' + ${readMsg.id}}" class="btn btn-outline-danger  btn-block">
                                                             <span class="icon text-white-0">
                                                               <i class="fab fa-replyd"></i>
                                                             </span>
@@ -86,12 +86,12 @@
                                                         </a>
                                                     </div>
                                                     <div class="col-md-3" style="float:right">
-                                                        <button id="replyBtn" th:value="${user.id == toUserId}" onclick="sendMessage(); return false;" class="btn btn-outline-danger  btn-block">
+                                                        <a href="#" id="trashBtn"  class="btn btn-outline-success  btn-block" th:data-id="${readMsg.id}" data-toggle="modal" data-target="#trashModel">
                                                             <span class="icon text-white-0">
                                                               <i class="far fa-trash-alt"></i>
                                                             </span>
                                                             <span class="text">Trash</span>
-                                                        </button>
+                                                        </a>
                                                     </div>
                                                 </div>
                                             </form>
@@ -132,56 +132,4 @@
 <th:block th:replace="fragments/jsinclude::jsinclude"></th:block>
 
 </body>
-<script>
-    function sendMessage() {
-        g_showLoading();
-        if($("#sendBtn").val() == "true"){
-            layer.closeAll();
-            layer.msg("CANNOT SEND MESSAGE TO YOURSELF");
-            return;
-        }
-        var title = $("#title").val();
-        var msg = $("#msgBody").val();
-        if(title == null || title.length == 0 || title == undefined){
-            layer.closeAll();
-            layer.msg("TITLE CANNOT BE EMPTY");
-            return;
-        }
-
-        if(msg == null || msg.length == 0 || msg == undefined){
-            layer.closeAll();
-            layer.msg("MESSAGE CANNOT BE EMPTY");
-            return;
-        }
-
-        $.ajax({
-            url: "/message/send",
-            method: "POST",
-            data:{
-                fromUser: $("#fromUser").val(),
-                toUser: $("#toUser").val(),
-                title: title,
-                msg: msg,
-                senderName: $("#senderName").val()
-            },
-            success: function (data) {
-                layer.closeAll();
-                if(data.code == 0){
-                    layer.msg("SEND MESSAGE SUCCESS");
-                    window.location.href = "/admin/userList";
-                }else{
-                    layer.msg(data.msg, {
-                        time: 5000
-                    });
-                }
-            },
-            error: function (data) {
-                layer.closeAll();
-                layer.msg("SEND MESSAGE, PLEASE TRY AGAIN", {
-                    time: 5000
-                });
-            }
-        })
-    }
-</script>
 </html>

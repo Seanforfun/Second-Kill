@@ -52,4 +52,24 @@ function logout() {
             )
         }
     });
-};
+}
+
+function trashMsg() {
+    var msgId =  $("#trashFinalBtn").attr("data-id");
+
+    $.ajax({
+        url: "/message/trash/" + msgId,
+        method: "POST",
+        data:{},
+        success: function (data) {
+            if(data.code == 0){
+                window.location.href = "/message/list"
+            }else{
+                window.location.href = "/error/toError"
+            }
+        },
+        error: function (data) {
+            window.location.href = "/error/toError"
+        }
+    })
+}

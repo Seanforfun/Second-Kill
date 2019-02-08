@@ -22,6 +22,9 @@ public interface MessageDao {
     @Select("Select id, title, msg, sendTime, fromUser, senderName from Message where status = #{status} and toUser = #{toUser}")
     List<Message> getMessageByUserIdAndStatus(@Param("toUser") Long id, @Param("status") Integer status);
 
+    @Select("Select id, title, msg, sendTime, fromUser, senderName from Message where id = #{id}")
+    Message getMessageById(@Param("id") Long messageId);
+
     /**
      *  Update
      */
