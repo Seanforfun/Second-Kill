@@ -58,6 +58,11 @@ public class Vehicle {
 
     private static  Map<Integer, String> VEHICLE_PROCESS_MAP = null;
 
+    // Modify
+    public static final Long VEHICLE_NEVER_MODIFIED = 0L;
+    public static final String VEHICLE_NEVER_MODIFIED_STR = "NEVER MODIFIED";
+    public static final Long VEHICLE_NEVER_MODIFIED_USER = -1L;
+
     static{
         VEHICEL_STATUS_MAP = new HashMap<>();
         VEHICEL_STATUS_MAP.put(VEHICLE_NEW, VEHICLE_NEW_STR);
@@ -86,16 +91,25 @@ public class Vehicle {
     private String model;
     @Setter
     private Integer year;
+    @Setter
+    private Long creatorId;
+    @Setter
+    private Long lastModifierId;
+
     private Integer status;
     private Double price;
     private Integer transmission;
     private Integer process;
+    private Long createTime;    //Vo
+    private Long lastModifyTime;    //Vo
 
     //Vo fields
     private String statusVo;
     private String priceVo;
     private String transmissionVo;
     private String processVo;
+    private String createTimeVo;
+    private String lastModifyTimeVo;
 
     public void setStatus(Integer status) {
         this.status = status;
@@ -117,4 +131,16 @@ public class Vehicle {
         this.processVo = VEHICLE_PROCESS_MAP.get(process);
     }
 
+
+    public void setCreateTime(Long createTime) {
+        this.createTime = createTime;
+        this.createTimeVo = FormatUtils.formatDateTime(createTime);
+    }
+
+    public void setLastModifyTime(Long lastModifyTime) {
+        this.lastModifyTime = lastModifyTime;
+        this.lastModifyTimeVo = lastModifyTime.equals(VEHICLE_NEVER_MODIFIED) ?
+                VEHICLE_NEVER_MODIFIED_STR :
+                FormatUtils.formatDateTime(lastModifyTime);
+    }
 }

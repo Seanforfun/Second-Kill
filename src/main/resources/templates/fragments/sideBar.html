@@ -35,7 +35,7 @@
 
                 <!-- Nav Item - Pages Collapse Menu -->
                 <li class="nav-item">
-                    <a class="nav-link collapsed" type="submit" href="/admin/userApproval">
+                    <a class="nav-link collapsed" type="submit" th:href="@{/admin/userApproval}">
                         <!--fa-fw fa-cog-->
                         <i class="fas fa-list"></i>
                         <span>User Management</span>
@@ -43,7 +43,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link collapsed" type="submit" href="/admin/userList">
+                    <a class="nav-link collapsed" type="submit" th:href="@{/admin/userList}">
                         <i class="fas fa-user"></i>
                         <span>User List</span>
                     </a>
@@ -61,7 +61,7 @@
 
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item">
-                <a class="nav-link collapsed" type="submit" href="/message/list">
+                <a class="nav-link collapsed" type="submit" th:href="@{/message/list}">
                     <!--fa-fw fa-cog-->
                     <i class="fas fa-envelope-square"></i>
                     <span>Unread Messages</span>
@@ -69,12 +69,15 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link collapsed" type="submit" href="/message/readedMessages">
+                <a class="nav-link collapsed" type="submit" th:href="@{/message/readedMessages}">
                     <!--fa-fw fa-cog-->
                     <i class="far fa-envelope-open"></i>
                     <span>Read Messages</span>
                 </a>
             </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
 
             <!-- Heading -->
             <div class="sidebar-heading">
@@ -83,7 +86,23 @@
 
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item">
-                <a class="nav-link collapsed" type="submit" href="/vehicle/list">
+                <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="true" aria-controls="collapsePages">
+                    <i class="far fa-plus-square"></i>
+                    <span>Add Vehicle</span>
+                </a>
+                <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Add methods</h6>
+                        <a class="collapse-item" th:href="@{/vehicle/toAddPage}">Add Single Vehicle</a>
+                        <a class="collapse-item" th:href="register.html">Add Multiple Vehicles</a>
+                        <div class="collapse-divider"></div>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Nav Item - Pages Collapse Menu -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" type="submit" th:href="@{/vehicle/list}">
                     <!--fa-fw fa-cog-->
                     <i class="fas fa-car"></i>
                     <span>Instock Vehicles</span>
@@ -91,31 +110,11 @@
             </li>
 
             <li class="nav-item">
-                <a class="nav-link collapsed" type="submit" href="/vehicle/sold">
+                <a class="nav-link collapsed" type="submit" th:href="@{/vehicle/sold}">
                     <!--fa-fw fa-cog-->
                     <i class="fas fa-check-circle"></i>
                     <span>Sold Vehicles</span>
                 </a>
-            </li>
-
-            <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item active">
-                <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="true" aria-controls="collapsePages">
-                    <i class="fas fa-fw fa-folder"></i>
-                    <span>Pages</span>
-                </a>
-                <div id="collapsePages" class="collapse show" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Login Screens:</h6>
-                        <a class="collapse-item" href="login.html">Login</a>
-                        <a class="collapse-item" href="register.html">Register</a>
-                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
-                        <div class="collapse-divider"></div>
-                        <h6 class="collapse-header">Other Pages:</h6>
-                        <a class="collapse-item active" href="404.html">404 Page</a>
-                        <a class="collapse-item" href="blank.html">Blank Page</a>
-                    </div>
-                </div>
             </li>
 
             <!-- Nav Item - Charts -->

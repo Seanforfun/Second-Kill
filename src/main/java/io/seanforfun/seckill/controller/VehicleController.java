@@ -62,4 +62,11 @@ public class VehicleController {
         mv.setViewName("/pages/vehicle/vehicleList.html");
         return mv;
     }
+
+    @RequestMapping("/toAddPage")
+    @ResponseBody
+    public ModelAndView toAddPage(ModelAndView mv, User user, List<Message> messages){
+        mv.setViewName("/pages/vehicle/addVehicle.html");
+        return mv;
+    }
 }

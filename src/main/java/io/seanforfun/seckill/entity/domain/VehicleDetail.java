@@ -1,9 +1,11 @@
 package io.seanforfun.seckill.entity.domain;
 
+import io.seanforfun.seckill.utils.FormatUtils;
 import io.seanforfun.seckill.utils.VehicleUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+
 
 /**
  * @author: Seanforfun
@@ -28,6 +30,7 @@ public class VehicleDetail extends Vehicle{
      * 	seatingposition TINYINT,
      * 	doors TINYINT
      */
+
     @Setter
     private String zip;
     @Setter
@@ -54,7 +57,7 @@ public class VehicleDetail extends Vehicle{
 
     public void setBodyType(Integer bodyType) {
         this.bodyType = bodyType;
-        this.bodyTypeVo = VehicleUtils.setBodyTypeVo(bodyTypeVo);
+        this.bodyTypeVo = VehicleUtils.setBodyTypeVo(bodyType);
     }
 
     public void setExteriorColor(Integer exteriorColor) {

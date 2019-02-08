@@ -49,7 +49,7 @@
             <div class="col-xl-10 col-lg-12 col-md-9">
                 <div class="row text-center justify-content-center">
                     <!--class="error mx-auto"-->
-                    <div  class="error mx-auto" data-text="MESSAGE">MESSAGE</div>
+                    <div  class="error mx-auto" data-text="VEHICLE">VEHICLE</div>
                 </div>
             </div>
 
@@ -64,9 +64,6 @@
                                     <div class="col-lg-12">
                                         <div class="p-5">
                                             <form id="registerForm"  class="needs-validation" novalidate>
-                                                <input type="hidden" class="form-control" id="fromUser" th:value="${user.id}" required>
-                                                <input type="hidden" class="form-control" id="toUser" th:value="${toUserId}" required>
-                                                <input type="hidden" class="form-control" id="senderName" th:value="${user.username}" required>
                                                 <input type="text" class="form-control" id="title" placeholder="Title" th:value="${currentMsg == null} ? '': '[Re]' + ${currentMsg.title}"  required>
                                                 <hr/>
 
@@ -124,69 +121,6 @@
 <th:block th:replace="fragments/logout::logout"></th:block>
 <!-- Bootstrap core JavaScript-->
 <th:block th:replace="fragments/jsinclude::jsinclude"></th:block>
-<th:block th:replace="fragments/textEditor::textEditorJS"></th:block>
 
 </body>
-<script>
-    function sendMessage() {
-        g_showLoading();
-        if($("#sendBtn").val() == "true"){
-            layer.closeAll();
-            layer.msg("CANNOT SEND MESSAGE TO YOURSELF");
-            return;
-        }
-        var title = $("#title").val();
-        var msg = $("#msgBody").val();
-        if(title == null || title.length == 0 || title == undefined){
-            layer.closeAll();
-            layer.msg("TITLE CANNOT BE EMPTY");
-            return;
-        }
-
-        if(msg == null || msg.length == 0 || msg == undefined){
-            layer.closeAll();
-            layer.msg("MESSAGE CANNOT BE EMPTY");
-            return;
-        }
-
-        $.ajax({
-            url: "/message/send",
-            method: "POST",
-            data:{
-                fromUser: $("#fromUser").val(),
-                toUser: $("#toUser").val(),
-                title: title,
-                msg: msg,
-                senderName: $("#senderName").val()
-            },
-            success: function (data) {
-                layer.closeAll();
-                if(data.code == 0){
-                    layer.msg("SEND MESSAGE SUCCESS");
-                    var pre = document.referrer + "";
-                    alert(pre);
-                    if(pre.indexOf("/admin/userList") != -1){
-                        window.location.href = "/admin/userList";
-                    }else if(pre.indexOf("/message/readedMessages") != -1){
-                        window.location.href = "/message/readedMessages";
-                    }else if (pre.indexOf("/message/list") != -1) {
-                        window.location.href = "/message/list";
-                    }else{
-                        window.location.href = "/manage/toManage";
-                    }
-                }else{
-                    layer.msg(data.msg, {
-                        time: 5000
-                    });
-                }
-            },
-            error: function (data) {
-                layer.closeAll();
-                layer.msg("SEND MESSAGE, PLEASE TRY AGAIN", {
-                    time: 5000
-                });
-            }
-        })
-    }
-</script>
 </html>

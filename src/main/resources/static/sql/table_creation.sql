@@ -27,7 +27,11 @@ CREATE TABLE vehicle(
 	STATUS TINYINT(2) NOT NULL,
 	transmission TINYINT NOT NULL,
 	YEAR INT(10) NOT NULL,
-	process TINYINT NOT NULL
+	process TINYINT NOT NULL,
+	createTime BIGINT NOT NULL,
+	lastModifyTime BIGINT NOT NULL,
+	creatorId BIGINT NOT NULL,
+	lastModifierId BIGINT NOT NULL
 );
 
 # Vehicle detail
