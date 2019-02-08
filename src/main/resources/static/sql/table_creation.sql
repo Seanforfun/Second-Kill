@@ -45,8 +45,8 @@ CREATE TABLE vehicle_detail(
 	drivetrain TINYINT,
 	fueltype TINYINT,
 	ENGINE TINYINT,
-	seatingposition TINYINT,
-	doors TINYINT
+	doors TINYINT,
+	seatNum TINYINT
 );
 
 # Message table

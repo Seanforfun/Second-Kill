@@ -164,7 +164,6 @@
                 if(data.code == 0){
                     layer.msg("SEND MESSAGE SUCCESS");
                     var pre = document.referrer + "";
-                    alert(pre);
                     if(pre.indexOf("/admin/userList") != -1){
                         window.location.href = "/admin/userList";
                     }else if(pre.indexOf("/message/readedMessages") != -1){

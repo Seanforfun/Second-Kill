@@ -216,11 +216,6 @@ public class VehicleUtils {
         return ENGINE_MAP.get(engine);
     }
 
-
-    public static String setSeatingPositionVo(Integer seatingPosition) {
-        return null;
-    }
-
     public static final Integer DOOR_TWO = 0;
     public static final String DOOR_TWO_STR = "Two Door";
     public static final Integer DOOR_THREE= 1;

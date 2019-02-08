@@ -34,12 +34,19 @@ public class MessageService implements MessageEbi {
     public void sendMessageToUser(Message message) {
         Long currentTime = System.currentTimeMillis();
         message.setSendTime(currentTime);
+        // Update data saved in db.
         messageDao.saveUnreadMessage(message);
         // Update the unreadList saved in redis.
         User toUser = new User();
         toUser.setId(message.getToUser());
-        List<Message> toUserUnreadList = getUserUnreadMsg(toUser);
-        redisAddUnreadMessage(toUserUnreadList, message.getToUser(), message);
+        List<Message> redisUnreadMsgs = null;
+        redisUnreadMsgs = redisService.getList(MessageKey.getUnreadMessageByUserId, "" + toUser.getId(), Message.class);
+        if(redisUnreadMsgs == null){
+            List<Message> dbUserUnreadList = getUserUnreadMsg(toUser);
+            redisService.set(MessageKey.getUnreadMessageByUserId, "" + toUser.getId(), dbUserUnreadList);
+        }else{
+            redisAddUnreadMessage(redisUnreadMsgs, message.getToUser(), message);
+        }
     }
 
     @Override

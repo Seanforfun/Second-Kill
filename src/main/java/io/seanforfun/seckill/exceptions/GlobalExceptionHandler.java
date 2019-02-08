@@ -29,7 +29,6 @@ public class GlobalExceptionHandler {
         e.printStackTrace();
         if(e instanceof GlobalException){
             GlobalException exception = (GlobalException)e;
-            response.sendRedirect("/error/toError");
             return Result.error(exception.getMsg());
         }else if(e instanceof BindException){
             BindException exception = (BindException)e;

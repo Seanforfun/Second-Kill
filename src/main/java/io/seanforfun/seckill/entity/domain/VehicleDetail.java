@@ -37,13 +37,14 @@ public class VehicleDetail extends Vehicle{
     private Integer mileage;
     @Setter
     private String trim;
+    @Setter
+    private Integer seatNum;
 
     private Integer bodyType;      //Vo
     private Integer exteriorColor; //Vo
     private Integer driveTrain; //Vo
     private Integer fuelType;   //Vo
     private Integer engine; //Vo
-    private Integer seatingPosition; //Vo
     private Integer doors; //Vo
 
     // Vo
@@ -52,7 +53,6 @@ public class VehicleDetail extends Vehicle{
     private String driveTrainVo;
     private String fuelTypeVo;
     private String engineVo;
-    private String seatingPositionVo;
     private String doorsVo;
 
     public void setBodyType(Integer bodyType) {
@@ -78,11 +78,6 @@ public class VehicleDetail extends Vehicle{
     public void setEngine(Integer engine) {
         this.engine = engine;
         this.engineVo = VehicleUtils.setEngineVo(engine);
-    }
-
-    public void setSeatingPosition(Integer seatingPosition) {
-        this.seatingPosition = seatingPosition;
-        this.seatingPositionVo = VehicleUtils.setSeatingPositionVo(seatingPosition);
     }
 
     public void setDoors(Integer doors) {
