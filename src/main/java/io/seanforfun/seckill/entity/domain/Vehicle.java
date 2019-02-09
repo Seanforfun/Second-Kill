@@ -51,7 +51,7 @@ public class Vehicle {
     public static final int VEHICLE_UNEXPECTED_PENDING = -1;
 
     private static final String VEHICLE_ON_SALE_STR = "ON SALE";
-    private static final String VEHICLE_ORDERED_STR = "ORDERED RECEIVED";
+    private static final String VEHICLE_ORDERED_STR = "ORDER RECEIVED";
     private static final String VEHICLE_MONEY_RECEIVED_STR = "MONEY RECEIVED";
     private static final String VEHICLE_TRANSACTION_FINISHED_STR = "TRANSACTION FINISHED";
     private static final String VEHICLE_UNEXPECTED_PENDING_STR = "UNEXPECTED PENDING";

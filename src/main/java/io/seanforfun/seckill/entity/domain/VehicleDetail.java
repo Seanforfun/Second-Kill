@@ -39,6 +39,8 @@ public class VehicleDetail extends Vehicle{
     private String trim;
     @Setter
     private Integer seatNum;
+    @Setter
+    private String description;
 
     private Integer bodyType;      //Vo
     private Integer exteriorColor; //Vo

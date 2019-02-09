@@ -35,6 +35,9 @@ public class MessageResolver implements HandlerMethodArgumentResolver {
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         User user = (User)mavContainer.getModel().get("user");
+        if(user == null){
+            return null;
+        }
         List<Message> messages = messageEbi.getUserUnreadMsg(user);
         mavContainer.addAttribute("unreadMsg", messages);
         return messages;

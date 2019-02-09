@@ -46,7 +46,8 @@ CREATE TABLE vehicle_detail(
 	fueltype TINYINT,
 	ENGINE TINYINT,
 	doors TINYINT,
-	seatNum TINYINT
+	seatNum TINYINT,
+	description TEXT
 );
 
 # Message table
@@ -58,5 +59,6 @@ CREATE TABLE message(
 	msg TEXT NOT NULL,
 	hasRead BOOLEAN NOT NULL,
 	sendTime BIGINT NOT NULL,
-	senderName varchar(100) NOT NULL
+	senderName varchar(100) NOT NULL,
+	status BIGINT NOT NULL
 );
