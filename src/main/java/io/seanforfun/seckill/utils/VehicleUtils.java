@@ -238,4 +238,42 @@ public class VehicleUtils {
     public static String setDoorsVo(Integer doors) {
         return DOOR_MAP.get(doors);
     }
+
+    public static Integer VEHICLE_ONE_SEAT = 1;
+    public static String VEHICLE_ONE_SEAT_STR = "One seat";
+    public static Integer VEHICLE_TWO_SEAT = 2;
+    public static String VEHICLE_TWO_SEAT_STR = "Two seats";
+    public static Integer VEHICLE_THREE_SEAT = 3;
+    public static String VEHICLE_THREE_SEAT_STR = "Three seats";
+    public static Integer VEHICLE_FOUR_SEAT = 4;
+    public static String VEHICLE_FOUR_SEAT_STR = "Four seats";
+    public static Integer VEHICLE_FIVE_SEAT = 5;
+    public static String VEHICLE_FIVE_SEAT_STR = "Five seats";
+    public static Integer VEHICLE_SIX_SEAT = 6;
+    public static String VEHICLE_SIX_SEAT_STR = "Six seats";
+    public static Integer VEHICLE_SEVEN_SEAT = 7;
+    public static String VEHICLE_SEVEN_SEAT_STR = "Seven seats";
+    public static Integer VEHICLE_SEVEN_PLUS_SEAT = 8;
+    public static String VEHICLE_SEVEN_PLUS_SEAT_STR = "Seven plus seats";
+
+    public static Map<Integer, String> VEHICLE_SEAT_MAP = null;
+
+    static{
+        VEHICLE_SEAT_MAP = new HashMap<>();
+        VEHICLE_SEAT_MAP.put(VEHICLE_ONE_SEAT, VEHICLE_ONE_SEAT_STR);
+        VEHICLE_SEAT_MAP.put(VEHICLE_TWO_SEAT, VEHICLE_TWO_SEAT_STR);
+        VEHICLE_SEAT_MAP.put(VEHICLE_THREE_SEAT, VEHICLE_THREE_SEAT_STR);
+        VEHICLE_SEAT_MAP.put(VEHICLE_FOUR_SEAT, VEHICLE_FOUR_SEAT_STR);
+        VEHICLE_SEAT_MAP.put(VEHICLE_FIVE_SEAT, VEHICLE_FIVE_SEAT_STR);
+        VEHICLE_SEAT_MAP.put(VEHICLE_SIX_SEAT, VEHICLE_SIX_SEAT_STR);
+        VEHICLE_SEAT_MAP.put(VEHICLE_SEVEN_SEAT, VEHICLE_SEVEN_SEAT_STR);
+    }
+
+    public static String setSeatNumVo(Integer seatNum) {
+        if(seatNum > 7){
+            return VEHICLE_SEVEN_PLUS_SEAT_STR;
+        }else{
+            return VEHICLE_SEAT_MAP.get(seatNum);
+        }
+    }
 }

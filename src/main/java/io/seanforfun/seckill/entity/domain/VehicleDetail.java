@@ -38,10 +38,9 @@ public class VehicleDetail extends Vehicle{
     @Setter
     private String trim;
     @Setter
-    private Integer seatNum;
-    @Setter
     private String description;
 
+    private Integer seatNum;
     private Integer bodyType;      //Vo
     private Integer exteriorColor; //Vo
     private Integer driveTrain; //Vo
@@ -50,12 +49,19 @@ public class VehicleDetail extends Vehicle{
     private Integer doors; //Vo
 
     // Vo
+    private String seatNumVo;
     private String bodyTypeVo;
     private String exteriorColorVo;
     private String driveTrainVo;
     private String fuelTypeVo;
     private String engineVo;
     private String doorsVo;
+
+    public void setSeatNum(Integer seatNum) {
+        this.seatNum = seatNum;
+        this.seatNumVo = VehicleUtils.setSeatNumVo(seatNum);
+    }
+
 
     public void setBodyType(Integer bodyType) {
         this.bodyType = bodyType;

@@ -23,8 +23,8 @@
     <!-- Custom css and js file for register.html-->
     <script type="text/javascript" th:src="@{/js/form-validation.js}"></script>
     <link rel="stylesheet" type="text/css" th:href="@{/css/form-validation.css}" />
+
     <th:block th:replace="fragments/cssinclude::cssinclude"></th:block>
-    <th:block th:replace="fragments/textEditor::textEditorCSS"></th:block>
 
 </head>
 
@@ -162,6 +162,148 @@
                                                         <input type="text" class="form-control" id="price" placeholder="Price of Vehicle" minlength="1" required>
                                                         <div class="invalid-feedback">
                                                             Valid price is required. (Must longer than 1 characters.)
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="zip">ZIP</label>
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" id="zip" placeholder="Zip of current Location" minlength="1">
+                                                            <div class="invalid-feedback">
+                                                                Valid zip is required. (Minimum equal to 1 characters.)
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="mileage">Mileage</label>
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" id="mileage" placeholder="Mileleage of Vehicle" minlength="1">
+                                                            <div class="invalid-feedback">
+                                                                Valid mileage is required. (Minimum equal to 1 characters.)
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="seatNum">Seat Number(Optional)</label>
+                                                        <div class="input-group">
+                                                            <select class="custom-select form-control" id="seatNum">
+                                                                <option value="" selected>Select Seat Number</option>
+                                                                <option value="1" >1 Seat</option>
+                                                                <option value="2" >2 Seats</option>
+                                                                <option value="3" >3 Seats</option>
+                                                                <option value="4" >4 Seats</option>
+                                                                <option value="5" >5 Seats</option>
+                                                                <option value="6" >6 Seats</option>
+                                                                <option value="7" >7 Seats</option>
+                                                                <option value="8" >7+ Seats</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="bodyType">Body Type(Optional)</label>
+                                                        <div class="input-group">
+                                                            <select class="custom-select form-control" id="bodyType">
+                                                                <option value="" selected>Select Body Type</option>
+                                                                <option value="1" >Convertible</option>
+                                                                <option value="2" >Sedan</option>
+                                                                <option value="3" >Van/Minivan</option>
+                                                                <option value="4" >Couple</option>
+                                                                <option value="5" >SUV/Crossover</option>
+                                                                <option value="6" >Wagon</option>
+                                                                <option value="7" >Hatchback</option>
+                                                                <option value="8" >Truck</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-md-12 mb-6">
+                                                        <div id="exteriorColor">Exterior Color(Optional)</div>
+                                                        <div class="form-check">
+                                                            <div class="row">
+                                                                <div class="col-md-2 mb-1">
+                                                                    <input type="checkbox" class="form-check-input" id="Aluminum">
+                                                                    <label class="" for="exteriorColor"><i class="fa fa-circle" style="color: #848789" aria-hidden="true"></i>Aluminum</label>
+                                                                </div>
+                                                                <div class="col-md-2 mb-1">
+                                                                    <input type="checkbox" class="form-check-input" id="Beige">
+                                                                    <label class="" for="exteriorColor"><i class="fa fa-circle" style="color: #F3E4CC" aria-hidden="true"></i>Beige</label>
+                                                                </div>
+                                                                <div class="col-md-2 mb-1">
+                                                                    <input type="checkbox" class="form-check-input" id="Black">
+                                                                    <label class="" for="exteriorColor"><i class="fa fa-circle" style="color: #000000" aria-hidden="true"></i>Black</label>
+                                                                </div>
+                                                                <div class="col-md-2 mb-1">
+                                                                    <input type="checkbox" class="form-check-input" id="Blue">
+                                                                    <label class="" for="exteriorColor"><i class="fa fa-circle" style="color: #0000ff" aria-hidden="true"></i>Blue</label>
+                                                                </div>
+                                                                <div class="col-md-2 mb-1">
+                                                                    <input type="checkbox" class="form-check-input" id="Brown">
+                                                                    <label class="" for="exteriorColor"><i class="fa fa-circle" style="color: #835C3B" aria-hidden="true"></i>Brown</label>
+                                                                </div>
+                                                                <div class="col-md-2 mb-1">
+                                                                    <input type="checkbox" class="form-check-input" id="Bronze">
+                                                                    <label class="" for="exteriorColor"><i class="fa fa-circle" style="color: #cd7f32" aria-hidden="true"></i>Bronze</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-2 mb-1">
+                                                                    <input type="checkbox" class="form-check-input" id="Claret">
+                                                                    <label class="" for="exteriorColor"><i class="fa fa-circle" style="color: #7f1734" aria-hidden="true"></i>Claret</label>
+                                                                </div>
+                                                                <div class="col-md-2 mb-1">
+                                                                    <input type="checkbox" class="form-check-input" id="Copper">
+                                                                    <label class="" for="exteriorColor"><i class="fa fa-circle" style="color: #b87333" aria-hidden="true"></i>Copper</label>
+                                                                </div>
+                                                                <div class="col-md-2 mb-1">
+                                                                    <input type="checkbox" class="form-check-input" id="Cream">
+                                                                    <label class="" for="exteriorColor"><i class="fa fa-circle" style="color: #ffffcc" aria-hidden="true"></i>Cream</label>
+                                                                </div>
+                                                                <div class="col-md-2 mb-1">
+                                                                    <input type="checkbox" class="form-check-input" id="Gold">
+                                                                    <label class="" for="exteriorColor"><i class="fa fa-circle" style="color: #FFD700" aria-hidden="true"></i>Gold</label>
+                                                                </div>
+                                                                <div class="col-md-2 mb-1">
+                                                                    <input type="checkbox" class="form-check-input" id="Gray">
+                                                                    <label class="" for="exteriorColor"><i class="fa fa-circle" style="color: #808080" aria-hidden="true"></i>Gray</label>
+                                                                </div>
+                                                                <div class="col-md-2 mb-1">
+                                                                    <input type="checkbox" class="form-check-input" id="Green">
+                                                                    <label class="" for="exteriorColor"><i class="fa fa-circle" style="color: #008000" aria-hidden="true"></i>Green</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-md-2 mb-1">
+                                                                    <input type="checkbox" class="form-check-input" id="Maroon">
+                                                                    <label class="" for="exteriorColor"><i class="fa fa-circle" style="color: #800000" aria-hidden="true"></i>Maroon</label>
+                                                                </div>
+                                                                <div class="col-md-2 mb-1">
+                                                                    <input type="checkbox" class="form-check-input" id="Metallic">
+                                                                    <label class="" for="exteriorColor"><i class="fa fa-circle" style="color: #b87333" aria-hidden="true"></i>Metallic</label>
+                                                                </div>
+                                                                <div class="col-md-2 mb-1">
+                                                                    <input type="checkbox" class="form-check-input" id="Cream">
+                                                                    <label class="" for="exteriorColor"><i class="fa fa-circle" style="color: #ffffcc" aria-hidden="true"></i>Cream</label>
+                                                                </div>
+                                                                <div class="col-md-2 mb-1">
+                                                                    <input type="checkbox" class="form-check-input" id="Gold">
+                                                                    <label class="" for="exteriorColor"><i class="fa fa-circle" style="color: #FFD700" aria-hidden="true"></i>Gold</label>
+                                                                </div>
+                                                                <div class="col-md-2 mb-1">
+                                                                    <input type="checkbox" class="form-check-input" id="Gray">
+                                                                    <label class="" for="exteriorColor"><i class="fa fa-circle" style="color: #808080" aria-hidden="true"></i>Gray</label>
+                                                                </div>
+                                                                <div class="col-md-2 mb-1">
+                                                                    <input type="checkbox" class="form-check-input" id="Green">
+                                                                    <label class="" for="exteriorColor"><i class="fa fa-circle" style="color: #008000" aria-hidden="true"></i>Green</label>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
