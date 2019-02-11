@@ -26,7 +26,7 @@ public class UserInterceptor {
     private UserEbi userService;
 
     protected void notLoginHandler(HttpServletResponse response) throws Exception{
-        response.sendRedirect("/user/tologin");
+        response.sendRedirect("forword: static/user/login.htm");
     }
 
     protected boolean checkUserLogin(HttpServletRequest request, HttpServletResponse response) throws Exception{

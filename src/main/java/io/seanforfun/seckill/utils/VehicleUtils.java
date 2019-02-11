@@ -72,8 +72,8 @@ public class VehicleUtils {
     public static final String Green_str = "Green";
     public static final Integer Maroon = 12;
     public static final String Maroon_str = "Maroon";
-    public static final Integer Metallic = 13;
-    public static final String Metallic_str = "Metallic";
+//    public static final Integer Metallic = 13;
+//    public static final String Metallic_str = "Metallic";
     public static final Integer Navy = 14;
     public static final String Navy_str = "Navy";
     public static final Integer Orange = 15;
@@ -81,8 +81,8 @@ public class VehicleUtils {
     public static final Integer Pink = 16;
     public static final String Pink_str = "Pink";
     public static final Integer Purple = 17;
-    public static final String Purple_str = "Purple";
     public static final Integer Red = 18;
+    public static final String Purple_str = "Purple";
     public static final String Red_str = "Red";
     public static final Integer Rose = 19;
     public static final String Rose_str = "Rose";
@@ -115,7 +115,7 @@ public class VehicleUtils {
         EXTERIOR_COLOR_MAP.put(Gray, Gray_str);
         EXTERIOR_COLOR_MAP.put(Green, Green_str);
         EXTERIOR_COLOR_MAP.put(Maroon, Maroon_str);
-        EXTERIOR_COLOR_MAP.put(Metallic, Metallic_str);
+//        EXTERIOR_COLOR_MAP.put(Metallic, Metallic_str);
         EXTERIOR_COLOR_MAP.put(Navy, Navy_str);
         EXTERIOR_COLOR_MAP.put(Orange, Orange_str);
         EXTERIOR_COLOR_MAP.put(Pink, Pink_str);
@@ -158,6 +158,10 @@ public class VehicleUtils {
     public static String FUEL_TYPE_DIESEL_STR = "Diesel";
     public static Integer FUEL_TYPE_ALTERNATIVE = 2;
     public static String FUEL_TYPE_ALTERNATIVE_STR = "Alternative";
+    public static Integer FUEL_TYPE_ELECTRICITY = 3;
+    public static String FUEL_TYPE_ELECTRICITY_STR = "Electric";
+    public static Integer FUEL_TYPE_HYBIRD = 4;
+    public static String FUEL_TYPE_HYBIRD_STR = "Hybird";
     public static Map<Integer, String> FUEL_TYPE_MAP = null;
 
     static {
@@ -165,6 +169,7 @@ public class VehicleUtils {
         FUEL_TYPE_MAP.put(FUEL_TYPE_GAS, FUEL_TYPE_GAS_STR);
         FUEL_TYPE_MAP.put(FUEL_TYPE_DIESEL, FUEL_TYPE_DIESEL_STR);
         FUEL_TYPE_MAP.put(FUEL_TYPE_ALTERNATIVE, FUEL_TYPE_ALTERNATIVE_STR);
+        FUEL_TYPE_MAP.put(FUEL_TYPE_ELECTRICITY, FUEL_TYPE_HYBIRD_STR);
     }
     public static String setFuelTypeVo(Integer fuelType) {
         return FUEL_TYPE_MAP.get(fuelType);
@@ -217,13 +222,13 @@ public class VehicleUtils {
     }
 
     public static final Integer DOOR_TWO = 0;
-    public static final String DOOR_TWO_STR = "Two Door";
+    public static final String DOOR_TWO_STR = "Two Doors";
     public static final Integer DOOR_THREE= 1;
-    public static final String DOOR_THREE_STR= "Three Door";
+    public static final String DOOR_THREE_STR= "Three Doors";
     public static final Integer DOOR_FOUR = 2;
-    public static final String DOOR_FOUR_STR = "Four Door";
+    public static final String DOOR_FOUR_STR = "Four Doors";
     public static final Integer DOOR_FIVE = 3;
-    public static final String DOOR_FIVE_STR = "Four Door";
+    public static final String DOOR_FIVE_STR = "Five Doors";
 
     public static Map<Integer, String> DOOR_MAP = null;
 

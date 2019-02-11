@@ -73,3 +73,11 @@ function trashMsg() {
         }
     })
 }
+
+function blockRender() {
+    $("#meta").load("/static/meta.htm");
+    $("#cssinclude").load("/static/cssinclude.htm");
+    $("#footer").load("/static/footer.htm");
+    $("#logout").load("/static/logout.htm");
+    $("#jsinclude").load("/static/jsinclude.htm");
+}

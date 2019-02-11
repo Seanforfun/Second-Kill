@@ -1,6 +1,5 @@
 package io.seanforfun.seckill.entity.domain;
 
-import io.seanforfun.seckill.utils.FormatUtils;
 import io.seanforfun.seckill.utils.VehicleUtils;
 import lombok.Getter;
 import lombok.Setter;

@@ -37,7 +37,7 @@ public class GlobalExceptionHandler {
             String errorMsg = error.getDefaultMessage();
             return Result.error(CodeMsg.BIND_ERROR_MSG.fillArgs(errorMsg));
         }else{
-            response.sendRedirect("/error/toError");
+            response.sendRedirect("/static/error/404.htm");
             return Result.error(CodeMsg.SERVER_ERROR_MSG);
         }
     }

@@ -47,6 +47,7 @@ public class UserController {
      * Path re-directory
      */
     @RequestMapping("/tologin")
+    @ResponseBody
     public ModelAndView toLogin(ModelAndView mv){
         mv.setViewName("/pages/login.html");
         return mv;
@@ -71,6 +72,20 @@ public class UserController {
         }
         mv.setViewName("/pages/forgetpassword.html");
         return mv;
+    }
+
+    @RequestMapping("/renderForgetPassword")
+    @ResponseBody
+    public Result<Boolean> renderForgetPassword(@CookieValue(value = User.USER_TOKEN, required = false) String cookieToken,
+                                                @RequestAttribute(value = User.USER_TOKEN, required = false) String requestToken,
+                                                HttpSession session,
+                                                HttpServletRequest request,
+                                                HttpServletResponse response) throws Exception{
+        if(!StringUtils.isEmpty(cookieToken) || !StringUtils.isEmpty(requestToken)){
+            String token = StringUtils.isEmpty(cookieToken) ? requestToken : cookieToken;
+            loginService.logout(token, session, request, response);
+        }
+        return Result.success(true);
     }
 
     /**
