@@ -12,6 +12,9 @@ import java.util.Map;
  */
 public class VehicleUtils {
 
+    public static Integer NOT_GIVEN = -8;
+    public static String NOT_GIVEN_STR = "N.A.";
+
     //Convertible, Sedan, Van/Minivan, Couple, SUV/Crossover, Wagon, Hatchback, Truck
     public static final Integer BODY_TYPE_CONVERTIBLE = 1;
     public static final String BODY_TYPE_CONVERTIBLE_STR = "Convertible";
@@ -33,6 +36,7 @@ public class VehicleUtils {
 
     static {
         BODY_TYPE_MAP = new HashMap<>();
+        BODY_TYPE_MAP.put(NOT_GIVEN, NOT_GIVEN_STR);
         BODY_TYPE_MAP.put(BODY_TYPE_CONVERTIBLE, BODY_TYPE_CONVERTIBLE_STR);
         BODY_TYPE_MAP.put(BODY_TYPE_SEDAN, BODY_TYPE_SEDAN_STR);
         BODY_TYPE_MAP.put(BODY_TYPE_VAN, BODY_TYPE_VAN_STR);
@@ -102,6 +106,7 @@ public class VehicleUtils {
     public static Map<Integer, String > EXTERIOR_COLOR_MAP = null;
     static{
         EXTERIOR_COLOR_MAP = new HashMap<>();
+        EXTERIOR_COLOR_MAP.put(NOT_GIVEN, NOT_GIVEN_STR);
         EXTERIOR_COLOR_MAP.put(Aluminum, Aluminum_str);
         EXTERIOR_COLOR_MAP.put(Beige, Beige_str);
         EXTERIOR_COLOR_MAP.put(Black, Black_str);
@@ -144,6 +149,7 @@ public class VehicleUtils {
 
     static {
         DRIVE_TRAIN_MAP = new HashMap<>();
+        DRIVE_TRAIN_MAP.put(NOT_GIVEN, NOT_GIVEN_STR);
         DRIVE_TRAIN_MAP.put(DRIVE_TRAIN_AWD, DRIVE_TRAIN_AWD_STR);
         DRIVE_TRAIN_MAP.put(DRIVE_TRAIN_FWD, DRIVE_TRAIN_FWD_STR);
         DRIVE_TRAIN_MAP.put(DRIVE_TRAIN_RWD, DRIVE_TRAIN_RWD_STR);
@@ -166,6 +172,7 @@ public class VehicleUtils {
 
     static {
         FUEL_TYPE_MAP = new HashMap<>();
+        FUEL_TYPE_MAP.put(NOT_GIVEN, NOT_GIVEN_STR);
         FUEL_TYPE_MAP.put(FUEL_TYPE_GAS, FUEL_TYPE_GAS_STR);
         FUEL_TYPE_MAP.put(FUEL_TYPE_DIESEL, FUEL_TYPE_DIESEL_STR);
         FUEL_TYPE_MAP.put(FUEL_TYPE_ALTERNATIVE, FUEL_TYPE_ALTERNATIVE_STR);
@@ -204,6 +211,7 @@ public class VehicleUtils {
 
     static {
         ENGINE_MAP = new HashMap<>();
+        ENGINE_MAP.put(NOT_GIVEN, NOT_GIVEN_STR);
         ENGINE_MAP.put(ENGINE_3_CYLINDER, ENGINE_3_CYLINDER_STR);
         ENGINE_MAP.put(ENGINE_4_CYLINDER, ENGINE_4_CYLINDER_STR);
         ENGINE_MAP.put(ENGINE_5_CYLINDER, ENGINE_5_CYLINDER_STR);
@@ -234,6 +242,7 @@ public class VehicleUtils {
 
     static {
         DOOR_MAP = new HashMap<>();
+        DOOR_MAP.put(NOT_GIVEN, NOT_GIVEN_STR);
         DOOR_MAP.put(DOOR_TWO, DOOR_TWO_STR);
         DOOR_MAP.put(DOOR_THREE, DOOR_THREE_STR);
         DOOR_MAP.put(DOOR_FOUR, DOOR_FOUR_STR);
@@ -265,6 +274,7 @@ public class VehicleUtils {
 
     static{
         VEHICLE_SEAT_MAP = new HashMap<>();
+        VEHICLE_SEAT_MAP.put(NOT_GIVEN, NOT_GIVEN_STR);
         VEHICLE_SEAT_MAP.put(VEHICLE_ONE_SEAT, VEHICLE_ONE_SEAT_STR);
         VEHICLE_SEAT_MAP.put(VEHICLE_TWO_SEAT, VEHICLE_TWO_SEAT_STR);
         VEHICLE_SEAT_MAP.put(VEHICLE_THREE_SEAT, VEHICLE_THREE_SEAT_STR);

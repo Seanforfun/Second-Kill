@@ -1,12 +1,14 @@
 package io.seanforfun.seckill.entity.domain;
 
 import io.seanforfun.seckill.utils.FormatUtils;
+import io.seanforfun.seckill.validator.isVin;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.omg.CORBA.PRIVATE_MEMBER;
 import org.springframework.expression.spel.ast.NullLiteral;
 
+import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -84,21 +86,28 @@ public class Vehicle {
     @Setter
     private Long id;
     @Setter
+    @isVin
     private String vin;
     @Setter
+    @NotNull
     private String make;
     @Setter
+    @NotNull
     private String model;
     @Setter
+    @NotNull
     private Integer year;
     @Setter
     private Long creatorId;
     @Setter
     private Long lastModifierId;
-
+    @NotNull
     private Integer status;
+    @NotNull
     private Double price;
+    @NotNull
     private Integer transmission;
+    @NotNull
     private Integer process;
     private Long createTime;    //Vo
     private Long lastModifyTime;    //Vo

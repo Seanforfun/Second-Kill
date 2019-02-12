@@ -5,6 +5,10 @@ function g_showLoading(){
 //salt
 var g_passsword_salt="ILOVEIRENE";
 
+//Max image size
+var IMAGE_MAX_SIZE = 4096 * 1000;
+var NOT_GIVEN = -8;
+
 // Get Parameter from url
 function g_getQueryString(name) {
 	var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
