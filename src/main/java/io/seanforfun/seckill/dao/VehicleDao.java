@@ -3,6 +3,7 @@ package io.seanforfun.seckill.dao;
 import io.seanforfun.seckill.entity.domain.Vehicle;
 import io.seanforfun.seckill.entity.domain.VehicleDetail;
 import io.seanforfun.seckill.entity.vo.VehicleVo;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -44,6 +45,16 @@ public interface VehicleDao {
     /**
      * Insert
      */
+    @Insert("Insert into vehicle (id, vin, make, model, price, status, transmission, year, process, " +
+            "createTime, lastModifyTime, creatorId, lastModifierId) values (#{id}, #{vin}, #{make}, " +
+            "#{model}, #{price}, #{status}, #{transmission}, #{year}, #{process}, #{createTime}, #{lastModifyTime}, " +
+            "#{creatorId}, #{lastModifierId})")
+    void saveVehicle(VehicleDetail vehicleDetail);
+
+    @Insert("Insert into vehicle_detail (id, zip, bodytype, ExteriorColour, mileage, drivetrain, fueltype, " +
+            "ENGINE, doors, seatNum, description) values (#{id}, #{zip}, #{bodyType}, #{exteriorColor}, #{mileage}, " +
+            "#{driveTrain}, #{fuelType}, #{engine}, #{doors}, #{seatNum}, #{description})")
+    void saveVehicleDetail(VehicleDetail vehicleDetail);
 
     /**
      * Update

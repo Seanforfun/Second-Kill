@@ -1,13 +1,14 @@
 package io.seanforfun.seckill.service;
 
 import io.seanforfun.seckill.dao.VehicleDao;
-import io.seanforfun.seckill.entity.domain.User;
 import io.seanforfun.seckill.entity.domain.Vehicle;
 import io.seanforfun.seckill.entity.domain.VehicleDetail;
 import io.seanforfun.seckill.entity.vo.VehicleVo;
 import io.seanforfun.seckill.service.ebi.VehicleEbi;
+import io.seanforfun.seckill.utils.SnowFlakeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -44,5 +45,17 @@ public class VehicleService implements VehicleEbi {
     @Override
     public List<VehicleDetail> getSoldVehicles() {
         return vehicleDao.getVehicleListByProcess(Vehicle.VEHICLE_TRANSACTION_FINISHED);
+    }
+
+    @Override
+    @Transactional
+    public void saveVehicle(VehicleDetail vehicleDetail, Long creatorId) {
+        vehicleDetail.setId(SnowFlakeUtils.getSnowFlakeId());
+        vehicleDetail.setCreatorId(creatorId);
+        vehicleDetail.setCreateTime(System.currentTimeMillis());
+        vehicleDetail.setLastModifierId(Vehicle.VEHICLE_NEVER_MODIFIED_USER);
+        vehicleDetail.setLastModifyTime(Vehicle.VEHICLE_NEVER_MODIFIED);
+        vehicleDao.saveVehicle(vehicleDetail);
+        vehicleDao.saveVehicleDetail(vehicleDetail);
     }
 }

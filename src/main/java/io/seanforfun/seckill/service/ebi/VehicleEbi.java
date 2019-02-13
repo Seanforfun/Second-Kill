@@ -1,6 +1,5 @@
 package io.seanforfun.seckill.service.ebi;
 
-import io.seanforfun.seckill.entity.domain.Vehicle;
 import io.seanforfun.seckill.entity.domain.VehicleDetail;
 import io.seanforfun.seckill.entity.vo.VehicleVo;
 
@@ -38,4 +37,11 @@ public interface VehicleEbi {
      * @return
      */
     List<VehicleDetail> getSoldVehicles();
+
+    /**
+     * Save vehicle information.
+     * @param vehicleDetail
+     * @param creatorId
+     */
+    void saveVehicle(VehicleDetail vehicleDetail, Long creatorId);
 }

@@ -1,6 +1,7 @@
 package io.seanforfun.seckill.controller;
 
 import com.sun.webkit.PageCache;
+import io.seanforfun.seckill.config.EnvironmentConfigBean;
 import io.seanforfun.seckill.entity.domain.Message;
 import io.seanforfun.seckill.entity.domain.User;
 import io.seanforfun.seckill.entity.domain.VehicleDetail;
@@ -9,6 +10,7 @@ import io.seanforfun.seckill.redis.PageKey;
 import io.seanforfun.seckill.redis.RedisService;
 import io.seanforfun.seckill.result.Result;
 import io.seanforfun.seckill.service.ebi.VehicleEbi;
+import io.seanforfun.seckill.utils.SnowFlakeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -65,6 +67,9 @@ public class VehicleController {
     @Autowired
     private RedisService redisService;
 
+    @Autowired
+    private EnvironmentConfigBean environmentConfigBean;
+
     @RequestMapping(value = {"/list"})
     public String listVehicles(Model model, User user, List<Message> messages){
         // Get Vehicles from db or redis.
@@ -89,10 +94,12 @@ public class VehicleController {
     public String toAddPage(User user, List<Message> messages, Model model, HttpServletRequest request, HttpServletResponse response){
         String html = null;
         // Redis get cached html page.
-//        html = redisService.get(PageKey.getPageByName, "toAddPage", String.class);
-//        if(html != null){
-//            return html;
-//        }
+        if(environmentConfigBean.getCachePage()) {
+            html = redisService.get(PageKey.getPageByName, "toAddPage", String.class);
+            if (html != null) {
+                return html;
+            }
+        }
         IWebContext ctx =new WebContext(request,response,
                 request.getServletContext(),request.getLocale(),model.asMap());
         html = thymeleafViewResolver.getTemplateEngine().process("pages/vehicle/addVehicle", ctx);
@@ -102,16 +109,16 @@ public class VehicleController {
 
     @RequestMapping(value = "/addVehicle", method = RequestMethod.POST)
     @ResponseBody
-    public Result<Boolean> addVehicle(@Valid VehicleDetail vehicleDetail, MultipartHttpServletRequest request ){
+    public Result<Boolean> addVehicle(User user, @Valid VehicleDetail vehicleDetail, MultipartHttpServletRequest request ){
         System.out.println(vehicleDetail.toString());
         // Get all uploaded files.
         Map<String, MultipartFile> fileMap = request.getFileMap();
         Set<Map.Entry<String, MultipartFile>> entries = fileMap.entrySet();
-        for(Map.Entry<String, MultipartFile> entry: entries){
-            System.out.println(entry.getKey());
-        }
 
         // Save vehicle to db.
+        vehicleService.saveVehicle(vehicleDetail, user.getId());
         return Result.success(true);
     }
+
+
 }

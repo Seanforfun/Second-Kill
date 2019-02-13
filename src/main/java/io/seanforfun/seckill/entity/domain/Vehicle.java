@@ -5,8 +5,6 @@ import io.seanforfun.seckill.validator.isVin;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.omg.CORBA.PRIVATE_MEMBER;
-import org.springframework.expression.spel.ast.NullLiteral;
 
 import javax.validation.constraints.NotNull;
 import java.util.HashMap;

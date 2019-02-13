@@ -11,19 +11,20 @@ import org.springframework.stereotype.Component;
 
 /**
  * @author: Seanforfun
- * @date: Created in 2019/2/1 14:19
+ * @date: Created in 2019/2/12 21:53
  * @description: ${description}
  * @modified:
- * @version: 0.0.1
+ * @version: 0.01
  */
 @Component
 @Scope("singleton")
 @Configuration
-@ConfigurationProperties
-@PropertySource(value = "classpath:/properties/pagination.properties")
+@ConfigurationProperties(prefix = "environment")
+@PropertySource(value = "classpath:/properties/environment.properties")
 @Slf4j
 @Getter
 @Setter
-public class ConfigBean {
-    private int maxUserPerPage;
+public class EnvironmentConfigBean {
+    private Boolean dev;
+    private Boolean cachePage;
 }

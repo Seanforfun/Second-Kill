@@ -18,25 +18,25 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 public class VehicleDetail extends Vehicle{
     /**
+     * 	CREATE TABLE vehicle_detail(
      * 	id BIGINT NOT NULL PRIMARY KEY,
      * 	zip VARCHAR(20),
-     * 	TRIM TINYINT,
      * 	bodytype TINYINT,
      * 	ExteriorColour TINYINT,
-     * 	mileage INT,
+     * 	mileage DOUBLE,
      * 	drivetrain TINYINT,
      * 	fueltype TINYINT,
      * 	ENGINE TINYINT,
-     * 	seatingposition TINYINT,
-     * 	doors TINYINT
+     * 	doors TINYINT,
+     * 	seatNum TINYINT,
+     * 	description TEXT
+     * );
      */
 
     @Setter
     private String zip;
     @Setter
     private Integer mileage;
-    @Setter
-    private String trim;
     @Setter
     private String description;
 

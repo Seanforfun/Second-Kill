@@ -38,7 +38,6 @@ CREATE TABLE vehicle(
 CREATE TABLE vehicle_detail(
 	id BIGINT NOT NULL PRIMARY KEY,
 	zip VARCHAR(20),
-	TRIM TINYINT,
 	bodytype TINYINT,
 	ExteriorColour TINYINT,
 	mileage DOUBLE,
