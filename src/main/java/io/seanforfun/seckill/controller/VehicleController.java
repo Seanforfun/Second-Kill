@@ -6,8 +6,10 @@ import io.seanforfun.seckill.entity.domain.Message;
 import io.seanforfun.seckill.entity.domain.User;
 import io.seanforfun.seckill.entity.domain.VehicleDetail;
 import io.seanforfun.seckill.entity.vo.VehicleVo;
+import io.seanforfun.seckill.exceptions.GlobalException;
 import io.seanforfun.seckill.redis.PageKey;
 import io.seanforfun.seckill.redis.RedisService;
+import io.seanforfun.seckill.result.CodeMsg;
 import io.seanforfun.seckill.result.Result;
 import io.seanforfun.seckill.service.ebi.VehicleEbi;
 import io.seanforfun.seckill.utils.SnowFlakeUtils;
@@ -30,6 +32,7 @@ import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -109,16 +112,22 @@ public class VehicleController {
 
     @RequestMapping(value = "/addVehicle", method = RequestMethod.POST)
     @ResponseBody
-    public Result<Boolean> addVehicle(User user, @Valid VehicleDetail vehicleDetail, MultipartHttpServletRequest request ){
-        System.out.println(vehicleDetail.toString());
+    public Result<Boolean> addVehicle(User user, @Valid VehicleDetail vehicleDetail, MultipartHttpServletRequest request ) throws Exception {
         // Get all uploaded files.
         Map<String, MultipartFile> fileMap = request.getFileMap();
         Set<Map.Entry<String, MultipartFile>> entries = fileMap.entrySet();
+        for(Map.Entry<String, MultipartFile> file : entries){
+            MultipartFile image = file.getValue();
+            String contentType = image.getContentType();
+            // Check type of each file.
+            if(contentType == null || !contentType.contains("image")){
+                throw new GlobalException(CodeMsg.FILE_NOT_IMAGE_MSG);
+            }
+        }
 
         // Save vehicle to db.
-        vehicleService.saveVehicle(vehicleDetail, user.getId());
+        vehicleService.saveVehicle(vehicleDetail, user.getId(), fileMap);
         return Result.success(true);
     }
-
 
 }

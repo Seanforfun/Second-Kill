@@ -2,8 +2,10 @@ package io.seanforfun.seckill.service.ebi;
 
 import io.seanforfun.seckill.entity.domain.VehicleDetail;
 import io.seanforfun.seckill.entity.vo.VehicleVo;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author: Seanforfun
@@ -42,6 +44,7 @@ public interface VehicleEbi {
      * Save vehicle information.
      * @param vehicleDetail
      * @param creatorId
+     * @param imageMap
      */
-    void saveVehicle(VehicleDetail vehicleDetail, Long creatorId);
+    void saveVehicle(VehicleDetail vehicleDetail, Long creatorId, Map<String, MultipartFile> imageMap) throws Exception;
 }

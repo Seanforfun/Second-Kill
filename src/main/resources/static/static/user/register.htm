@@ -235,16 +235,17 @@
                     window.location.href = "/user/tologin";
                 }else{
                     layer.msg(data.msg, {
-                        time: 5000
+                        time: 3000
                     });
                 }
             },
             error: function (data) {
                 layer.closeAll();
                 layer.msg("REGISTER FAILED, PLEASE TRY AGAIN", {
-                    time: 5000
+                    time: 3000
                 });
-            }
+            },
+            timeout: 5000
         });
     }
 

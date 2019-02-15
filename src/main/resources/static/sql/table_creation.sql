@@ -61,3 +61,13 @@ CREATE TABLE message(
 	senderName varchar(100) NOT NULL,
 	status BIGINT NOT NULL
 );
+
+# Image table
+CREATE TABLE image(
+	id BIGINT NOT NULL PRIMARY KEY,
+	link VARCHAR(255) NOT NULL,
+	NAME VARCHAR(255) NOT NULL,
+	source VARCHAR(100) NOT NULL,
+	TYPE VARCHAR(100) NOT NULL,
+	associateId BIGINT NOT NULL
+);

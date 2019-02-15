@@ -6,6 +6,8 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 
 /**
  * @author: Seanforfun
@@ -39,6 +41,8 @@ public class VehicleDetail extends Vehicle{
     private Integer mileage;
     @Setter
     private String description;
+    @Setter
+    private List<Image> images;
 
     private Integer seatNum;
     private Integer bodyType;      //Vo
