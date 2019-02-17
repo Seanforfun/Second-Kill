@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
  * @version: 0.0.1
  */
 @Component
-@Scope("prototype")
+@Scope(value="prototype")
 @Slf4j
 @Getter
 @Setter

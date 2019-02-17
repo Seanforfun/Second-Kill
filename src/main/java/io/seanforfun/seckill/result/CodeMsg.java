@@ -66,6 +66,8 @@ public class CodeMsg {
     private static final String USER_NOT_FOUND_ERROR_STR = "USER NOT FOUND";
     private static final int USER_NOT_LOGOUT_ERROR = 500306;
     private static final String USER_NOT_LOGOUT_ERROR_STR = "USER NOT LOG OUT";
+    private static final int USER_REGISTER_FAILED = 500307;
+    private static final String USER_REGISTER_FAILED_STR = "USER REGISTER FAILED";
 
 
     public static CodeMsg USERNAME_NOT_EXIST_ERROR_MSG = new CodeMsg(USERNAME_NOT_EXIST_ERROR, USERNAME_NOT_EXIST_ERROR_STR);
@@ -75,6 +77,7 @@ public class CodeMsg {
     public static CodeMsg USER_NOT_LOGIN_ERROR_MSG = new CodeMsg(USER_NOT_LOGIN_ERROR, USER_NOT_LOGIN_ERROR_STR);
     public static CodeMsg USER_NOT_FOUND_ERROR_MSG = new CodeMsg(USER_NOT_FOUND_ERROR, USER_NOT_FOUND_ERROR_STR);
     public static CodeMsg USER_NOT_LOGOUT_ERROR_MSG = new CodeMsg(USER_NOT_LOGOUT_ERROR, USER_NOT_LOGOUT_ERROR_STR);
+    public static CodeMsg USER_REGISTER_FAILED_MSG = new CodeMsg(USER_REGISTER_FAILED, USER_REGISTER_FAILED_STR);
 
     // Message error 5004XX
     private static final int SEND_TO_YOURSELF_ERROR = 500400;

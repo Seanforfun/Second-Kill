@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.io.IOException;
 
 /**
  * @author: Seanforfun
@@ -47,10 +48,14 @@ public class UserController {
      * Path re-directory
      */
     @RequestMapping("/tologin")
-    @ResponseBody
-    public ModelAndView toLogin(ModelAndView mv){
-        mv.setViewName("/pages/login.html");
-        return mv;
+    public void toLogin(HttpServletResponse response) throws IOException {
+        // Check if initial admin exists,
+        // if true, go to login page, if false go to initial register.
+        if(userService.hasAdmin()){
+            response.sendRedirect("/static/user/login.htm");
+        }else{
+            response.sendRedirect("/static/user/register.htm");
+        }
     }
 
     @RequestMapping("/toRegister")
@@ -66,10 +71,7 @@ public class UserController {
                                          HttpServletRequest request,
                                          HttpServletResponse response,
                                          ModelAndView mv) throws Exception {
-        if(!StringUtils.isEmpty(cookieToken) || !StringUtils.isEmpty(requestToken)){
-            String token = StringUtils.isEmpty(cookieToken) ? requestToken : cookieToken;
-            loginService.logout(token, session, request, response);
-        }
+        logoutHandler(cookieToken, requestToken, session, request, response);
         mv.setViewName("/pages/forgetpassword.html");
         return mv;
     }
@@ -81,11 +83,17 @@ public class UserController {
                                                 HttpSession session,
                                                 HttpServletRequest request,
                                                 HttpServletResponse response) throws Exception{
+        logoutHandler(cookieToken, requestToken, session, request, response);
+        return Result.success(true);
+    }
+
+    private void logoutHandler(String cookieToken, String requestToken,
+                               HttpSession session,
+                               HttpServletRequest request, HttpServletResponse response) throws Exception {
         if(!StringUtils.isEmpty(cookieToken) || !StringUtils.isEmpty(requestToken)){
             String token = StringUtils.isEmpty(cookieToken) ? requestToken : cookieToken;
             loginService.logout(token, session, request, response);
         }
-        return Result.success(true);
     }
 
     /**
@@ -122,7 +130,7 @@ public class UserController {
         user.setCountry(registerVo.getCountry());
         user.setState(registerVo.getState());
         user.setEmail(registerVo.getEmail());
-        user.setZip(registerVo.getZip());
+        user.setZip(registerVo.getZip().toUpperCase());
         String dbPassword = MD5Utils.httpPassToDbPass(registerVo.getPassword(), user.getSalt());
         user.setPassword(dbPassword);
         registerService.registerUser(user);

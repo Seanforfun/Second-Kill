@@ -2,9 +2,6 @@ package io.seanforfun.seckill.utils;
 
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.omg.CORBA.PUBLIC_MEMBER;
-
-import java.io.File;
 
 /**
  * @author: Seanforfun

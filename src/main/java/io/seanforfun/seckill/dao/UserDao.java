@@ -55,6 +55,10 @@ public interface UserDao {
     @Select("Select id, username, firstname, lastname, email, registertime from user where activated = #{status} " +
             " order by registerTime asc")
     List<User> getAllInactiveUserByStatus(int notActivated);
+
+    @Select("Select count(id) from user where admin = #{admin}")
+    Long getUserNumberByAdmin(@Param("admin") boolean b);
+
     /**
      * Update
      */
@@ -79,7 +83,7 @@ public interface UserDao {
             " (#{id}, #{username}, #{password}, #{salt}, #{admin}, #{country}," +
             " #{state},#{zip}, #{email}, #{activated}, #{registerTime}, " +
             "#{lastLoginTime}, #{lastModifiedTime}, #{firstname}, #{lastname})")
-    void saveRegisterUser(User user);
+    Long saveRegisterUser(User user);
 
     /**
      * Delete

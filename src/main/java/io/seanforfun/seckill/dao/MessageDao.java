@@ -19,10 +19,10 @@ public interface MessageDao {
     /**
      *  Read
      */
-    @Select("Select id, title, msg, sendTime, fromUser, senderName from Message where status = #{status} and toUser = #{toUser}")
+    @Select("Select id, title, msg, sendTime, fromUser, senderName from message where status = #{status} and toUser = #{toUser}")
     List<Message> getMessageByUserIdAndStatus(@Param("toUser") Long id, @Param("status") Integer status);
 
-    @Select("Select id, title, msg, sendTime, fromUser, senderName from Message where id = #{id}")
+    @Select("Select id, title, msg, sendTime, fromUser, senderName from message where id = #{id}")
     Message getMessageById(@Param("id") Long messageId);
 
     /**

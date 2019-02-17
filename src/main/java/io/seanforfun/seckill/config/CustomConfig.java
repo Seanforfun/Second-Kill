@@ -39,7 +39,7 @@ public class CustomConfig implements WebMvcConfigurer {
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/").setViewName("forward:/static/user/login.htm");
+        registry.addViewController("/").setViewName("redirect:/user/tologin");
         registry.setOrder(Ordered.HIGHEST_PRECEDENCE );
     }
 

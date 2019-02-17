@@ -12,6 +12,7 @@ import io.seanforfun.seckill.utils.SnowFlakeUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -60,6 +61,9 @@ public class LocalImageService implements ImageEbi<MultipartFile, Image> {
     @Autowired
     private ImageDao imageDao;
 
+    @Autowired
+    private ObjectFactory<Image> imageFactory;
+
     // Create methods
     @Override
     @Transactional
@@ -77,7 +81,7 @@ public class LocalImageService implements ImageEbi<MultipartFile, Image> {
             throw new GlobalException(CodeMsg.PATH_EMPTY_ERROR_MSG);
         }
         // Set Image detail
-        Image emptyImage = new Image();
+        Image emptyImage = imageFactory.getObject();
         emptyImage.setId(SnowFlakeUtils.getSnowFlakeId());
         emptyImage.setName(name);
         emptyImage.setSource(ImageSource.IMAGE_FROM_LOCAL);

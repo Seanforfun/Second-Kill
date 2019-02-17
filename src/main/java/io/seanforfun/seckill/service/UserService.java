@@ -92,8 +92,7 @@ public class UserService implements UserEbi {
         Long numPerPage = userVo.getNumPerPage();
         Long currentPageNum = userVo.getCurrentPageNum();
         Long currentPageIndex = (currentPageNum - 1) * numPerPage;
-        List<User> users = userDao.getUserListByUserStatus(User.NOT_ACTIVATED, currentPageIndex, userVo.getNumPerPage());
-        return users;
+        return userDao.getUserListByUserStatus(User.NOT_ACTIVATED, currentPageIndex, userVo.getNumPerPage());
     }
 
     @Override
@@ -119,11 +118,14 @@ public class UserService implements UserEbi {
         userDao.updateUserAdminStatus(user.getId(), adminStatus);
         // Step 2: Update redis by id;
         redisService.set(UserKey.getKeyForId, "" + user.getId(), user);
+        // Step 3: Update redis admin number;
+        redisService.inc(UserKey.userNumByAdmin, "" + true);
     }
 
     @Override
     public List<User> getActivatedUserList() {
         List<User> userList = null;
+        userList = redisService.getList(UserKey.activateUserListToken, "", User.class);
         if(userList != null){
             userList = redisGetUserList();
             return userList;
@@ -131,6 +133,17 @@ public class UserService implements UserEbi {
         userList = userDao.getUserListByStatus(User.ACTIVATED);
         redisService.set(UserKey.activateUserListToken, "", userList);
         return userList;
+    }
+
+    @Override
+    public boolean hasAdmin() {
+        Long adminNum;
+        adminNum = redisService.get(UserKey.userNumByAdmin, "" + true, Long.class);
+        if(adminNum == null){
+            adminNum = userDao.getUserNumberByAdmin(true);
+            redisService.set(UserKey.userNumByAdmin, "" + true, adminNum);
+        }
+        return adminNum > 0;
     }
 
     protected void updateUserSession(String token, User user, HttpServletResponse response){
@@ -155,8 +168,7 @@ public class UserService implements UserEbi {
     }
 
     private List<User> redisGetUserList(){
-        List<User> userlist = redisService.get(UserKey.activateUserListToken, "", List.class);
-        return userlist;
+        return redisService.getList(UserKey.activateUserListToken, "", User.class);
     }
 
     /**

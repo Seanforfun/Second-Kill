@@ -100,4 +100,9 @@ public interface UserEbi {
      * @return
      */
     List<User> getActivatedUserList();
+
+    /**
+     * @return If exist user.
+     */
+    boolean hasAdmin();
 }

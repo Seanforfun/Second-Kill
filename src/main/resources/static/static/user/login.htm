@@ -134,6 +134,10 @@
                 },
                 success: function (data) {
                     layer.closeAll();
+                    if (data.code == null || data.code == undefined){
+                        layer.msg("SERVER ERROR");
+                        return;
+                    }
                     if (data.code == 0) {
                         layer.msg("LOGIN SUCCESS, REDIRECTING TO MAIN PAGE");
                         window.location.href="/manage/toManage";

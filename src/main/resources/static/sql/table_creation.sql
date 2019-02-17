@@ -1,5 +1,5 @@
 # TABLE for saving user information
-CREATE TABLE USER (
+CREATE TABLE user (
 	id BIGINT PRIMARY KEY AUTO_INCREMENT NOT NULL,
 	username VARCHAR(100) NOT NULL,
 	firstname VARCHAR(80) NOT NULL,
