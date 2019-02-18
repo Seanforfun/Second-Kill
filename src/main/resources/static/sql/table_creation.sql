@@ -69,5 +69,6 @@ CREATE TABLE image(
 	NAME VARCHAR(255) NOT NULL,
 	source VARCHAR(100) NOT NULL,
 	TYPE VARCHAR(100) NOT NULL,
-	associateId BIGINT NOT NULL
+	associateId BIGINT NOT NULL,
+	deleteHash varchar(50)
 );

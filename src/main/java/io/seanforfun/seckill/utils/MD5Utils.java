@@ -1,7 +1,10 @@
 package io.seanforfun.seckill.utils;
 
 
+import io.seanforfun.seckill.entity.enums.ImageType;
 import org.apache.commons.codec.digest.DigestUtils;
+
+import java.io.File;
 
 /**
  * @author: Seanforfun
@@ -45,7 +48,7 @@ public class MD5Utils {
      * @param len Length of the internal path
      * @return full path name of current image with given token.
      */
-    public static String localImagePath(String name, String token, String path, int len){
+    public static String localImagePath(String name, String token, String path, int len, ImageType imageType){
         String md5Path = md5(token).substring(0, len);
         String separator = File.separator;
         String modifiedPath = path.replace("\\", separator).replace("/", separator) ;
@@ -53,6 +56,8 @@ public class MD5Utils {
         if(!sb.toString().substring(sb.length() - 1, sb.length()).equals(separator)){
             sb.append(separator);
         }
+        sb.append(imageType == ImageType.VEHICLE_IMAGE ? "vehicle": "user");
+        sb.append(separator);
         for(int i = 0; i < len; i++){
             sb.append(md5Path.charAt(i));
             sb.append(separator);

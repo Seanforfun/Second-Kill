@@ -34,6 +34,10 @@ public class CodeMsg {
     private static final String IMAGE_CONTENT_EMPTY_STR = "IMAGE CONTENT EMPTY ERROR";
     private static final int PATH_EMPTY_ERROR = 500104;
     private static final String PATH_EMPTY_ERROR_STR = "PATH EMPTY ERROR";
+    private static final int IMGUR_UPLOAD_IMAGE_ERROR = 500105;
+    private static final String IMGUR_UPLOAD_IMAGE_ERROR_STR = "IMGUR IMAGE UPLOAD ERROR";
+    private static final int JSON_PARSE_INCORRECT_TOKEN = 500106;
+    private static final String JSON_PARSE_INCORRECT_TOKEN_STR = "JSON PARSE KEY ERROR";
 
     public static CodeMsg SUCCESS_MSG = new CodeMsg(SUCCESS, SUCCESS_STR);
     public static CodeMsg SERVER_ERROR_MSG = new CodeMsg(SERVER_ERROR, SERVER_ERROR_STR);
@@ -41,6 +45,8 @@ public class CodeMsg {
     public static CodeMsg IMAGE_NAME_EMPTY_MSG = new CodeMsg(IMAGE_NAME_EMPTY, IMAGE_NAME_EMPTY_STR);
     public static CodeMsg IMAGE_CONTENT_EMPTY_MSG = new CodeMsg(IMAGE_CONTENT_EMPTY, IMAGE_CONTENT_EMPTY_STR);
     public static CodeMsg PATH_EMPTY_ERROR_MSG = new CodeMsg(PATH_EMPTY_ERROR, PATH_EMPTY_ERROR_STR);
+    public static CodeMsg IMGUR_UPLOAD_IMAGE_ERROR_MSG = new CodeMsg(IMGUR_UPLOAD_IMAGE_ERROR, IMGUR_UPLOAD_IMAGE_ERROR_STR);
+    public static CodeMsg JSON_PARSE_INCORRECT_TOKEN_MSG = new CodeMsg(JSON_PARSE_INCORRECT_TOKEN, JSON_PARSE_INCORRECT_TOKEN_STR);
 
     //Redis error 5002XX
     private static final int REDIS_ERROR = 500200;

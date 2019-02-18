@@ -52,7 +52,7 @@ public interface ImageEbi<T, R> {
      * @return
      * @throws Exception
      */
-    R deleteImageByLink(String link) throws Exception;
+    R deleteImage(String link) throws Exception;
 
     /**
      * Delete a set of images by Id.

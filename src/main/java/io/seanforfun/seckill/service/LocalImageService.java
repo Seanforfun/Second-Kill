@@ -8,18 +8,12 @@ import io.seanforfun.seckill.exceptions.GlobalException;
 import io.seanforfun.seckill.result.CodeMsg;
 import io.seanforfun.seckill.service.ebi.ImageEbi;
 import io.seanforfun.seckill.utils.MD5Utils;
-import io.seanforfun.seckill.utils.SnowFlakeUtils;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -46,7 +40,7 @@ import java.util.concurrent.Future;
 @Service
 @Configuration
 @PropertySource(value = "classpath:/properties/image.properties")
-public class LocalImageService implements ImageEbi<MultipartFile, Image> {
+public class LocalImageService extends AbstractImageService implements ImageEbi<MultipartFile, Image> {
 
     @Value("${image.local.path}")
     @Getter
@@ -61,34 +55,18 @@ public class LocalImageService implements ImageEbi<MultipartFile, Image> {
     @Autowired
     private ImageDao imageDao;
 
-    @Autowired
-    private ObjectFactory<Image> imageFactory;
-
     // Create methods
     @Override
     @Transactional
     public Image uploadImage(MultipartFile image, ImageType imageType, Long associateId) throws Exception {
         // Check parameters
         String name = image.getName();
-        if(StringUtils.isEmpty(name)){
-            throw new GlobalException(CodeMsg.IMAGE_NAME_EMPTY_MSG);
-        }
         byte[] imageBytes = image.getBytes();
-        if(imageBytes == null || imageBytes.length == 0){
-            throw new GlobalException(CodeMsg.IMAGE_CONTENT_EMPTY_MSG);
-        }
-        if(StringUtils.isEmpty(path)){
-            throw new GlobalException(CodeMsg.PATH_EMPTY_ERROR_MSG);
-        }
+        checkImage(name, path, imageBytes);
         // Set Image detail
-        Image emptyImage = imageFactory.getObject();
-        emptyImage.setId(SnowFlakeUtils.getSnowFlakeId());
-        emptyImage.setName(name);
-        emptyImage.setSource(ImageSource.IMAGE_FROM_LOCAL);
-        emptyImage.setImageByte(imageBytes);
-        emptyImage.setType(imageType);
-        emptyImage.setAssociateId(associateId);
-        emptyImage.setLink(MD5Utils.localImagePath(name, "" + emptyImage.getId(), path, dictNum));
+        Image emptyImage = getInitializedImage(name, ImageSource.IMAGE_FROM_LOCAL,
+                imageBytes, imageType, associateId);
+        emptyImage.setLink(MD5Utils.localImagePath(name, "" + emptyImage.getId(), path, dictNum, ImageType.VEHICLE_IMAGE));
 
         //Save Image to file system
         String link = emptyImage.getLink();
@@ -148,11 +126,12 @@ public class LocalImageService implements ImageEbi<MultipartFile, Image> {
     }
 
     @Override
-    public Image deleteImageByLink(String link) throws Exception {
+    public Image deleteImage(String link) throws Exception {
         File imageFile = new File(link);
         if(imageFile.exists()){
             imageFile.delete();
         }
+        imageDao.deleteImageByLink(link);
         return null;
     }
 
@@ -164,7 +143,7 @@ public class LocalImageService implements ImageEbi<MultipartFile, Image> {
     @Override
     public Image deleteImagesByLink(Collection<String> links) throws Exception {
         for(String link : links){
-            deleteImageByLink(link);
+            deleteImage(link);
         }
         return null;
     }

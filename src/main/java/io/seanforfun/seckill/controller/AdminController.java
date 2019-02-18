@@ -1,15 +1,12 @@
 package io.seanforfun.seckill.controller;
 
-import io.seanforfun.seckill.config.ConfigBean;
 import io.seanforfun.seckill.config.annotations.Access;
 import io.seanforfun.seckill.entity.domain.Message;
 import io.seanforfun.seckill.entity.domain.User;
 import io.seanforfun.seckill.entity.vo.UserVo;
-import io.seanforfun.seckill.service.AdminService;
 import io.seanforfun.seckill.service.ebi.AdminEbi;
 import io.seanforfun.seckill.service.ebi.UserEbi;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;

@@ -484,7 +484,6 @@
 
 </body>
 <script type="text/javascript">
-    var curFiles = [];
 
     function blockRender() {
         $("#meta").load("/static/meta.htm");
@@ -493,29 +492,16 @@
         $("#logout").load("/static/logout.htm");
         $("#jsinclude").load("/static/jsinclude.htm");
         $("#upload").on("change", function () {
-            curFiles = [];
+            $("#filenames").empty();
             var files = this.files;
             for (var i = 0; i < files.length; i++){
                 var file = files[i];
                 var filename = file.name;
                 var id = filename.replace(".", "");
-                var fileDiv = '<div class="row" id="'+ id +'"><div class="col-md-4 mb-2">'+ filename +'</div><div class="col-md-4 mb-2"><button value="'+ filename +'" type="button" class="file-remove btn-xs btn-outline-danger">Remove</button></div></div>';
+                var fileDiv = '<div class="row" id="'+ id +'"><div class="col-md-4 mb-2">'+ filename +'</div></div>';
                 $("#filenames").append($(fileDiv));
             }
         });
-        $("#filenames").on("click", ".file-remove", function () {
-            var filename = $(this).val();
-            var id = filename.replace(".", "");
-            $("#" + id).remove();
-            var files = document.getElementById("upload").files;
-            if (files && files.length) {
-                Array.prototype.push.apply(curFiles, files);
-            }
-            curFiles = curFiles.filter(function(file) {
-                return file.name !== filename;
-            });
-            alert(curFiles.length);
-        })
     }
 
     $(function () {

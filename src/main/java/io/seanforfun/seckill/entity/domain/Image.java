@@ -2,7 +2,6 @@ package io.seanforfun.seckill.entity.domain;
 
 import io.seanforfun.seckill.entity.enums.ImageSource;
 import io.seanforfun.seckill.entity.enums.ImageType;
-import io.seanforfun.seckill.utils.MD5Utils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -29,4 +28,5 @@ public class Image {
     private ImageSource source;
     private ImageType type;
     private Long associateId;
+    private String deleteHash;
 }
