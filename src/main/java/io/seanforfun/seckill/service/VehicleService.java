@@ -1,5 +1,6 @@
 package io.seanforfun.seckill.service;
 
+import io.nayuki.qrcodegen.QrCode;
 import io.seanforfun.seckill.dao.VehicleDao;
 import io.seanforfun.seckill.entity.domain.Image;
 import io.seanforfun.seckill.entity.domain.Vehicle;
@@ -11,11 +12,23 @@ import io.seanforfun.seckill.result.CodeMsg;
 import io.seanforfun.seckill.service.ebi.ImageEbi;
 import io.seanforfun.seckill.service.ebi.VehicleEbi;
 import io.seanforfun.seckill.utils.SnowFlakeUtils;
+import org.omg.CORBA.PRIVATE_MEMBER;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -34,7 +47,11 @@ public class VehicleService implements VehicleEbi {
     private VehicleDao vehicleDao;
 
     @Autowired
-    private ImageEbi localImageService;
+    @Qualifier("imgurService")
+    private ImageEbi imageService;
+
+    @Autowired
+    private ServerProperties serverProperties;
 
     @Override
     public Long getInstockVehicleNumber() {
@@ -71,7 +88,7 @@ public class VehicleService implements VehicleEbi {
         // Need to find a image database for saving all images, for example S3, imgur, local
         // Step 1: Save images to S3, and get the reference.
         // Step 2: Save image info to database.
-        List<Image> images = localImageService.uploadImages(imageMap.values(), ImageType.VEHICLE_IMAGE, vehicleDetail.getId());
+        List<Image> images = imageService.uploadImages(imageMap.values(), ImageType.VEHICLE_IMAGE, vehicleDetail.getId());
         if(images == null || images.size() == 0){
             throw new GlobalException(CodeMsg.NO_VEHICLE_IMAGE_SAVED_ERROR_MSG);
         }
@@ -80,10 +97,39 @@ public class VehicleService implements VehicleEbi {
             vehicleDao.saveVehicleDetail(vehicleDetail);
         }catch (Exception e){
             // Step 1: Roll back for images.
-            List<String> imageLinkes = images.stream().map(Image::getLink).collect(Collectors.toList());
-            localImageService.deleteImagesByLink(imageLinkes);
+            imageService.deleteImages(images);
             // Step 2: Throw the exception for transaction.
             throw e;
         }
+    }
+
+    private String createQRCodeHttpRequest(Long id){
+        return "http://" + serverProperties.getAddress() + ":" + serverProperties.getPort() + "/vehicle/qr/" + id;
+    }
+
+    @Override
+    public byte[] getQrCodeById(Long id) throws IOException {
+        String qrText = createQRCodeHttpRequest(id);
+        // Up to 30 % error correction.
+        QrCode.Ecc ecc = QrCode.Ecc.HIGH;
+        QrCode qrCode = QrCode.encodeText(qrText, ecc);
+        BufferedImage bufferedImage = qrCode.toImage(20, 10);
+        ByteArrayOutputStream byteArrayOutputStream = null;
+        try {
+            byteArrayOutputStream = new ByteArrayOutputStream();
+            ImageIO.write(bufferedImage, "png", byteArrayOutputStream);
+            // Release the stream.
+            byte[] resBytes = byteArrayOutputStream.toByteArray();
+            return resBytes;
+        }finally {
+            if(byteArrayOutputStream != null){
+                byteArrayOutputStream.close();
+            }
+        }
+    }
+
+    @Override
+    public VehicleDetail getQRVehicleById(Long id) {
+        return null;
     }
 }

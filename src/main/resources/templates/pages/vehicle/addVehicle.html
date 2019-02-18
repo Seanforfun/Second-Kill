@@ -516,6 +516,7 @@
     });
 
     function saveVehicle() {
+        g_showLoading();
         var formData = new FormData();
         var make = $("#make").val();
         formData.append("make", make);
@@ -562,10 +563,12 @@
                 var iDot = filename.lastIndexOf(".");
                 var type = filename.substring(iDot + 1);
                 if(!suffixs.includes(type)){
+                    layer.closeAll();
                     layer.msg(filename + " IS NOT A IMAGE FILE");
                     return;
                 }
                 if(file.size > IMAGE_MAX_SIZE){
+                    layer.closeAll();
                     layer.msg("SINGLE IMAGE CANNOT EXCEED 4 MB");
                     return;
                 }
@@ -582,10 +585,19 @@
             mimeType: "multipart/form-data",
             data: formData,
             success: function (data) {
-                alert("success");
+                layer.closeAll();
+                if(data.code == 0){
+                    // show current car information.
+                    // TODO
+                    alert("success")
+                }else{
+                    layer.msg(data.msg);
+                    window.location.reload();
+                }
             },
             error: function (data) {
-                alert("error");
+                layer.closeAll();
+                window.location.href = "/static/error/404.htm";
             }
         })
     }

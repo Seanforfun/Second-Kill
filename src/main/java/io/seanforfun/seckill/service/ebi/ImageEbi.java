@@ -1,5 +1,6 @@
 package io.seanforfun.seckill.service.ebi;
 
+import io.seanforfun.seckill.entity.domain.Image;
 import io.seanforfun.seckill.entity.enums.ImageType;
 
 import java.util.Collection;
@@ -41,31 +42,15 @@ public interface ImageEbi<T, R> {
 
     /**
      * Delete a images in third party server.
-     * @param id
+     * @param image
      * @return
      */
-    R deleteImage(Long id) throws Exception;
-
-    /**
-     * Delete saved image according to linl
-     * @param link
-     * @return
-     * @throws Exception
-     */
-    R deleteImage(String link) throws Exception;
+    R deleteImage(Image image) throws Exception;
 
     /**
      * Delete a set of images by Id.
-     * @param imageIds
+     * @param images
      * @return
      */
-    R deleteImages(Collection<Long> imageIds) throws Exception;
-
-    /**
-     * Delete all saveImages by link
-     * @param links
-     * @return
-     * @throws Exception
-     */
-    R deleteImagesByLink(Collection<String> links) throws Exception;
+    void deleteImages(Collection<Image> images) throws Exception;
 }

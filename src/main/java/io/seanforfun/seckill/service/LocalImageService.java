@@ -28,6 +28,8 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Future;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * @author: Seanforfun
@@ -121,12 +123,15 @@ public class LocalImageService extends AbstractImageService implements ImageEbi<
 
     //Deletion methods
     @Override
-    public Image deleteImage(Long id) throws Exception {
-        return null;
+    public Image deleteImage(Image image) throws Exception {
+        if(image == null || image.getLink() == null){
+            throw new NullPointerException();
+        }
+        String link = image.getLink();
+        return deleteImage(link);
     }
 
-    @Override
-    public Image deleteImage(String link) throws Exception {
+    private Image deleteImage(String link) throws Exception {
         File imageFile = new File(link);
         if(imageFile.exists()){
             imageFile.delete();
@@ -136,16 +141,21 @@ public class LocalImageService extends AbstractImageService implements ImageEbi<
     }
 
     @Override
-    public Image deleteImages(Collection<Long> imagesId) throws Exception {
-        return null;
+    public void deleteImages(Collection<Image> images) throws Exception {
+        List<String> links = images.stream().map(Image::getLink).collect(Collectors.toList());
+        deleteImagesByLink(links);
     }
 
-    @Override
-    public Image deleteImagesByLink(Collection<String> links) throws Exception {
+    /**
+     * Delete all saveImages by link
+     * @param links
+     * @return
+     * @throws Exception
+     */
+    private void deleteImagesByLink(Collection<String> links) throws Exception {
         for(String link : links){
             deleteImage(link);
         }
-        return null;
     }
 }
 

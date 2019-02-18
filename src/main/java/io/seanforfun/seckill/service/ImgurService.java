@@ -8,17 +8,13 @@ import io.seanforfun.seckill.exceptions.GlobalException;
 import io.seanforfun.seckill.result.CodeMsg;
 import io.seanforfun.seckill.service.ebi.ImageEbi;
 import io.seanforfun.seckill.utils.JsonUtils;
-import io.seanforfun.seckill.utils.SnowFlakeUtils;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.*;
-import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -26,6 +22,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -53,7 +50,6 @@ public class ImgurService extends AbstractImageService implements ImageEbi<Multi
         Image emptyImage = getInitializedImage(name, ImageSource.IMAGE_FROM_IMGUR,
                 imageBytes, imageType, associateId);
         // Upload Image to imgur.
-        // TODO Need to finish this part.
         /**
          * request:
          * curl --location --request POST "https://api.imgur.com/3/image" \
@@ -95,11 +91,11 @@ public class ImgurService extends AbstractImageService implements ImageEbi<Multi
          }
          */
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.add("Authorization: Client-ID", clientId);
-        MultiValueMap<String, Byte[]> map= new LinkedMultiValueMap<>();
-        map.add("image", ArrayUtils.toObject(Base64.encodeBase64(multipartFile.getBytes())));
-        HttpEntity<MultiValueMap<String, Byte[]>> request = new HttpEntity<>(map, headers);
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        headers.add("Authorization", "Client-ID " + clientId);
+        MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
+        map.add("image", new String(Base64.encodeBase64(multipartFile.getBytes())));
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
         ResponseEntity<String> responseEntity = restTemplate.postForEntity("https://api.imgur.com/3/image", request, String.class);
         if(responseEntity.getStatusCode() != HttpStatus.OK){
             throw new GlobalException(CodeMsg.IMGUR_UPLOAD_IMAGE_ERROR_MSG);
@@ -120,7 +116,15 @@ public class ImgurService extends AbstractImageService implements ImageEbi<Multi
 
     @Override
     public List<Image> uploadImages(Collection<MultipartFile> images, ImageType imageType, Long associateId) throws Exception {
-        return null;
+        List<Image> result = null;
+        for(MultipartFile image : images){
+            Image singleImage = uploadImage(image, imageType, associateId);
+            if(result == null){
+                result = new LinkedList<>();
+            }
+            result.add(singleImage);
+        }
+        return result;
     }
 
     @Override
@@ -129,27 +133,48 @@ public class ImgurService extends AbstractImageService implements ImageEbi<Multi
     }
 
     @Override
-    public Image deleteImage(Long id) throws Exception {
-        return null;
+    public Image deleteImage(Image image) throws Exception {
+        if(image != null && image.getSource() == ImageSource.IMAGE_FROM_IMGUR){
+            String deleteHash = image.getDeleteHash();
+            deleteImageFromImgurByDeleteHash(deleteHash);
+        }
+        return image;
     }
 
     @Override
-    public Image deleteImage(String link) throws Exception {
-        return null;
+    public void deleteImages(Collection<Image> images) throws Exception {
+        for(Image image : images){
+            deleteImage(image);
+        }
     }
 
-    @Override
-    public Image deleteImages(Collection<Long> imageIds) throws Exception {
-        return null;
-    }
-
-    @Override
-    public Image deleteImagesByLink(Collection<String> links) throws Exception {
-        return null;
+    /**
+     * Use delete hash to delete image on Imgur.
+     * curl --location --request DELETE "https://api.imgur.com/3/image/{{imageDeleteHash}}" \
+     *   --header "Authorization: Client-ID {{clientId}}"
+     * @param deleteHash
+     */
+    private void deleteImageFromImgurByDeleteHash(String deleteHash){
+        if(deleteHash == null || deleteHash.length() == 0){
+            throw new GlobalException(CodeMsg.IMGUR_DELETE_IMAGE_ERROR_MSG);
+        }
+        // Delete image from imgur by using deleteHash.
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Authorization", "Client-ID " + clientId);
+        HttpEntity<Object> request = new HttpEntity<>(headers);
+        ResponseEntity<String> deleteResponse = restTemplate.exchange("https://api.imgur.com/3/image/" + deleteHash, HttpMethod.DELETE, request, String.class);
+        if(deleteResponse.getStatusCode() != HttpStatus.OK){
+            throw  new GlobalException(CodeMsg.IMGUR_DELETE_IMAGE_ERROR_MSG);
+        }
+        String json = deleteResponse.getBody();
+        Boolean success = JsonUtils.get(json, "success", Boolean.class);
+        if(!success){
+            throw  new GlobalException(CodeMsg.IMGUR_DELETE_IMAGE_ERROR_MSG);
+        }
     }
 
     @Bean
-    public RestTemplate postTemplate(){
+    public RestTemplate restTemplate(){
         return new RestTemplate();
     }
 }
