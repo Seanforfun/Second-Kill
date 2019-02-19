@@ -24,12 +24,7 @@ import java.nio.channels.AsynchronousFileChannel;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.Future;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 /**
  * @author: Seanforfun
@@ -104,58 +99,24 @@ public class LocalImageService extends AbstractImageService implements ImageEbi<
         return emptyImage;
     }
 
-    @Override
-    @Transactional
-    public List<Image> uploadImages(Collection<MultipartFile> images, ImageType imageType, Long associateId) throws Exception {
-        List<Image> imagesList = new LinkedList<>();
-        for(MultipartFile image : images){
-            Image singleImage = uploadImage(image, imageType, associateId);
-            imagesList.add(singleImage);
-        }
-        return imagesList;
-    }
-
-    // Read methods
-    @Override
-    public Image getImage(String link) throws Exception {
-        return null;
-    }
-
     //Deletion methods
     @Override
+    @Transactional
     public Image deleteImage(Image image) throws Exception {
         if(image == null || image.getLink() == null){
             throw new NullPointerException();
         }
         String link = image.getLink();
-        return deleteImage(link);
+        return deleteImage(link, image.getId());
     }
 
-    private Image deleteImage(String link) throws Exception {
+    private Image deleteImage(String link, Long id) throws Exception {
         File imageFile = new File(link);
         if(imageFile.exists()){
             imageFile.delete();
         }
-        imageDao.deleteImageByLink(link);
+        imageDao.updateImageExistById(id,Image.IMAGE_NOT_EXIST);
         return null;
-    }
-
-    @Override
-    public void deleteImages(Collection<Image> images) throws Exception {
-        List<String> links = images.stream().map(Image::getLink).collect(Collectors.toList());
-        deleteImagesByLink(links);
-    }
-
-    /**
-     * Delete all saveImages by link
-     * @param links
-     * @return
-     * @throws Exception
-     */
-    private void deleteImagesByLink(Collection<String> links) throws Exception {
-        for(String link : links){
-            deleteImage(link);
-        }
     }
 }
 

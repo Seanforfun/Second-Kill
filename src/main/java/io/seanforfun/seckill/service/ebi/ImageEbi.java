@@ -33,12 +33,13 @@ public interface ImageEbi<T, R> {
     List<R> uploadImages(Collection<T> images, ImageType imageType, Long associateId) throws Exception;
 
     /**
-     * Get Image from link.
-     * @param link
+     * Get Image from id.
+     * @param id
      * @return
      * @throws Exception
      */
-    R getImage(String link) throws Exception;
+    R getImage(Long id) throws Exception;
+
 
     /**
      * Delete a images in third party server.

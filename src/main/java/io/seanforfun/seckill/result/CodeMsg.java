@@ -40,6 +40,10 @@ public class CodeMsg {
     private static final String IMGUR_DELETE_IMAGE_ERROR_STR = "IMGUR DELETE IMAGE ERROR";
     private static final int JSON_PARSE_INCORRECT_TOKEN = 500106;
     private static final String JSON_PARSE_INCORRECT_TOKEN_STR = "JSON PARSE KEY ERROR";
+    private static final int AWS_BUCKET_DUPLICATE_NAME = 500108;
+    private static final String AWS_BUCKET_DUPLICATE_NAME_STR = "DUPLICATE BUCKET NAME ERROR, PLEASE CHANGE YOUR BUCKET NAME FOR %s";
+    private static final int AWS_FILE_UPLOAD_FAILED = 500109;
+    private static final String AWS_FILE_UPLOAD_FAILED_STR = "AWS S3 UPLOAD FAILED";
 
     public static CodeMsg SUCCESS_MSG = new CodeMsg(SUCCESS, SUCCESS_STR);
     public static CodeMsg SERVER_ERROR_MSG = new CodeMsg(SERVER_ERROR, SERVER_ERROR_STR);
@@ -50,6 +54,8 @@ public class CodeMsg {
     public static CodeMsg IMGUR_UPLOAD_IMAGE_ERROR_MSG = new CodeMsg(IMGUR_UPLOAD_IMAGE_ERROR, IMGUR_UPLOAD_IMAGE_ERROR_STR);
     public static CodeMsg JSON_PARSE_INCORRECT_TOKEN_MSG = new CodeMsg(JSON_PARSE_INCORRECT_TOKEN, JSON_PARSE_INCORRECT_TOKEN_STR);
     public static CodeMsg IMGUR_DELETE_IMAGE_ERROR_MSG = new CodeMsg(IMGUR_DELETE_IMAGE_ERROR, IMGUR_DELETE_IMAGE_ERROR_STR);
+    public static CodeMsg AWS_BUCKET_DUPLICATE_NAME_MSG = new CodeMsg(AWS_BUCKET_DUPLICATE_NAME, AWS_BUCKET_DUPLICATE_NAME_STR);
+    public static CodeMsg AWS_FILE_UPLOAD_FAILED_MSG = new CodeMsg(AWS_FILE_UPLOAD_FAILED, AWS_FILE_UPLOAD_FAILED_STR);
 
     //Redis error 5002XX
     private static final int REDIS_ERROR = 500200;

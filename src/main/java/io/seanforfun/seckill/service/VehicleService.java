@@ -12,7 +12,6 @@ import io.seanforfun.seckill.result.CodeMsg;
 import io.seanforfun.seckill.service.ebi.ImageEbi;
 import io.seanforfun.seckill.service.ebi.VehicleEbi;
 import io.seanforfun.seckill.utils.SnowFlakeUtils;
-import org.omg.CORBA.PRIVATE_MEMBER;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -88,16 +87,19 @@ public class VehicleService implements VehicleEbi {
         // Need to find a image database for saving all images, for example S3, imgur, local
         // Step 1: Save images to S3, and get the reference.
         // Step 2: Save image info to database.
-        List<Image> images = imageService.uploadImages(imageMap.values(), ImageType.VEHICLE_IMAGE, vehicleDetail.getId());
-        if(images == null || images.size() == 0){
-            throw new GlobalException(CodeMsg.NO_VEHICLE_IMAGE_SAVED_ERROR_MSG);
-        }
+        List<Image> images = null;
         try {
+            images = imageService.uploadImages(imageMap.values(), ImageType.VEHICLE_IMAGE, vehicleDetail.getId());
+            if(images == null || images.size() == 0){
+                throw new GlobalException(CodeMsg.NO_VEHICLE_IMAGE_SAVED_ERROR_MSG);
+            }
             vehicleDao.saveVehicle(vehicleDetail);
             vehicleDao.saveVehicleDetail(vehicleDetail);
         }catch (Exception e){
             // Step 1: Roll back for images.
-            imageService.deleteImages(images);
+            if(images != null){
+                imageService.deleteImages(images);
+            }
             // Step 2: Throw the exception for transaction.
             throw e;
         }

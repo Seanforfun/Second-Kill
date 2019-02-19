@@ -21,12 +21,15 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 public class Image {
+    public static Integer IMAGE_EXIST = 0;
+    public static Integer IMAGE_NOT_EXIST = 1;
+
     private Long id;
     private String link;
-    private byte[] ImageByte;
     private String name;
     private ImageSource source;
     private ImageType type;
     private Long associateId;
     private String deleteHash;
+    private Integer exist;
 }

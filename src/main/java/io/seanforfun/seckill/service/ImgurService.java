@@ -21,10 +21,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
 @Service
 @Configuration
 @PropertySource(value = "classpath:/properties/image.properties")
@@ -115,37 +111,13 @@ public class ImgurService extends AbstractImageService implements ImageEbi<Multi
     }
 
     @Override
-    public List<Image> uploadImages(Collection<MultipartFile> images, ImageType imageType, Long associateId) throws Exception {
-        List<Image> result = null;
-        for(MultipartFile image : images){
-            Image singleImage = uploadImage(image, imageType, associateId);
-            if(result == null){
-                result = new LinkedList<>();
-            }
-            result.add(singleImage);
-        }
-        return result;
-    }
-
-    @Override
-    public Image getImage(String link) throws Exception {
-        return null;
-    }
-
-    @Override
     public Image deleteImage(Image image) throws Exception {
         if(image != null && image.getSource() == ImageSource.IMAGE_FROM_IMGUR){
             String deleteHash = image.getDeleteHash();
             deleteImageFromImgurByDeleteHash(deleteHash);
+            imageDao.updateImageExistById(image.getId(), Image.IMAGE_NOT_EXIST);
         }
         return image;
-    }
-
-    @Override
-    public void deleteImages(Collection<Image> images) throws Exception {
-        for(Image image : images){
-            deleteImage(image);
-        }
     }
 
     /**

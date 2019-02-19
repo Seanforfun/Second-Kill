@@ -1,10 +1,7 @@
 package io.seanforfun.seckill.dao;
 
 import io.seanforfun.seckill.entity.domain.Image;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -24,10 +21,15 @@ public interface ImageDao {
     void saveImageInfo(Image image);
 
     // Load image information.
+    @Select("Select (id, link, name, source, type, associateId, deleteHash) from Image where id = #{id}")
+    Image getImageById(@Param("id") Long id);
 
     // Update image information.
+    @Update("Update Image set exist = #{exist} where id = #{id}")
+    void updateImageExistById(@Param("id") Long id, @Param("exist") Integer exist);
 
     // Delete image information.
     @Delete("Delete from Image where link = #{link}")
     void deleteImageByLink(@Param("link") String link);
+
 }
