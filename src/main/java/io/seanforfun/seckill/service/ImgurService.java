@@ -21,6 +21,13 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Objects;
+
 @Service
 @Configuration
 @PropertySource(value = "classpath:/properties/image.properties")
@@ -38,6 +45,7 @@ public class ImgurService extends AbstractImageService implements ImageEbi<Multi
     @Autowired
     private ImageDao imageDao;
 
+    //Save method
     @Override
     public Image uploadImage(MultipartFile multipartFile, ImageType imageType, Long associateId) throws Exception {
         // Set initial Image information.
@@ -110,6 +118,20 @@ public class ImgurService extends AbstractImageService implements ImageEbi<Multi
         return emptyImage;
     }
 
+    // Get method
+    @Override
+    public String getBase64String(Image image) throws IOException {
+        // Step 1: Get available link string from image object.
+        String link = getLinkFromImage(image, ImageSource.IMAGE_FROM_IMGUR);
+        String suffix = link.substring(link.lastIndexOf('.') + 1);
+        //Step 2: Get image from link.
+        BufferedImage bufferedImage = ImageIO.read(new URL(link));
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        ImageIO.write(bufferedImage, suffix, os);
+        return Base64.encodeBase64String(os.toByteArray());
+    }
+
+    //Delete method
     @Override
     public Image deleteImage(Image image) throws Exception {
         if(image != null && image.getSource() == ImageSource.IMAGE_FROM_IMGUR){

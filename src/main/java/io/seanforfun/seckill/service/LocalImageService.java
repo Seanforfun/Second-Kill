@@ -10,6 +10,7 @@ import io.seanforfun.seckill.service.ebi.ImageEbi;
 import io.seanforfun.seckill.utils.MD5Utils;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -19,8 +20,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousFileChannel;
+import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -83,6 +87,7 @@ public class LocalImageService extends AbstractImageService implements ImageEbi<
         AsynchronousFileChannel imageChannel = null;
         try {
             imageChannel = AsynchronousFileChannel.open(imagePath, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
+            //TODO Bug, what if length is bigger than Integer.MAX_VALUE
             ByteBuffer imageBuffer = ByteBuffer.allocate(imageBytes.length);
             imageBuffer.put(imageBytes);
             imageBuffer.flip();
@@ -97,6 +102,29 @@ public class LocalImageService extends AbstractImageService implements ImageEbi<
             }
         }
         return emptyImage;
+    }
+
+    //Get method
+    @Override
+    public String getBase64String(Image image) throws IOException {
+        // Step 1: Get link
+       String link = getLinkFromImage(image, ImageSource.IMAGE_FROM_LOCAL);
+        // Step 2: Save image as byte array from local file system.
+        RandomAccessFile file = null;
+        FileChannel channel = null;
+        try {
+            file = new RandomAccessFile(link, "r");
+            // Image size is not able to bigger than 2047GB.
+            int byteNum = (int)file.length();
+            ByteBuffer byteBuffer = ByteBuffer.allocate(byteNum);
+            channel = file.getChannel();
+            channel.read(byteBuffer);
+            byte[] array = byteBuffer.array();
+            return Base64.encodeBase64String(array);
+        } finally {
+            if(file != null) file.close();
+            if(channel != null) channel.close();
+        }
     }
 
     //Deletion methods

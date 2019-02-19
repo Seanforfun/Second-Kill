@@ -46,7 +46,7 @@ public class VehicleService implements VehicleEbi {
     private VehicleDao vehicleDao;
 
     @Autowired
-    @Qualifier("imgurService")
+    @Qualifier("awsS3ImageService")
     private ImageEbi imageService;
 
     @Autowired

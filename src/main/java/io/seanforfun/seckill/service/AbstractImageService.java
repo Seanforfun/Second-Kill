@@ -56,6 +56,20 @@ public abstract class AbstractImageService implements ImageEbi<MultipartFile, Im
         return emptyImage;
     }
 
+    protected String getLinkFromImage(Image image, ImageSource imageSource){
+        if(image == null){
+            throw new NullPointerException();
+        }
+        if(image.getSource() != imageSource){
+            throw new GlobalException(CodeMsg.GET_IMAGE_SOURCE_ERROR_MSG);
+        }
+        String link = image.getLink();
+        if(link == null || StringUtils.isEmpty(link)){
+            throw new GlobalException(CodeMsg.INVALID_IMAGE_MSG);
+        }
+        return link;
+    }
+
     @Override
     @Transactional
     public List<Image> uploadImages(Collection<MultipartFile> images, ImageType imageType, Long associateId) throws Exception {

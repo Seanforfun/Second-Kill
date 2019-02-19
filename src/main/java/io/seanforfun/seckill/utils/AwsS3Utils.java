@@ -28,7 +28,7 @@ public class AwsS3Utils {
      */
     public static void createBucket(AmazonS3 client, String bucketName, String awsRegion){
         if(!client.doesBucketExistV2(bucketName)){
-            // TODO, Need to file the specified error.
+            // TODO, Need to fill the specified error.
             throw new GlobalException(CodeMsg.AWS_BUCKET_DUPLICATE_NAME_MSG);
         }else{
             if(awsRegion == null){

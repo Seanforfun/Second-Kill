@@ -44,6 +44,12 @@ public class CodeMsg {
     private static final String AWS_BUCKET_DUPLICATE_NAME_STR = "DUPLICATE BUCKET NAME ERROR, PLEASE CHANGE YOUR BUCKET NAME FOR %s";
     private static final int AWS_FILE_UPLOAD_FAILED = 500109;
     private static final String AWS_FILE_UPLOAD_FAILED_STR = "AWS S3 UPLOAD FAILED";
+    private static final int GET_IMAGE_SOURCE_ERROR = 500110;
+    private static final String GET_IMAGE_SOURCE_ERROR_STR = "GET IMAGE FROM WRONG SOURCE";
+    private static final int INVALID_IMAGE = 500111;
+    private static final String INVALID_IMAGE_STR = "INVALID IMAGE";
+    private static final int GET_IMAGE_BYTE_ERROR = 500112;
+    private static final String GET_IMAGE_BYTE_ERROR_STR = "GET IMAGE BYTE ERROR";
 
     public static CodeMsg SUCCESS_MSG = new CodeMsg(SUCCESS, SUCCESS_STR);
     public static CodeMsg SERVER_ERROR_MSG = new CodeMsg(SERVER_ERROR, SERVER_ERROR_STR);
@@ -54,8 +60,12 @@ public class CodeMsg {
     public static CodeMsg IMGUR_UPLOAD_IMAGE_ERROR_MSG = new CodeMsg(IMGUR_UPLOAD_IMAGE_ERROR, IMGUR_UPLOAD_IMAGE_ERROR_STR);
     public static CodeMsg JSON_PARSE_INCORRECT_TOKEN_MSG = new CodeMsg(JSON_PARSE_INCORRECT_TOKEN, JSON_PARSE_INCORRECT_TOKEN_STR);
     public static CodeMsg IMGUR_DELETE_IMAGE_ERROR_MSG = new CodeMsg(IMGUR_DELETE_IMAGE_ERROR, IMGUR_DELETE_IMAGE_ERROR_STR);
+    // TODO Need to fill the arguments.
     public static CodeMsg AWS_BUCKET_DUPLICATE_NAME_MSG = new CodeMsg(AWS_BUCKET_DUPLICATE_NAME, AWS_BUCKET_DUPLICATE_NAME_STR);
     public static CodeMsg AWS_FILE_UPLOAD_FAILED_MSG = new CodeMsg(AWS_FILE_UPLOAD_FAILED, AWS_FILE_UPLOAD_FAILED_STR);
+    public static CodeMsg GET_IMAGE_SOURCE_ERROR_MSG = new CodeMsg(GET_IMAGE_SOURCE_ERROR, GET_IMAGE_SOURCE_ERROR_STR);
+    public static CodeMsg INVALID_IMAGE_MSG = new CodeMsg(INVALID_IMAGE, INVALID_IMAGE_STR);
+    public static CodeMsg GET_IMAGE_BYTE_ERROR_MSG = new CodeMsg(GET_IMAGE_BYTE_ERROR, GET_IMAGE_BYTE_ERROR_STR);
 
     //Redis error 5002XX
     private static final int REDIS_ERROR = 500200;

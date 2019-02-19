@@ -1,10 +1,7 @@
 package io.seanforfun.seckill.service;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.DeleteObjectRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.*;
 import io.seanforfun.seckill.dao.ImageDao;
 import io.seanforfun.seckill.entity.domain.Image;
 import io.seanforfun.seckill.entity.enums.ImageSource;
@@ -20,7 +17,9 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.InputStream;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
 
 /**
  * @author: Seanforfun
@@ -49,6 +48,7 @@ public class AwsS3ImageService extends AbstractImageService implements ImageEbi<
     @Autowired
     private ImageDao imageDao;
 
+    // Add image
     @Override
     public Image uploadImage(MultipartFile file, ImageType imageType, Long associateId) throws Exception {
         // Step 1: Get initialized message instance.
@@ -66,6 +66,7 @@ public class AwsS3ImageService extends AbstractImageService implements ImageEbi<
             client.putObject(new PutObjectRequest(bucketName, "" + image.getId(), is, meta)
                     .withCannedAcl(CannedAccessControlList.Private));
         } catch (Exception e){
+            e.printStackTrace();
             throw new GlobalException(CodeMsg.AWS_FILE_UPLOAD_FAILED_MSG);
         }finally {
             if(is != null){
@@ -80,6 +81,31 @@ public class AwsS3ImageService extends AbstractImageService implements ImageEbi<
         return image;
     }
 
+    // Get image
+    @Override
+    // TODO bug here.
+    public String getBase64String(Image image) throws IOException {
+        String bucketName = image.getType() == ImageType.VEHICLE_IMAGE ? vehicleBucketName : userBucketName;
+        S3Object response = client.getObject(new GetObjectRequest(bucketName, "" + image.getId()));
+        InputStream content = response.getObjectContent();
+        File file = new File("F:\\upload\\aws.png");
+        OutputStream os = new FileOutputStream(file);
+        int contentLength = (int)response.getObjectMetadata().getContentLength();
+        byte[] imageByte = new byte[1024];
+        int sum = 0;
+        int load = 0;
+        while ((load = content.read(imageByte, 0, 1024)) != -1){
+            sum += load;
+            os.write(imageByte);
+        }
+        System.out.println(sum);
+//        os.flush();
+//        os.close();
+//        content.close();
+        return null;
+    }
+
+    // Remove image.
     @Override
     public Image deleteImage(Image image) throws Exception {
         String bucketName = image.getType() == ImageType.USER_IMAGE ? userBucketName : vehicleBucketName;

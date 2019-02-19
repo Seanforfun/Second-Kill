@@ -40,6 +40,14 @@ public interface ImageEbi<T, R> {
      */
     R getImage(Long id) throws Exception;
 
+    /**
+     * Get the byte array of a image file, could be from Local file system, imgur or aws s3.
+     * I write this method for getting the bytes and cache them in redis so I can reduce the
+     * request number and improve efficiency.
+     * @param image
+     * @return
+     */
+    String getBase64String(Image image) throws Exception;
 
     /**
      * Delete a images in third party server.
