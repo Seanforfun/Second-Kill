@@ -10,7 +10,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.AwsCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
 
 @Service
@@ -29,7 +31,7 @@ public class AwsS3Service {
 
 
     @Bean
-    public AmazonS3 client(){
+    public AmazonS3 s3Client(){
         BasicAWSCredentials awsCredentials = new BasicAWSCredentials(awsAccessKey, awsAccessSecret);
         return AmazonS3ClientBuilder.standard()
                 .withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
@@ -41,6 +43,12 @@ public class AwsS3Service {
     public S3AsyncClient asyncClient(){
         return S3AsyncClient.builder()
                 .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(awsAccessKey, awsAccessSecret)))
+                .region(Region.US_EAST_1)
                 .build();
+    }
+
+    @Bean
+    public AwsCredentials credentials(){
+        return AwsBasicCredentials.create(awsAccessKey, awsAccessSecret);
     }
 }

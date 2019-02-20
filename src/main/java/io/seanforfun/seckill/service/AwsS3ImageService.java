@@ -18,12 +18,17 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.auth.credentials.AwsCredentials;
+import software.amazon.awssdk.core.async.AsyncRequestBody;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
+import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
+import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author: Seanforfun
@@ -39,11 +44,14 @@ import java.io.InputStream;
 public class AwsS3ImageService extends AbstractImageService implements ImageEbi<MultipartFile, Image> {
 
     @Autowired
-    private AmazonS3 client;
+    private AmazonS3 s3Client;
 
     @Autowired
     @Qualifier("asyncClient")
     private S3AsyncClient s3AsyncClient;
+
+    @Autowired
+    private AwsCredentials credentials;
 
     @Value("${image.aws.bucket.userBucket}")
     private String userBucketName;
@@ -72,7 +80,7 @@ public class AwsS3ImageService extends AbstractImageService implements ImageEbi<
             ObjectMetadata meta = new ObjectMetadata();
             meta.setContentLength(is.available());
             // Only owner has the right to read and write.
-            client.putObject(new PutObjectRequest(bucketName, "" + image.getId(), is, meta)
+            s3Client.putObject(new PutObjectRequest(bucketName, "" + image.getId(), is, meta)
                     .withCannedAcl(CannedAccessControlList.Private));
         } catch (Exception e){
             e.printStackTrace();
@@ -90,11 +98,44 @@ public class AwsS3ImageService extends AbstractImageService implements ImageEbi<
         return image;
     }
 
+    public Image uploadImageAsync(MultipartFile file, ImageType imageType, Long associateId) throws IOException {
+        // Step 1: Get initialized message instance.
+        Image image = getInitializedImage(file.getName(), ImageSource.IMAGE_FROM_FROM_AWS,
+                file.getBytes(), imageType, associateId);
+        // Step 2: Upload image to AWS.
+        String bucketName = null;
+        byte[] imageBytes = file.getBytes();
+        CompletableFuture<PutObjectResponse> future = null;
+        try {
+            ByteBuffer byteBuffer = ByteBuffer.allocate(imageBytes.length);
+            byteBuffer.put(imageBytes);
+            bucketName = imageType == ImageType.USER_IMAGE ? userBucketName : vehicleBucketName;
+            ObjectMetadata meta = new ObjectMetadata();
+            meta.setContentLength(imageBytes.length);
+            future = s3AsyncClient.putObject(software.amazon.awssdk.services.s3.model.PutObjectRequest.builder()
+                            .acl(ObjectCannedACL.BUCKET_OWNER_FULL_CONTROL)
+                            .bucket(bucketName)
+                            .key("" + image.getId())
+                            .build(),
+                    AsyncRequestBody.fromByteBuffer(byteBuffer));
+        } catch (Exception e){
+            e.printStackTrace();
+            throw new GlobalException(CodeMsg.AWS_FILE_UPLOAD_FAILED_MSG);
+        }
+        String s3FileLink = AwsS3Utils.getS3FileLink(awsRegion, bucketName, "" + image.getId());
+        image.setLink(s3FileLink);
+
+        // Step 3: Save image information to Database.
+        imageDao.saveImageInfo(image);
+        while (!future.isDone())
+        return image;
+    }
+
     // Get image
     @Override
     public String getBase64String(Image image) throws IOException {
         String bucketName = image.getType() == ImageType.VEHICLE_IMAGE ? vehicleBucketName : userBucketName;
-        S3Object response = client.getObject(new GetObjectRequest(bucketName, "" + image.getId()));
+        S3Object response = s3Client.getObject(new GetObjectRequest(bucketName, "" + image.getId()));
         int contentLen = (int)response.getObjectMetadata().getContentLength();
         InputStream content = null;
         ByteArrayInputStream byteInputStream = null;
@@ -127,7 +168,7 @@ public class AwsS3ImageService extends AbstractImageService implements ImageEbi<
     @Override
     public Image deleteImage(Image image) throws Exception {
         String bucketName = image.getType() == ImageType.USER_IMAGE ? userBucketName : vehicleBucketName;
-        client.deleteObject(new DeleteObjectRequest(bucketName, "" + image.getId()));
+        s3Client.deleteObject(new DeleteObjectRequest(bucketName, "" + image.getId()));
         imageDao.updateImageExistById(image.getId(), Image.IMAGE_NOT_EXIST);
         return image;
     }
