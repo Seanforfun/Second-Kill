@@ -10,16 +10,20 @@ import io.seanforfun.seckill.exceptions.GlobalException;
 import io.seanforfun.seckill.result.CodeMsg;
 import io.seanforfun.seckill.service.ebi.ImageEbi;
 import io.seanforfun.seckill.utils.AwsS3Utils;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.services.s3.S3AsyncClient;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @author: Seanforfun
@@ -31,10 +35,15 @@ import java.io.*;
 @Service
 @Configuration
 @PropertySource(value = "classpath:/properties/image.properties")
+// TODO Need to modify the code to asynchronous way.
 public class AwsS3ImageService extends AbstractImageService implements ImageEbi<MultipartFile, Image> {
 
     @Autowired
     private AmazonS3 client;
+
+    @Autowired
+    @Qualifier("asyncClient")
+    private S3AsyncClient s3AsyncClient;
 
     @Value("${image.aws.bucket.userBucket}")
     private String userBucketName;
@@ -83,26 +92,35 @@ public class AwsS3ImageService extends AbstractImageService implements ImageEbi<
 
     // Get image
     @Override
-    // TODO bug here.
     public String getBase64String(Image image) throws IOException {
         String bucketName = image.getType() == ImageType.VEHICLE_IMAGE ? vehicleBucketName : userBucketName;
         S3Object response = client.getObject(new GetObjectRequest(bucketName, "" + image.getId()));
-        InputStream content = response.getObjectContent();
-        File file = new File("F:\\upload\\aws.png");
-        OutputStream os = new FileOutputStream(file);
-        int contentLength = (int)response.getObjectMetadata().getContentLength();
-        byte[] imageByte = new byte[1024];
-        int sum = 0;
-        int load = 0;
-        while ((load = content.read(imageByte, 0, 1024)) != -1){
-            sum += load;
-            os.write(imageByte);
+        int contentLen = (int)response.getObjectMetadata().getContentLength();
+        InputStream content = null;
+        ByteArrayInputStream byteInputStream = null;
+        byte[] storeBuf = new byte[contentLen];
+        // Load data from AWS S3 to local buffer "storeBuf"
+        try{
+            content = response.getObjectContent();
+            int contentLength = (int)response.getObjectMetadata().getContentLength();
+            byte[] imageByte = new byte[2048];
+            byteInputStream = new ByteArrayInputStream(storeBuf);
+            int read;
+            int sum = 0;
+            while ((read = content.read(imageByte)) > 0){
+                sum += read;
+                byteInputStream.read(imageByte, 0, read);
+            }
+            if (sum != contentLen){
+                throw new GlobalException(CodeMsg.LOAD_IMAGE_BYTE_ERROR_MSG);
+            }
+        }catch (Exception e){
+            throw new GlobalException(CodeMsg.LOAD_IMAGE_BYTE_ERROR_MSG);
+        }finally {
+            if(content != null) content.close();
+            if(byteInputStream != null) byteInputStream.close();
         }
-        System.out.println(sum);
-//        os.flush();
-//        os.close();
-//        content.close();
-        return null;
+        return Base64.encodeBase64String(storeBuf);
     }
 
     // Remove image.

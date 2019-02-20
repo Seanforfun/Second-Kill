@@ -127,6 +127,12 @@
             <version>1.11.500</version>
         </dependency>
 
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+            <version>2.4.11</version>
+        </dependency>
+
     </dependencies>
 
     <build>

@@ -26,7 +26,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Objects;
 
 @Service
 @Configuration
@@ -126,9 +125,14 @@ public class ImgurService extends AbstractImageService implements ImageEbi<Multi
         String suffix = link.substring(link.lastIndexOf('.') + 1);
         //Step 2: Get image from link.
         BufferedImage bufferedImage = ImageIO.read(new URL(link));
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        ImageIO.write(bufferedImage, suffix, os);
-        return Base64.encodeBase64String(os.toByteArray());
+        ByteArrayOutputStream os = null;
+        try {
+            os = new ByteArrayOutputStream();
+            ImageIO.write(bufferedImage, suffix, os);
+            return Base64.encodeBase64String(os.toByteArray());
+        }finally {
+            if(os != null) os.close();
+        }
     }
 
     //Delete method
