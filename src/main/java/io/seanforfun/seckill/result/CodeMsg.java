@@ -50,6 +50,10 @@ public class CodeMsg {
     private static final String INVALID_IMAGE_STR = "INVALID IMAGE";
     private static final int LOAD_IMAGE_BYTE_ERROR = 500112;
     private static final String LOAD_IMAGE_BYTE_ERROR_STR = "LOAD IMAGE BYTE ERROR";
+    private static final int AWS_DELETE_IMAGE_ERROR = 500113;
+    private static final String AWS_DELETE_IMAGE_ERROR_STR = "AWS DELETE IMAGE ERROR";
+    private static final int IMAGE_CHEKC_INFO_ERROR = 500114;
+    private static final String IMAGE_CHEKC_INFO_ERROR_STR = "GET IMAGE INFO ERROR";
 
     public static CodeMsg SUCCESS_MSG = new CodeMsg(SUCCESS, SUCCESS_STR);
     public static CodeMsg SERVER_ERROR_MSG = new CodeMsg(SERVER_ERROR, SERVER_ERROR_STR);
@@ -66,6 +70,8 @@ public class CodeMsg {
     public static CodeMsg GET_IMAGE_SOURCE_ERROR_MSG = new CodeMsg(GET_IMAGE_SOURCE_ERROR, GET_IMAGE_SOURCE_ERROR_STR);
     public static CodeMsg INVALID_IMAGE_MSG = new CodeMsg(INVALID_IMAGE, INVALID_IMAGE_STR);
     public static CodeMsg LOAD_IMAGE_BYTE_ERROR_MSG = new CodeMsg(LOAD_IMAGE_BYTE_ERROR, LOAD_IMAGE_BYTE_ERROR_STR);
+    public static CodeMsg AWS_DELETE_IMAGE_ERROR_MSG = new CodeMsg(AWS_DELETE_IMAGE_ERROR, AWS_DELETE_IMAGE_ERROR_STR);
+    public static CodeMsg IMAGE_CHEKC_INFO_ERROR_MSG = new CodeMsg(IMAGE_CHEKC_INFO_ERROR, IMAGE_CHEKC_INFO_ERROR_STR);
 
     //Redis error 5002XX
     private static final int REDIS_ERROR = 500200;

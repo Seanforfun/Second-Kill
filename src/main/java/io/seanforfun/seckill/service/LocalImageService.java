@@ -127,6 +127,13 @@ public class LocalImageService extends AbstractImageService implements ImageEbi<
         }
     }
 
+    @Override
+    public boolean imageExists(Image image) throws Exception {
+        String link = image.getLink();
+        File file = new File(link);
+        return file.isFile() && file.exists();
+    }
+
     //Deletion methods
     @Override
     @Transactional
@@ -135,7 +142,10 @@ public class LocalImageService extends AbstractImageService implements ImageEbi<
             throw new NullPointerException();
         }
         String link = image.getLink();
-        return deleteImage(link, image.getId());
+        if(imageExists(image)){
+            deleteImage(link, image.getId());
+        }
+        return image;
     }
 
     private Image deleteImage(String link, Long id) throws Exception {

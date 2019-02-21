@@ -16,8 +16,8 @@ import org.springframework.stereotype.Repository;
 public interface ImageDao {
 
     // Save images
-    @Insert("Insert into Image (id, link, name, source, type, associateId, deleteHash) " +
-            "values (#{id}, #{link}, #{name}, #{source}, #{type}, #{associateId}, #{deleteHash})")
+    @Insert("Insert into Image (id, link, name, source, type, associateId, deleteHash, imageHash) " +
+            "values (#{id}, #{link}, #{name}, #{source}, #{type}, #{associateId}, #{deleteHash}, #{imageHash})")
     void saveImageInfo(Image image);
 
     // Load image information.

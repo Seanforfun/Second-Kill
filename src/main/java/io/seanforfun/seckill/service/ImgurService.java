@@ -18,6 +18,7 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -110,8 +111,10 @@ public class ImgurService extends AbstractImageService implements ImageEbi<Multi
             }
             String link = JsonUtils.get(responseJson, "data.link", String.class);
             String deleteHash = JsonUtils.get(responseJson, "data.deletehash", String.class);
+            String imageHash = JsonUtils.get(responseJson, "data.id", String.class);
             emptyImage.setLink(link);
             emptyImage.setDeleteHash(deleteHash);
+            emptyImage.setImageHash(imageHash);
         }
         imageDao.saveImageInfo(emptyImage);
         return emptyImage;
@@ -135,12 +138,80 @@ public class ImgurService extends AbstractImageService implements ImageEbi<Multi
         }
     }
 
+    @Override
+    /**
+     * Request:
+     * curl --location --request GET "https://api.imgur.com/3/image/{{imageHash}}" \
+     *   --header "Authorization: Client-ID {{clientId}}"
+     *
+     * Response:
+     * {
+     *     "data": {
+     *         "id": "uNWrX4b",
+     *         "title": null,
+     *         "description": null,
+     *         "datetime": 1550522182,
+     *         "type": "image/png",
+     *         "animated": false,
+     *         "width": 620,
+     *         "height": 460,
+     *         "size": 409553,
+     *         "views": 20,
+     *         "bandwidth": 8191060,
+     *         "vote": null,
+     *         "favorite": false,
+     *         "nsfw": false,
+     *         "section": null,
+     *         "account_url": null,
+     *         "account_id": null,
+     *         "is_ad": false,
+     *         "in_most_viral": false,
+     *         "has_sound": false,
+     *         "tags": [],
+     *         "ad_type": 0,
+     *         "ad_url": "",
+     *         "in_gallery": false,
+     *         "link": "https://i.imgur.com/uNWrX4b.png",
+     *         "ad_config": {
+     *             "safeFlags": [
+     *                 "onsfw_mod_safe",
+     *                 "share"
+     *             ],
+     *             "highRiskFlags": [
+     *                 "not_in_gallery"
+     *             ],
+     *             "unsafeFlags": [],
+     *             "showsAds": true
+     *         }
+     *     },
+     *     "success": true,
+     *     "status": 200
+     * }
+     */
+    public boolean imageExists(Image image) throws Exception {
+        String imageHash = image.getImageHash();
+        if(StringUtils.isEmpty(imageHash)){
+            throw new GlobalException(CodeMsg.IMAGE_CHEKC_INFO_ERROR_MSG);
+        }
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        headers.add("Authorization", "Client-ID " + clientId);
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(null, headers);
+        ResponseEntity<String> response = restTemplate.postForEntity("https://api.imgur.com/3/image/" + imageHash, headers, String.class);
+        if(!response.getStatusCode().equals(HttpStatus.OK)){
+            return false;
+        }
+        return true;
+    }
+
     //Delete method
     @Override
     public Image deleteImage(Image image) throws Exception {
         if(image != null && image.getSource() == ImageSource.IMAGE_FROM_IMGUR){
-            String deleteHash = image.getDeleteHash();
-            deleteImageFromImgurByDeleteHash(deleteHash);
+            if(imageExists(image)){
+                String deleteHash = image.getDeleteHash();
+                deleteImageFromImgurByDeleteHash(deleteHash);
+            }
             imageDao.updateImageExistById(image.getId(), Image.IMAGE_NOT_EXIST);
         }
         return image;

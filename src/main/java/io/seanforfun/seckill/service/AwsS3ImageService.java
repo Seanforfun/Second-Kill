@@ -19,8 +19,12 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.auth.credentials.AwsCredentials;
+import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.core.async.AsyncRequestBody;
+import software.amazon.awssdk.core.async.AsyncResponseTransformer;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
+import software.amazon.awssdk.services.s3.model.DeleteObjectResponse;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
@@ -105,29 +109,32 @@ public class AwsS3ImageService extends AbstractImageService implements ImageEbi<
         // Step 2: Upload image to AWS.
         String bucketName = null;
         byte[] imageBytes = file.getBytes();
-        CompletableFuture<PutObjectResponse> future = null;
         try {
             ByteBuffer byteBuffer = ByteBuffer.allocate(imageBytes.length);
             byteBuffer.put(imageBytes);
             bucketName = imageType == ImageType.USER_IMAGE ? userBucketName : vehicleBucketName;
             ObjectMetadata meta = new ObjectMetadata();
             meta.setContentLength(imageBytes.length);
-            future = s3AsyncClient.putObject(software.amazon.awssdk.services.s3.model.PutObjectRequest.builder()
+            CompletableFuture<PutObjectResponse> future = s3AsyncClient.putObject(software.amazon.awssdk.services.s3.model.PutObjectRequest.builder()
                             .acl(ObjectCannedACL.BUCKET_OWNER_FULL_CONTROL)
                             .bucket(bucketName)
                             .key("" + image.getId())
                             .build(),
                     AsyncRequestBody.fromByteBuffer(byteBuffer));
+            future.whenComplete((resp, err) -> {
+               if(err != null){
+                   err.printStackTrace();
+                   throw new GlobalException(CodeMsg.AWS_FILE_UPLOAD_FAILED_MSG);
+               }
+            });
         } catch (Exception e){
             e.printStackTrace();
             throw new GlobalException(CodeMsg.AWS_FILE_UPLOAD_FAILED_MSG);
         }
         String s3FileLink = AwsS3Utils.getS3FileLink(awsRegion, bucketName, "" + image.getId());
         image.setLink(s3FileLink);
-
         // Step 3: Save image information to Database.
         imageDao.saveImageInfo(image);
-        while (!future.isDone())
         return image;
     }
 
@@ -164,11 +171,56 @@ public class AwsS3ImageService extends AbstractImageService implements ImageEbi<
         return Base64.encodeBase64String(storeBuf);
     }
 
+    public String getBase64StringAsync(Image image) throws Exception {
+        String bucketName = image.getType() == ImageType.USER_IMAGE ? userBucketName : vehicleBucketName;
+        CompletableFuture<ResponseBytes<GetObjectResponse>> getFuture = s3AsyncClient.getObject(software.amazon.awssdk.services.s3.model.GetObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key("" + image.getId())
+                        .build(),
+                AsyncResponseTransformer.toBytes());
+        CompletableFuture<String> handle = getFuture.handle((resp, err) -> {
+            if(err != null){
+                throw new GlobalException(CodeMsg.LOAD_IMAGE_BYTE_ERROR_MSG);
+            }
+            byte[] imageBytes = resp.asByteArray();
+            return Base64.encodeBase64String(imageBytes);
+        });
+        return handle.get();
+    }
+
+    @Override
+    public boolean imageExists(Image image) throws Exception {
+        String bucketName = image.getType() == ImageType.USER_IMAGE ? userBucketName : vehicleBucketName;
+        return s3Client.doesObjectExist(bucketName, "" + image.getId());
+    }
+
     // Remove image.
     @Override
     public Image deleteImage(Image image) throws Exception {
         String bucketName = image.getType() == ImageType.USER_IMAGE ? userBucketName : vehicleBucketName;
-        s3Client.deleteObject(new DeleteObjectRequest(bucketName, "" + image.getId()));
+        if(imageExists(image)){
+            try {
+                s3Client.deleteObject(new DeleteObjectRequest(bucketName, "" + image.getId()));
+            }catch (Exception e){
+                throw new GlobalException(CodeMsg.AWS_DELETE_IMAGE_ERROR_MSG);
+            }
+        }
+        imageDao.updateImageExistById(image.getId(), Image.IMAGE_NOT_EXIST);
+        return image;
+    }
+
+    public Image deleteImageAsync(Image image) throws  Exception{
+        String bucketName = image.getType() == ImageType.USER_IMAGE ? userBucketName : vehicleBucketName;
+        CompletableFuture<DeleteObjectResponse> deleteFuture = s3AsyncClient.deleteObject(software.amazon.awssdk.services.s3.model.DeleteObjectRequest.builder()
+                .bucket(bucketName)
+                .key("" + image.getId())
+                .build());
+        deleteFuture.whenComplete((resp, err) -> {
+            if(err != null){
+                err.printStackTrace();
+                throw new GlobalException(CodeMsg.AWS_DELETE_IMAGE_ERROR_MSG);
+            }
+        });
         imageDao.updateImageExistById(image.getId(), Image.IMAGE_NOT_EXIST);
         return image;
     }

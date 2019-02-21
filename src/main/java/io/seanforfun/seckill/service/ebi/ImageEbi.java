@@ -62,4 +62,12 @@ public interface ImageEbi<T, R> {
      * @return
      */
     void deleteImages(Collection<Image> images) throws Exception;
+
+    /**
+     * Check if given image exists.
+     * @param image
+     * @return boolean, if image exists.
+     * @throws Exception
+     */
+    boolean imageExists(Image image) throws Exception;
 }

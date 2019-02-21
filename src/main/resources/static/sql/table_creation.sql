@@ -71,5 +71,6 @@ CREATE TABLE image(
 	TYPE VARCHAR(100) NOT NULL,
 	associateId BIGINT NOT NULL,
 	exist int(1) NOT NULL,
-	deleteHash varchar(50)
+	deleteHash varchar(50),
+	imageHash varchar(50)
 );

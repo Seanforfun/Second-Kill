@@ -31,6 +31,7 @@ public class Image {
     private ImageType type;
     private Long associateId;
     private String deleteHash;
+    private String imageHash;
     private Integer exist;
     private byte[] imageByte;
 }
