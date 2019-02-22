@@ -1,5 +1,6 @@
 package io.seanforfun.seckill.service.ebi;
 
+import io.seanforfun.seckill.entity.domain.Image;
 import io.seanforfun.seckill.entity.domain.VehicleDetail;
 import io.seanforfun.seckill.entity.vo.VehicleVo;
 import org.springframework.web.multipart.MultipartFile;
@@ -62,4 +63,17 @@ public interface VehicleEbi {
      * @return
      */
     VehicleDetail getQRVehicleById(Long id);
+
+    /**
+     * Get vehicle information by vehicle id.
+     * @param id
+     */
+    VehicleDetail getVehicleInfoById(Long id);
+
+    /**
+     * Get Image list according to associateId id.
+     * @param id
+     * @return
+     */
+    List<Image> getVehicleImagesById(Long id) throws Exception;
 }

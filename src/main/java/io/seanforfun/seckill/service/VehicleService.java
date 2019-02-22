@@ -8,6 +8,8 @@ import io.seanforfun.seckill.entity.domain.VehicleDetail;
 import io.seanforfun.seckill.entity.enums.ImageType;
 import io.seanforfun.seckill.entity.vo.VehicleVo;
 import io.seanforfun.seckill.exceptions.GlobalException;
+import io.seanforfun.seckill.redis.RedisService;
+import io.seanforfun.seckill.redis.VehicleKey;
 import io.seanforfun.seckill.result.CodeMsg;
 import io.seanforfun.seckill.service.ebi.ImageEbi;
 import io.seanforfun.seckill.service.ebi.VehicleEbi;
@@ -51,6 +53,9 @@ public class VehicleService implements VehicleEbi {
 
     @Autowired
     private ServerProperties serverProperties;
+
+    @Autowired
+    private RedisService redisService;
 
     @Override
     public Long getInstockVehicleNumber() {
@@ -132,6 +137,24 @@ public class VehicleService implements VehicleEbi {
 
     @Override
     public VehicleDetail getQRVehicleById(Long id) {
+        //TODO
+
         return null;
+    }
+
+    @Override
+    public VehicleDetail getVehicleInfoById(Long id) {
+        VehicleDetail vehicleInfo = redisService.get(VehicleKey.getVehicleById, "" + id, VehicleDetail.class);
+        if(vehicleInfo != null){
+            return vehicleInfo;
+        }
+        vehicleInfo = vehicleDao.getVehicleById(id);
+        redisService.set(VehicleKey.getVehicleById, "" + id, VehicleDetail.class);
+        return vehicleInfo;
+    }
+
+    @Override
+    public List<Image> getVehicleImagesById(Long vehicleId) throws Exception {
+        return (List<Image>)imageService.getImageListByVehicleId(vehicleId);
     }
 }

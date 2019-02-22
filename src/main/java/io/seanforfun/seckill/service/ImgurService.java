@@ -198,10 +198,7 @@ public class ImgurService extends AbstractImageService implements ImageEbi<Multi
         headers.add("Authorization", "Client-ID " + clientId);
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(null, headers);
         ResponseEntity<String> response = restTemplate.postForEntity("https://api.imgur.com/3/image/" + imageHash, headers, String.class);
-        if(!response.getStatusCode().equals(HttpStatus.OK)){
-            return false;
-        }
-        return true;
+        return response.getStatusCode().equals(HttpStatus.OK);
     }
 
     //Delete method

@@ -4,6 +4,8 @@ import io.seanforfun.seckill.entity.domain.Image;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * @author: Seanforfun
  * @date: Created in 2019/2/15 15:04
@@ -21,8 +23,11 @@ public interface ImageDao {
     void saveImageInfo(Image image);
 
     // Load image information.
-    @Select("Select (id, link, name, source, type, associateId, deleteHash) from Image where id = #{id}")
+    @Select("Select id, link, name, source, type, associateId, deleteHash from Image where id = #{id}")
     Image getImageById(@Param("id") Long id);
+
+    @Select("Select id, link, name, source, type, associateId, deleteHash, exists from Image where associateId = #{vehicleId} ")
+    List<Image> getImagesByVehicleId(@Param("vehicleId") Long vehicleId);
 
     // Update image information.
     @Update("Update Image set exist = #{exist} where id = #{id}")

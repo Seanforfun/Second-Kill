@@ -42,6 +42,16 @@ public interface VehicleDao {
     @Select("Select id, vin, price, make, model, status, process, year from vehicle where process = #{process}")
     List<VehicleDetail> getVehicleListByProcess(int vehicleTransactionFinished);
 
+    @Select("SELECT v.id, v.vin, v.make, v.model, v.price, v.status, v.transmission," +
+            " v.year, v.process, v.createTime, v.lastModifyTime, v.creatorId, v.lastModifierId, " +
+            "vi.zip, vi.bodytype, vi.ExteriorColour, vi.mileage, vi.drivetrain, vi.fueltype,vi.ENGINE," +
+            " vi.doors, vi.seatNum, vi.description " +
+            "FROM vehicle v " +
+            "LEFT JOIN vehicle_detail vi " +
+            "ON v.id = vi.id " +
+            "WHERE v.id = #{id};")
+    VehicleDetail getVehicleById(@Param("id") Long id);
+
     /**
      * Insert
      */

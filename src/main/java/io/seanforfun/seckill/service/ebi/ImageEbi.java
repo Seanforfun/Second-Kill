@@ -41,13 +41,28 @@ public interface ImageEbi<T, R> {
     R getImage(Long id) throws Exception;
 
     /**
-     * Get the byte array of a image file, could be from Local file system, imgur or aws s3.
+     * Get image list by using vehicle id.
+     * @return
+     * @throws Exception
+     */
+    List<R> getImageListByVehicleId(Long vehicleId) throws Exception;
+
+    /**
+     * Get the base64 string of a image file, could be from Local file system, imgur or aws s3.
      * I write this method for getting the bytes and cache them in redis so I can reduce the
      * request number and improve efficiency.
      * @param image
      * @return
      */
     String getBase64String(Image image) throws Exception;
+
+    /**
+     * Set the image base64 string for all images in the list.
+     * @param images
+     * @return
+     * @throws Exception
+     */
+    List<Image> getImageBase64StringForImages(List<Image> images) throws Exception;
 
     /**
      * Delete a images in third party server.

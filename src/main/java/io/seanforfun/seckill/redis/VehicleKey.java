@@ -8,7 +8,7 @@ package io.seanforfun.seckill.redis;
  * @version: 0.0.1
  */
 public class VehicleKey extends BasePrefix {
-    private static final int VEHICLE_EXPIRE_SECOND = 2 * 24 * 3600;
+    private static final int VEHICLE_EXPIRE_SECOND = 300;
 
     public VehicleKey(int expireSecond, String prefix) {
         super(expireSecond, prefix);
@@ -19,4 +19,5 @@ public class VehicleKey extends BasePrefix {
     }
     public static VehicleKey getKeyForId = new VehicleKey(VEHICLE_EXPIRE_SECOND, "id");
     public static VehicleKey getGetKeyForList = new VehicleKey(VEHICLE_EXPIRE_SECOND, "list");
+    public static VehicleKey getVehicleById = new VehicleKey(VEHICLE_EXPIRE_SECOND, "vehicle_id");
 }

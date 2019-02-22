@@ -34,4 +34,5 @@ public class Image {
     private String imageHash;
     private Integer exist;
     private byte[] imageByte;
+    private String imageBase64String;
 }

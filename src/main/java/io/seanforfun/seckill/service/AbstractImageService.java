@@ -9,6 +9,7 @@ import io.seanforfun.seckill.redis.ImageKey;
 import io.seanforfun.seckill.redis.RedisService;
 import io.seanforfun.seckill.result.CodeMsg;
 import io.seanforfun.seckill.service.ebi.ImageEbi;
+import io.seanforfun.seckill.utils.JsonUtils;
 import io.seanforfun.seckill.utils.SnowFlakeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectFactory;
@@ -102,6 +103,28 @@ public abstract class AbstractImageService implements ImageEbi<MultipartFile, Im
         image =  imageDao.getImageById(id);
         redisService.set(ImageKey.getImageById, "" + id, Image.class);
         return image;
+    }
+
+    @Override
+    public List<Image> getImageListByVehicleId(Long vehicleId) throws Exception{
+        List<Image> images = null;
+        images = redisService.getList(ImageKey.getImageListByVehicleId, "" + vehicleId, Image.class);
+        if(images == null){
+            images = imageDao.getImagesByVehicleId(vehicleId);
+            //Load image Contents(Base64 String)
+            images = getImageBase64StringForImages(images);
+            redisService.set(ImageKey.getImageListByVehicleId, "" + vehicleId, images);
+        }
+        return images;
+    }
+
+    @Override
+    public List<Image> getImageBase64StringForImages(List<Image> images) throws Exception{
+        for(int i = 0; i < images.size(); i++){
+            Image image = images.get(i);
+            image.setImageBase64String(getBase64String(image));
+        }
+        return images;
     }
 
 }
