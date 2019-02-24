@@ -54,7 +54,7 @@ public interface VehicleEbi {
      * Get byte array of vehicle's QR code according to vehicle's id.
      * @return
      */
-    byte[] getQrCodeById(Long id) throws IOException;
+    String getBase64QrCodeById(Long id) throws IOException;
 
 
     /**

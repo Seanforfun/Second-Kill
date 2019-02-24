@@ -127,9 +127,12 @@ public class CodeMsg {
     private static final String FILE_NOT_IMAGE_STR = "UPLOAD FILE IS NOT A IMAGE";
     private static final Integer NO_VEHICLE_IMAGE_SAVED_ERROR = 500502;
     private static final String NO_VEHICLE_IMAGE_SAVED_ERROR_STR = "NO VEHICLE IMAGE SAVED ERROR";
+    private static final int VEHICLE_ADD_ERROR = 500503;
+    private static final String VEHICLE_ADD_ERROR_STR = "VEHICLE ADD ERROR";
 
     public static CodeMsg FILE_NOT_IMAGE_MSG = new CodeMsg(FILE_NOT_IMAGE, FILE_NOT_IMAGE_STR);
     public static CodeMsg NO_VEHICLE_IMAGE_SAVED_ERROR_MSG = new CodeMsg(NO_VEHICLE_IMAGE_SAVED_ERROR, NO_VEHICLE_IMAGE_SAVED_ERROR_STR);
+    public static CodeMsg VEHICLE_ADD_ERROR_MSG = new CodeMsg(VEHICLE_ADD_ERROR, VEHICLE_ADD_ERROR_STR);
 
     private CodeMsg(int code, String msg){
         this.code = code;

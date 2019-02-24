@@ -28,7 +28,9 @@ public interface ImageEbi<T, R> {
     /**
      * Upload a set of images.
      * @param images
-     * @return
+     * @param imageType Vehicle or User
+     * @param associateId Associate object id
+     * @return List of returned images.
      */
     List<R> uploadImages(Collection<T> images, ImageType imageType, Long associateId) throws Exception;
 

@@ -58,4 +58,13 @@ public class MqReceiver {
     public void receive3(String receive, Channel channel, Message message) throws IOException {
         log.info("[Receiver1]: receive {}", receive);
     }
+
+    public static void sendRespToReceiver(Channel channel, Message message) throws IOException {
+        try {
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+        } catch (IOException e) {
+            e.printStackTrace();
+            channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, false);
+        }
+    }
 }

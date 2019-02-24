@@ -1,5 +1,6 @@
 package io.seanforfun.seckill.controller;
 
+import com.rabbitmq.client.Channel;
 import io.seanforfun.seckill.config.EnvironmentConfigBean;
 import io.seanforfun.seckill.entity.domain.Image;
 import io.seanforfun.seckill.entity.domain.Message;
@@ -8,12 +9,20 @@ import io.seanforfun.seckill.entity.domain.VehicleDetail;
 import io.seanforfun.seckill.entity.vo.VehicleInfoVo;
 import io.seanforfun.seckill.entity.vo.VehicleVo;
 import io.seanforfun.seckill.exceptions.GlobalException;
+import io.seanforfun.seckill.rabbitmq.MqConfigure;
 import io.seanforfun.seckill.redis.PageKey;
 import io.seanforfun.seckill.redis.RedisService;
+import io.seanforfun.seckill.redis.VehicleKey;
 import io.seanforfun.seckill.result.CodeMsg;
 import io.seanforfun.seckill.result.Result;
 import io.seanforfun.seckill.service.ebi.VehicleEbi;
-import org.apache.commons.codec.binary.Base64;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.core.AmqpTemplate;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.annotation.RabbitHandler;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -78,6 +87,10 @@ public class VehicleController {
     @Autowired
     private ObjectFactory<VehicleInfoVo> vehicleInfoVoFactory;
 
+    @Autowired
+    private AmqpTemplate amqpTemplate;
+
+    public static final Float UPLOAD_VEHICLE_FAILED = -1F;
 
     @RequestMapping(value = {"/list"})
     public String listVehicles(Model model, User user, List<Message> messages){
@@ -134,9 +147,20 @@ public class VehicleController {
         return html;
     }
 
+    /**
+     * Upload images and corresponding images.
+     * This is an async method, we will check the parameters and then send the parameters to message queue and return waiting.
+     * Front side will recursively call io.seanforfun.seckill.controller.VehicleController#checkUploadById(java.lang.Long) for getting
+     * uploading percentage.
+     * @param user
+     * @param vehicleDetail
+     * @param request
+     * @return Return the id of the vehicle.
+     * @throws Exception
+     */
     @RequestMapping(value = "/addVehicle", method = RequestMethod.POST)
     @ResponseBody
-    public Result<Boolean> addVehicle(User user, @Valid VehicleDetail vehicleDetail, MultipartHttpServletRequest request ) throws Exception {
+    public Result<Long> addVehicle(User user, @Valid VehicleDetail vehicleDetail, MultipartHttpServletRequest request ) throws Exception {
         // Get all uploaded files.
         Map<String, MultipartFile> fileMap = request.getFileMap();
         Set<Map.Entry<String, MultipartFile>> entries = fileMap.entrySet();
@@ -148,10 +172,43 @@ public class VehicleController {
                 throw new GlobalException(CodeMsg.FILE_NOT_IMAGE_MSG);
             }
         }
+        String msg = AddVehicleMessage.build(vehicleDetail, user.getId(), fileMap);
+        amqpTemplate.convertAndSend(MqConfigure.SAVE_VEHICLE_QUEUE_NAME, msg);
+        return Result.success(vehicleDetail.getId());
+    }
 
-        // Save vehicle to db.
-        vehicleService.saveVehicle(vehicleDetail, user.getId(), fileMap);
-        return Result.success(true);
+    @RabbitListener(queues = {MqConfigure.SAVE_VEHICLE_QUEUE_NAME})
+    @RabbitHandler
+    public void addVehicleReceiver(String receive, Channel channel, org.springframework.amqp.core.Message message) throws Exception {
+        AddVehicleMessage addVehicleMessage = null;
+        try {
+            addVehicleMessage = RedisService.stringToBean(receive, AddVehicleMessage.class);
+            vehicleService.saveVehicle(addVehicleMessage.getVehicleDetail(),
+                    addVehicleMessage.getCreatorId(),
+                    addVehicleMessage.getFileMap());
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, false);
+            // Set up redis value to fail.
+            if(addVehicleMessage == null){
+                throw new GlobalException(CodeMsg.VEHICLE_ADD_ERROR_MSG);
+            }
+            redisService.set(VehicleKey.getVehicleUploadPercentageById, addVehicleMessage.getVehicleDetail().getId() + "", UPLOAD_VEHICLE_FAILED);
+        }
+    }
+
+    @RequestMapping("/uploadPercentage/{id}")
+    @ResponseBody
+    public Result<Float> checkUploadById(@PathVariable("id") Long id){
+        Float uploadPercentage = redisService.get(VehicleKey.getVehicleUploadPercentageById, "" + id, Float.class);
+        if(uploadPercentage == null){
+            redisService.set(VehicleKey.getVehicleUploadPercentageById, "" + id, 0F);
+            return Result.success(0F);
+        }else if(uploadPercentage.equals(UPLOAD_VEHICLE_FAILED)){
+            return Result.error(CodeMsg.VEHICLE_ADD_ERROR_MSG);
+        }
+        return Result.success(uploadPercentage);
     }
 
     @RequestMapping("/info/{id}")
@@ -170,8 +227,27 @@ public class VehicleController {
         List<Image> vehicleImages = vehicleService.getVehicleImagesById(id);
         vehicleInfoVo.setVehicleImages(vehicleImages);
         //Step 3.4: Get Qr code for vehicle
-        byte[] qrCode = vehicleService.getQrCodeById(id);
-        vehicleInfoVo.setBase64QRString(Base64.encodeBase64String(qrCode));
+        String qrCode = vehicleService.getBase64QrCodeById(id);
+        vehicleInfoVo.setBase64QRString(qrCode);
         return Result.success(vehicleInfoVo);
+    }
+
+    // Message Entity
+    @Slf4j
+    @Setter
+    @Getter
+    private static class AddVehicleMessage{
+        public VehicleDetail vehicleDetail;
+        public Long creatorId;
+        public Map<String, MultipartFile> fileMap;
+        private AddVehicleMessage(VehicleDetail vehicleDetail, Long creatorId, Map<String, MultipartFile> fileMap) {
+            this.vehicleDetail = vehicleDetail;
+            this.creatorId = creatorId;
+            this.fileMap = fileMap;
+        }
+        public static String build(VehicleDetail vehicleDetail, Long creatorId, Map<String, MultipartFile> fileMap){
+            AddVehicleMessage message = new AddVehicleMessage(vehicleDetail, creatorId, fileMap);
+            return RedisService.beanToString(message);
+        }
     }
 }

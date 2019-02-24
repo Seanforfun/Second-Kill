@@ -14,13 +14,11 @@ import io.seanforfun.seckill.result.CodeMsg;
 import io.seanforfun.seckill.service.ebi.ImageEbi;
 import io.seanforfun.seckill.service.ebi.VehicleEbi;
 import io.seanforfun.seckill.utils.SnowFlakeUtils;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,11 +26,9 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author: Seanforfun
@@ -48,7 +44,7 @@ public class VehicleService implements VehicleEbi {
     private VehicleDao vehicleDao;
 
     @Autowired
-    @Qualifier("awsS3ImageService")
+    @Qualifier("localImageService")
     private ImageEbi imageService;
 
     @Autowired
@@ -115,7 +111,11 @@ public class VehicleService implements VehicleEbi {
     }
 
     @Override
-    public byte[] getQrCodeById(Long id) throws IOException {
+    public String getBase64QrCodeById(Long id) throws IOException {
+        String qrBase64 = redisService.get(VehicleKey.getQRById, "" + id, String.class);
+        if(!StringUtils.isEmpty(qrBase64)){
+            return qrBase64;
+        }
         String qrText = createQRCodeHttpRequest(id);
         // Up to 30 % error correction.
         QrCode.Ecc ecc = QrCode.Ecc.HIGH;
@@ -127,7 +127,9 @@ public class VehicleService implements VehicleEbi {
             ImageIO.write(bufferedImage, "png", byteArrayOutputStream);
             // Release the stream.
             byte[] resBytes = byteArrayOutputStream.toByteArray();
-            return resBytes;
+            qrBase64 =  Base64.encodeBase64String(resBytes);
+            redisService.set(VehicleKey.getQRById, "" + id, qrBase64);
+            return qrBase64;
         }finally {
             if(byteArrayOutputStream != null){
                 byteArrayOutputStream.close();

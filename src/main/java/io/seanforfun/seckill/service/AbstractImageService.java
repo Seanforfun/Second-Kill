@@ -2,11 +2,13 @@ package io.seanforfun.seckill.service;
 
 import io.seanforfun.seckill.dao.ImageDao;
 import io.seanforfun.seckill.entity.domain.Image;
+import io.seanforfun.seckill.entity.domain.Vehicle;
 import io.seanforfun.seckill.entity.enums.ImageSource;
 import io.seanforfun.seckill.entity.enums.ImageType;
 import io.seanforfun.seckill.exceptions.GlobalException;
 import io.seanforfun.seckill.redis.ImageKey;
 import io.seanforfun.seckill.redis.RedisService;
+import io.seanforfun.seckill.redis.VehicleKey;
 import io.seanforfun.seckill.result.CodeMsg;
 import io.seanforfun.seckill.service.ebi.ImageEbi;
 import io.seanforfun.seckill.utils.JsonUtils;
@@ -75,12 +77,16 @@ public abstract class AbstractImageService implements ImageEbi<MultipartFile, Im
     @Transactional
     public List<Image> uploadImages(Collection<MultipartFile> images, ImageType imageType, Long associateId) throws Exception {
         List<Image> imageList = null;
+        int imageNum = images.size();
+        float count = 0F;
+        redisService.set(VehicleKey.getVehicleUploadPercentageById, "" + associateId, 0F);
         for(MultipartFile image : images){
             Image savedImage = uploadImage(image, imageType, associateId);
             if(imageList == null){
                 imageList = new LinkedList<>();
             }
             imageList.add(savedImage);
+            redisService.set(VehicleKey.getVehicleUploadPercentageById, "" + associateId, ++count / imageNum);
         }
         return imageList;
     }
@@ -126,5 +132,4 @@ public abstract class AbstractImageService implements ImageEbi<MultipartFile, Im
         }
         return images;
     }
-
 }
