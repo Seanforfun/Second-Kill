@@ -102,7 +102,8 @@ public class VehicleService implements VehicleEbi {
                 imageService.deleteImages(images);
             }
             // Step 2: Throw the exception for transaction.
-            throw e;
+            e.printStackTrace();
+            throw new GlobalException(CodeMsg.VEHICLE_ADD_ERROR_MSG);
         }
     }
 

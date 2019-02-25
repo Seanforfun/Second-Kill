@@ -621,7 +621,7 @@
                 if(data.code == 0){
                     // Upload is async, so we get the id of the vehicle.
                     // Step 1, Show the progress bar, initalized to be zero.
-                    var progress = '<h4 class="small font-weight-bold">Uploading <span id="upload-percentage-span" class="float-right">0%</span></h4><div class="progress mb-4"><div id="upload-percentage-bar" class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div></div>';
+                    var progress = '<h4 class="small font-weight-bold">Uploading <span id="upload-percentage-span" class="float-right">0%</span></h4><div class="progress mb-4"><div id="upload-percentage-bar" class="progress-bar progress-bar-striped" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div></div>';
                     $("#progress").append($(progress));
                     // Step 2, call the check progress function recursively.
                     var vehicleId = data.msg;

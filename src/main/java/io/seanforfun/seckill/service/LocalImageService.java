@@ -19,9 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousFileChannel;
 import java.nio.channels.FileChannel;
@@ -29,6 +27,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author: Seanforfun
@@ -56,50 +55,60 @@ public class LocalImageService extends AbstractImageService implements ImageEbi<
     @Autowired
     private ImageDao imageDao;
 
+    /**
+     * Asynchronous way of uploading images to local file system using nio.
+     * @param image
+     * @param imageType
+     * @param associateId
+     * @return
+     * @throws Exception
+     */
     // Create methods
     @Override
     @Transactional
-    public Image uploadImage(MultipartFile image, ImageType imageType, Long associateId) throws Exception {
-        // Check parameters
-        String name = image.getName();
-        byte[] imageBytes = image.getBytes();
-        checkImage(name, path, imageBytes);
-        // Set Image detail
-        Image emptyImage = getInitializedImage(name, ImageSource.IMAGE_FROM_LOCAL,
-                imageBytes, imageType, associateId);
-        emptyImage.setLink(MD5Utils.localImagePath(name, "" + emptyImage.getId(), path, dictNum, ImageType.VEHICLE_IMAGE));
-
+    public Image uploadImageAsync(MultipartFile image, ImageType imageType, Long associateId) throws Exception {
+        Image emptyImage = createLocalImage(image, imageType, associateId);
         //Save Image to file system
-        String link = emptyImage.getLink();
-        File directory = new File(link.substring(0, link.lastIndexOf(File.separatorChar) + 1));;
-        if(!directory.exists()){
-            directory.mkdirs();
-        }
-
-        File imageFile = new File(emptyImage.getLink());
-        if(!imageFile.exists()){
-            boolean createdImage = imageFile.createNewFile();
-            if(!createdImage){
-                throw new GlobalException(CodeMsg.SERVER_ERROR_MSG);
-            }
-        }
-        Path imagePath = Paths.get(emptyImage.getLink());
+        Path imagePath = getImagePath(emptyImage);
         AsynchronousFileChannel imageChannel = null;
         try {
             imageChannel = AsynchronousFileChannel.open(imagePath, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
-            //TODO Bug, what if length is bigger than Integer.MAX_VALUE
-            ByteBuffer imageBuffer = ByteBuffer.allocate(imageBytes.length);
-            imageBuffer.put(imageBytes);
+            ByteBuffer imageBuffer = ByteBuffer.allocate(emptyImage.getImageByte().length);
+            imageBuffer.put(emptyImage.getImageByte());
             imageBuffer.flip();
             Future<Integer> writeAction = imageChannel.write(imageBuffer, 0);
             // Save image information into database.
             imageDao.saveImageInfo(emptyImage);
-            while (!writeAction.isDone());
-            writeAction.get();
+            // Set 3 Seconds as timeout.
+            writeAction.get(3000L, TimeUnit.MICROSECONDS);
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new GlobalException(CodeMsg.LOCAL_FILE_IMAGE_UPLOAD_ERROR_MSG);
         }finally {
             if(imageChannel != null){
                 imageChannel.close();
             }
+        }
+        return emptyImage;
+    }
+
+    // TODO Need to test.
+    @Override
+    @Transactional
+    public Image uploadImage(MultipartFile image, ImageType imageType, Long associateId) throws Exception {
+        Image emptyImage = createLocalImage(image, imageType, associateId);
+        //Save Image to file system
+        Path imagePath = getImagePath(emptyImage);
+        OutputStream fileOutputStream = null;
+        try {
+            fileOutputStream = new FileOutputStream(new File(emptyImage.getLink()));
+            fileOutputStream.write(emptyImage.getImageByte());
+            imageDao.saveImageInfo(emptyImage);
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new GlobalException(CodeMsg.LOCAL_FILE_IMAGE_UPLOAD_ERROR_MSG);
+        }finally {
+            if(fileOutputStream != null) fileOutputStream.close();
         }
         return emptyImage;
     }
@@ -155,6 +164,34 @@ public class LocalImageService extends AbstractImageService implements ImageEbi<
         }
         imageDao.updateImageExistById(id,Image.IMAGE_NOT_EXIST);
         return null;
+    }
+
+    private Image createLocalImage(MultipartFile image, ImageType imageType, Long associateId) throws IOException {
+        // Check parameters
+        String name = image.getName();
+        byte[] imageBytes = image.getBytes();
+        checkImage(name, path, imageBytes);
+        // Set Image detail
+        Image emptyImage = getInitializedImage(name, ImageSource.IMAGE_FROM_LOCAL,
+                imageBytes, imageType, associateId);
+        emptyImage.setLink(MD5Utils.localImagePath(name, "" + emptyImage.getId(), path, dictNum, ImageType.VEHICLE_IMAGE));
+        return emptyImage;
+    }
+
+    private Path getImagePath(Image image) throws IOException {
+        String link = image.getLink();
+        File directory = new File(link.substring(0, link.lastIndexOf(File.separatorChar) + 1));;
+        if(!directory.exists()){
+            directory.mkdirs();
+        }
+        File imageFile = new File(image.getLink());
+        if(!imageFile.exists()){
+            boolean createdImage = imageFile.createNewFile();
+            if(!createdImage){
+                throw new GlobalException(CodeMsg.SERVER_ERROR_MSG);
+            }
+        }
+        return Paths.get(image.getLink());
     }
 }
 

@@ -147,6 +147,43 @@ public class VehicleController {
         return html;
     }
 
+    @RequestMapping(value = "/uploadPercentage/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    public Result<Float> checkUploadById(@PathVariable("id") Long id){
+        Float uploadPercentage = redisService.get(VehicleKey.getVehicleUploadPercentageById, "" + id, Float.class);
+        if(uploadPercentage == null){
+            redisService.set(VehicleKey.getVehicleUploadPercentageById, "" + id, 0F);
+            return Result.success(0F);
+        }else if(uploadPercentage.equals(UPLOAD_VEHICLE_FAILED)){
+            return Result.error(CodeMsg.VEHICLE_ADD_ERROR_MSG);
+        }
+        return Result.success(uploadPercentage);
+    }
+
+    @RequestMapping("/info/{id}")
+    @ResponseBody
+    public Result<VehicleInfoVo> vehicleInfo(User user, List<Message> messages, @PathVariable("id") Long id) throws Exception {
+        //Step 1: Create an empty vehicleVo object.
+        VehicleInfoVo vehicleInfoVo = vehicleInfoVoFactory.getObject();
+        //Step 2: Insert user related information.
+        vehicleInfoVo.setUser(user);
+        vehicleInfoVo.setMessages(messages);
+        //Step 3.1: Set vehicle related data.
+        //Step 3.2: Get vehicle detail.
+        VehicleDetail vehicleDetail = vehicleService.getVehicleInfoById(id);
+        vehicleInfoVo.setVehicleDetail(vehicleDetail);
+        //Step 3.3: Get Images.
+        List<Image> vehicleImages = vehicleService.getVehicleImagesById(id);
+        vehicleInfoVo.setVehicleImages(vehicleImages);
+        //Step 3.4: Get Qr code for vehicle
+        String qrCode = vehicleService.getBase64QrCodeById(id);
+        vehicleInfoVo.setBase64QRString(qrCode);
+        return Result.success(vehicleInfoVo);
+    }
+
+    /**
+     * Async Method
+     */
     /**
      * Upload images and corresponding images.
      * This is an async method, we will check the parameters and then send the parameters to message queue and return waiting.
@@ -196,40 +233,6 @@ public class VehicleController {
             }
             redisService.set(VehicleKey.getVehicleUploadPercentageById, addVehicleMessage.getVehicleDetail().getId() + "", UPLOAD_VEHICLE_FAILED);
         }
-    }
-
-    @RequestMapping("/uploadPercentage/{id}")
-    @ResponseBody
-    public Result<Float> checkUploadById(@PathVariable("id") Long id){
-        Float uploadPercentage = redisService.get(VehicleKey.getVehicleUploadPercentageById, "" + id, Float.class);
-        if(uploadPercentage == null){
-            redisService.set(VehicleKey.getVehicleUploadPercentageById, "" + id, 0F);
-            return Result.success(0F);
-        }else if(uploadPercentage.equals(UPLOAD_VEHICLE_FAILED)){
-            return Result.error(CodeMsg.VEHICLE_ADD_ERROR_MSG);
-        }
-        return Result.success(uploadPercentage);
-    }
-
-    @RequestMapping("/info/{id}")
-    @ResponseBody
-    public Result<VehicleInfoVo> vehicleInfo(User user, List<Message> messages, @PathVariable("id") Long id) throws Exception {
-        //Step 1: Create an empty vehicleVo object.
-        VehicleInfoVo vehicleInfoVo = vehicleInfoVoFactory.getObject();
-        //Step 2: Insert user related information.
-        vehicleInfoVo.setUser(user);
-        vehicleInfoVo.setMessages(messages);
-        //Step 3.1: Set vehicle related data.
-        //Step 3.2: Get vehicle detail.
-        VehicleDetail vehicleDetail = vehicleService.getVehicleInfoById(id);
-        vehicleInfoVo.setVehicleDetail(vehicleDetail);
-        //Step 3.3: Get Images.
-        List<Image> vehicleImages = vehicleService.getVehicleImagesById(id);
-        vehicleInfoVo.setVehicleImages(vehicleImages);
-        //Step 3.4: Get Qr code for vehicle
-        String qrCode = vehicleService.getBase64QrCodeById(id);
-        vehicleInfoVo.setBase64QRString(qrCode);
-        return Result.success(vehicleInfoVo);
     }
 
     // Message Entity

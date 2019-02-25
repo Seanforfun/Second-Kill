@@ -35,7 +35,7 @@ public class CodeMsg {
     private static final int PATH_EMPTY_ERROR = 500104;
     private static final String PATH_EMPTY_ERROR_STR = "PATH EMPTY ERROR";
     private static final int IMGUR_UPLOAD_IMAGE_ERROR = 500105;
-    private static final String IMGUR_UPLOAD_IMAGE_ERROR_STR = "IMGUR IMAGE UPLOAD ERROR";
+    private static final String IMGUR_UPLOAD_IMAGE_ERROR_STR = "IMGUR UPLOAD ERROR";
     private static final int IMGUR_DELETE_IMAGE_ERROR = 500107;
     private static final String IMGUR_DELETE_IMAGE_ERROR_STR = "IMGUR DELETE IMAGE ERROR";
     private static final int JSON_PARSE_INCORRECT_TOKEN = 500106;
@@ -54,6 +54,8 @@ public class CodeMsg {
     private static final String AWS_DELETE_IMAGE_ERROR_STR = "AWS DELETE IMAGE ERROR";
     private static final int IMAGE_CHEKC_INFO_ERROR = 500114;
     private static final String IMAGE_CHEKC_INFO_ERROR_STR = "GET IMAGE INFO ERROR";
+    private static final int LOCAL_FILE_IMAGE_UPLOAD_ERROR = 500115;
+    private static final String LOCAL_FILE_IMAGE_UPLOAD_ERROR_STR = "LOCAL FILE SYSTEM IMAGE UPLOAD ERROR";
 
     public static CodeMsg SUCCESS_MSG = new CodeMsg(SUCCESS, SUCCESS_STR);
     public static CodeMsg SERVER_ERROR_MSG = new CodeMsg(SERVER_ERROR, SERVER_ERROR_STR);
@@ -64,7 +66,6 @@ public class CodeMsg {
     public static CodeMsg IMGUR_UPLOAD_IMAGE_ERROR_MSG = new CodeMsg(IMGUR_UPLOAD_IMAGE_ERROR, IMGUR_UPLOAD_IMAGE_ERROR_STR);
     public static CodeMsg JSON_PARSE_INCORRECT_TOKEN_MSG = new CodeMsg(JSON_PARSE_INCORRECT_TOKEN, JSON_PARSE_INCORRECT_TOKEN_STR);
     public static CodeMsg IMGUR_DELETE_IMAGE_ERROR_MSG = new CodeMsg(IMGUR_DELETE_IMAGE_ERROR, IMGUR_DELETE_IMAGE_ERROR_STR);
-    // TODO Need to fill the arguments.
     public static CodeMsg AWS_BUCKET_DUPLICATE_NAME_MSG = new CodeMsg(AWS_BUCKET_DUPLICATE_NAME, AWS_BUCKET_DUPLICATE_NAME_STR);
     public static CodeMsg AWS_FILE_UPLOAD_FAILED_MSG = new CodeMsg(AWS_FILE_UPLOAD_FAILED, AWS_FILE_UPLOAD_FAILED_STR);
     public static CodeMsg GET_IMAGE_SOURCE_ERROR_MSG = new CodeMsg(GET_IMAGE_SOURCE_ERROR, GET_IMAGE_SOURCE_ERROR_STR);
@@ -72,6 +73,7 @@ public class CodeMsg {
     public static CodeMsg LOAD_IMAGE_BYTE_ERROR_MSG = new CodeMsg(LOAD_IMAGE_BYTE_ERROR, LOAD_IMAGE_BYTE_ERROR_STR);
     public static CodeMsg AWS_DELETE_IMAGE_ERROR_MSG = new CodeMsg(AWS_DELETE_IMAGE_ERROR, AWS_DELETE_IMAGE_ERROR_STR);
     public static CodeMsg IMAGE_CHEKC_INFO_ERROR_MSG = new CodeMsg(IMAGE_CHEKC_INFO_ERROR, IMAGE_CHEKC_INFO_ERROR_STR);
+    public static CodeMsg LOCAL_FILE_IMAGE_UPLOAD_ERROR_MSG = new CodeMsg(LOCAL_FILE_IMAGE_UPLOAD_ERROR, LOCAL_FILE_IMAGE_UPLOAD_ERROR_STR);
 
     //Redis error 5002XX
     private static final int REDIS_ERROR = 500200;

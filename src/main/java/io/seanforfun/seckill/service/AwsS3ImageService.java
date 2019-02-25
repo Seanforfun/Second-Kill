@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.auth.credentials.AwsCredentials;
 import software.amazon.awssdk.core.ResponseBytes;
@@ -44,7 +45,6 @@ import java.util.concurrent.CompletableFuture;
 @Service
 @Configuration
 @PropertySource(value = "classpath:/properties/image.properties")
-// TODO Need to modify the code to asynchronous way.
 public class AwsS3ImageService extends AbstractImageService implements ImageEbi<MultipartFile, Image> {
 
     @Autowired
@@ -102,6 +102,8 @@ public class AwsS3ImageService extends AbstractImageService implements ImageEbi<
         return image;
     }
 
+    @Override
+    @Transactional
     public Image uploadImageAsync(MultipartFile file, ImageType imageType, Long associateId) throws IOException {
         // Step 1: Get initialized message instance.
         Image image = getInitializedImage(file.getName(), ImageSource.IMAGE_FROM_FROM_AWS,

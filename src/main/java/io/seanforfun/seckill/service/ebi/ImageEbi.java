@@ -16,7 +16,8 @@ import java.util.List;
 public interface ImageEbi<T, R> {
 
     /**
-     * Upload image to a third party server.
+     * Upload image to a third party server or local file system.
+     * Synchronous operation.
      * @param t
      * @param imageType
      * @param associateId
@@ -24,6 +25,17 @@ public interface ImageEbi<T, R> {
      * @throws Exception
      */
     R uploadImage(T t, ImageType imageType, Long associateId) throws Exception;
+
+    /**
+     * Upload image to a third party server or local file system.
+     * Asynchronous operation.
+     * @param t
+     * @param imageType
+     * @param associateId
+     * @return
+     * @throws Exception
+     */
+    R uploadImageAsync(T t, ImageType imageType, Long associateId) throws Exception;
 
     /**
      * Upload a set of images.

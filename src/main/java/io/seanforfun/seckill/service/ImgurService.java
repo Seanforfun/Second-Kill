@@ -16,11 +16,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.reactive.function.BodyInserter;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -33,6 +37,8 @@ import java.net.URL;
 @PropertySource(value = "classpath:/properties/image.properties")
 public class ImgurService extends AbstractImageService implements ImageEbi<MultipartFile, Image> {
 
+    private static final String IMGUR_IMAGE_OPERATION_URL = "https://api.imgur.com/3/image/";
+
     @Value("${image.imgur.clientId}")
     private String clientId;
 
@@ -43,16 +49,17 @@ public class ImgurService extends AbstractImageService implements ImageEbi<Multi
     private RestTemplate restTemplate;
 
     @Autowired
+    private WebClient webClient;
+
+    @Autowired
     private ImageDao imageDao;
 
     //Save method
     @Override
     public Image uploadImage(MultipartFile multipartFile, ImageType imageType, Long associateId) throws Exception {
         // Set initial Image information.
-        String name = multipartFile.getName();
-        byte[] imageBytes = multipartFile.getBytes();
-        Image emptyImage = getInitializedImage(name, ImageSource.IMAGE_FROM_IMGUR,
-                imageBytes, imageType, associateId);
+        Image emptyImage = getInitializedImage(multipartFile.getName(), ImageSource.IMAGE_FROM_IMGUR,
+                multipartFile.getBytes(), imageType, associateId);
         // Upload Image to imgur.
         /**
          * request:
@@ -100,7 +107,7 @@ public class ImgurService extends AbstractImageService implements ImageEbi<Multi
         MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
         map.add("image", new String(Base64.encodeBase64(multipartFile.getBytes())));
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-        ResponseEntity<String> responseEntity = restTemplate.postForEntity("https://api.imgur.com/3/image", request, String.class);
+        ResponseEntity<String> responseEntity = restTemplate.postForEntity(IMGUR_IMAGE_OPERATION_URL, request, String.class);
         if(responseEntity.getStatusCode() != HttpStatus.OK){
             throw new GlobalException(CodeMsg.IMGUR_UPLOAD_IMAGE_ERROR_MSG);
         }else{
@@ -117,6 +124,43 @@ public class ImgurService extends AbstractImageService implements ImageEbi<Multi
             emptyImage.setImageHash(imageHash);
         }
         imageDao.saveImageInfo(emptyImage);
+        return emptyImage;
+    }
+
+    /**
+     * This method is not perfect asynchronous since we want to save some of the fields from the
+     * response to database wo we need to get the response from Imgur first then fill the fields in
+     * Image object before saving it into database.
+     * @param multipartFile
+     * @param imageType
+     * @param associateId
+     * @return
+     * @throws Exception
+     */
+    //TODO Need to test
+    @Override
+    @Transactional
+    public Image uploadImageAsync(MultipartFile multipartFile, ImageType imageType, Long associateId) throws Exception {
+        Image emptyImage = getInitializedImage(multipartFile.getName(), ImageSource.IMAGE_FROM_IMGUR,
+                multipartFile.getBytes(), imageType, associateId);
+        Mono<String> response = webClient.method(HttpMethod.POST)
+                .uri(IMGUR_IMAGE_OPERATION_URL)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .header("Authorization", "Client-ID " + clientId)
+                .attribute("image", new String(Base64.encodeBase64(multipartFile.getBytes())))
+                .retrieve().bodyToMono(String.class);
+        response.doOnError(e -> {
+            e.printStackTrace();
+            throw new GlobalException(CodeMsg.IMGUR_UPLOAD_IMAGE_ERROR_MSG);
+        }).doOnSuccess(responseJson -> {
+            String link = JsonUtils.get(responseJson, "data.link", String.class);
+            String deleteHash = JsonUtils.get(responseJson, "data.deletehash", String.class);
+            String imageHash = JsonUtils.get(responseJson, "data.id", String.class);
+            emptyImage.setLink(link);
+            emptyImage.setDeleteHash(deleteHash);
+            emptyImage.setImageHash(imageHash);
+            imageDao.saveImageInfo(emptyImage);
+        });
         return emptyImage;
     }
 
@@ -197,7 +241,7 @@ public class ImgurService extends AbstractImageService implements ImageEbi<Multi
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         headers.add("Authorization", "Client-ID " + clientId);
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(null, headers);
-        ResponseEntity<String> response = restTemplate.postForEntity("https://api.imgur.com/3/image/" + imageHash, headers, String.class);
+        ResponseEntity<String> response = restTemplate.postForEntity(IMGUR_IMAGE_OPERATION_URL + imageHash, headers, String.class);
         return response.getStatusCode().equals(HttpStatus.OK);
     }
 
@@ -228,7 +272,7 @@ public class ImgurService extends AbstractImageService implements ImageEbi<Multi
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("Authorization", "Client-ID " + clientId);
         HttpEntity<Object> request = new HttpEntity<>(headers);
-        ResponseEntity<String> deleteResponse = restTemplate.exchange("https://api.imgur.com/3/image/" + deleteHash, HttpMethod.DELETE, request, String.class);
+        ResponseEntity<String> deleteResponse = restTemplate.exchange(IMGUR_IMAGE_OPERATION_URL + deleteHash, HttpMethod.DELETE, request, String.class);
         if(deleteResponse.getStatusCode() != HttpStatus.OK){
             throw  new GlobalException(CodeMsg.IMGUR_DELETE_IMAGE_ERROR_MSG);
         }
@@ -242,5 +286,10 @@ public class ImgurService extends AbstractImageService implements ImageEbi<Multi
     @Bean
     public RestTemplate restTemplate(){
         return new RestTemplate();
+    }
+
+    @Bean
+    public WebClient webClient(){
+        return WebClient.create();
     }
 }

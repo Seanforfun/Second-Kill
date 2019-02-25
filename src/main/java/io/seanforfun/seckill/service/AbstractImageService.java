@@ -79,6 +79,7 @@ public abstract class AbstractImageService implements ImageEbi<MultipartFile, Im
         List<Image> imageList = null;
         int imageNum = images.size();
         float count = 0F;
+        // Step 1: Set initial percentage
         redisService.set(VehicleKey.getVehicleUploadPercentageById, "" + associateId, 0F);
         for(MultipartFile image : images){
             Image savedImage = uploadImage(image, imageType, associateId);
