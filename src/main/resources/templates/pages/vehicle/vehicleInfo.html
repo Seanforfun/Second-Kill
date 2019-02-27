@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <div id="meta"></div>
+
+    <title>Message</title>
+
+    <!-- Custom fonts for this template -->
+    <!-- jquery -->
+    <script type="text/javascript" src="/js/jquery.min.js"></script>
+    <!--<script src="/js/jquery.min.js"></script>-->
+    <!-- bootstrap -->
+    <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.min.css" />
+    <!-- layer -->
+    <script type="text/javascript" src="/layer/layer.js"></script>
+    <!-- common.js -->
+    <script type="text/javascript" src="/js/common.js"></script>
+    <!-- Custom css and js file for register.html-->
+    <script type="text/javascript" src="/js/form-validation.js"></script>
+    <script type="text/javascript" src="/js/mdb.min.js"></script>
+    <!--<link rel="stylesheet" type="text/css" href="/css/form-validation.css" />-->
+    <link rel="stylesheet" type="text/css" href="/css/mdb.min.css" />
+
+    <div id="cssinclude"></div>
+
+</head>
+
+<body id="page-top">
+
+<!-- Page Wrapper -->
+<div id="wrapper">
+
+    <!-- Sidebar -->
+    <th:block th:replace="fragments/sideBar::sidebar"></th:block>
+
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+
+        <!-- Main Content -->
+        <div id="content">
+
+            <!-- Topbar -->
+            <th:block th:replace="fragments/topBar::topBar"></th:block>
+
+            <!-- Outer Row -->
+            <div class="col-xl-10 col-lg-12 col-md-9">
+                <div class="row text-center justify-content-center">
+                    <!--class="error mx-auto"-->
+                    <div  class="error mx-auto" data-text="VEHICLE">VEHICLE</div>
+                </div>
+            </div>
+
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+                <div class="row justify-content-center">
+                    <div class="col-xl-10 col-lg-12 col-md-9">
+                        <div class="card o-hidden border-0 shadow-lg my-5">
+                            <div class="card-body p-0">
+                                <!-- Nested Row within Card Body -->
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="p-5">
+                                            <form id="addVehicleForm"  class="needs-validation" enctype="multipart/form-data" novalidate>
+                                                <div class="row">
+                                                    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+                                                        <ol class="carousel-indicators">
+                                                            <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+                                                            <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+                                                            <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+                                                        </ol>
+                                                        <div class="carousel-inner">
+                                                            <div class="carousel-item active">
+                                                                <img th:src="..." class="d-block w-100" alt="...">
+                                                            </div>
+                                                        </div>
+                                                        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                            <span class="sr-only">Previous</span>
+                                                        </a>
+                                                        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                            <span class="sr-only">Next</span>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <div class="form-row">
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="make">Make</label>
+                                                        <input type="text" class="form-control" id="make" th:value="${vehicleInfoVo.vehicleDetail.make}" disabled>
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="model">Model</label>
+                                                        <input type="text" class="form-control" id="model" th:value="${vehicleInfoVo.vehicleDetail.model}" disabled>
+                                                    </div>
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label for="vin">VIN</label>
+                                                    <input type="text" class="form-control" id="vin" th:value="${vehicleInfoVo.vehicleDetail.vin}" disabled>
+                                                </div>
+
+                                                <div class="form-row">
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="year">Year</label>
+                                                        <input type="text" class="form-control" id="year" th:value="${vehicleInfoVo.vehicleDetail.year}" disabled>
+                                                    </div>
+
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="status">Vehicle Condition</label>
+                                                        <input type="text" class="form-control" id="status" th:value="${vehicleInfoVo.vehicleDetail.statusVo}" disabled>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-row">
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="transmission">Transmission</label>
+                                                        <input type="text" class="form-control" id="transmission" th:value="${vehicleInfoVo.vehicleDetail.transmissionVo}" disabled>
+                                                    </div>
+
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="process">Vehicle process</label>
+                                                        <input type="text" class="form-control" id="process" th:value="${vehicleInfoVo.vehicleDetail.processVo}" disabled>
+                                                    </div>
+
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label for="price">Price</label>
+                                                    <input type="text" class="form-control" id="price" th:value="${vehicleInfoVo.vehicleDetail.priceVo}" disabled>
+                                                </div>
+
+                                                <div class="form-row">
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="zip">ZIP</label>
+                                                        <input type="text" class="form-control" id="zip" th:value="${vehicleInfoVo.vehicleDetail.zip}" disabled>
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="mileage">Mileage</label>
+                                                        <input type="text" class="form-control" id="mileage" th:value="${vehicleInfoVo.vehicleDetail.mileage}" disabled>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-row">
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="seatNum">Seat Number(Optional)</label>
+                                                        <input type="text" class="form-control" id="seatNum" th:value="${vehicleInfoVo.vehicleDetail.seatNumVo}" disabled>
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="bodyType">Body Type(Optional)</label>
+                                                        <input type="text" class="form-control" id="bodyType" th:value="${vehicleInfoVo.vehicleDetail.bodyTypeVo}" disabled>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-row">
+                                                    <div class="col-md-12 mb-6">
+                                                        <div id="exteriorColor">Exterior Color(Optional)</div>
+                                                        <div class="form-check">
+                                                            <div class="row">
+                                                                <div class="col-md-2 mb-1 custom-control custom-radio custom-control-inline">
+                                                                    <input type="radio" class="custom-control-input" id="Silver" value="21" name="exteriorColor">
+                                                                    <label class="custom-control-label" for="Silver"><i class="fa fa-circle" style="color: #C0C0C0" aria-hidden="true"></i>Silver</label>
+                                                                </div>
+                                                                <div class="col-md-2 mb-1 custom-control custom-radio custom-control-inline">
+                                                                    <input type="radio" class="custom-control-input" id="Tan" value="22" name="exteriorColor">
+                                                                    <label class="custom-control-label" for="Tan"><i class="fa fa-circle" style="color: #D2B48C" aria-hidden="true"></i>Tan</label>
+                                                                </div>
+                                                                <div class="col-md-2 mb-1 custom-control custom-radio custom-control-inline">
+                                                                    <input type="radio" class="custom-control-input" id="Turquoise" value="23" name="exteriorColor">
+                                                                    <label class="custom-control-label" for="Turquoise"><i class="fa fa-circle" style="color: #40e0d0" aria-hidden="true"></i>Turquoise</label>
+                                                                </div>
+                                                                <div class="col-md-2 mb-1 custom-control custom-radio custom-control-inline">
+                                                                    <input type="radio" class="custom-control-input" id="White" value="24" name="exteriorColor">
+                                                                    <label class="custom-control-label" for="White"><i class="fa fa-circle" style="color: 	#FFFFFF" aria-hidden="true"></i>White</label>
+                                                                </div>
+                                                                <div class="col-md-2 mb-1 custom-control custom-radio custom-control-inline">
+                                                                    <input type="radio" class="custom-control-input" id="Yellow" value="25" name="exteriorColor">
+                                                                    <label class="custom-control-label" for="Yellow"><i class="fa fa-circle" style="color: #FFFF00" aria-hidden="true"></i>Yellow</label>
+                                                                </div>
+                                                                <div class="col-md-2 mb-1 custom-control custom-radio custom-control-inline">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-row">
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="driveTrain">Drive Train(Optional)</label>
+                                                        <input type="text" class="form-control" id="driveTrain" th:value="${vehicleInfoVo.vehicleDetail.driveTrainVo}" disabled>
+                                                    </div>
+
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="fuelType">Fuel Type(Optional)</label>
+                                                        <input type="text" class="form-control" id="fuelType" th:value="${vehicleInfoVo.vehicleDetail.fuelTypeVo}" disabled>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-row">
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="engine">Engine(Optional)</label>
+                                                        <input type="text" class="form-control" id="engine" th:value="${vehicleInfoVo.vehicleDetail.engineVo}" disabled>
+                                                    </div>
+
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="doors">Door Number(Optional)</label>
+                                                        <input type="text" class="form-control" id="doors" th:value="${vehicleInfoVo.vehicleDetail.doorsVo}" disabled>
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-row">
+                                                    <div class="form-group col-md-12 mb-6">
+                                                        <label for="description">Description(Optional)</label>
+                                                        <textarea class="form-control" id="description" rows="6" th:value="${vehicleInfoVo.vehicleDetail.description}" disabled></textarea>
+                                                    </div>
+                                                </div>
+
+                                                <hr class="mb-4">
+                                                <div class="row">
+                                                    <div class="col-md-6"></div>
+                                                    <div class="col-md-3">
+                                                        <button id="deleteBtn" onclick="deleteVehicle(); return false;" class="btn btn-outline-danger  btn-block">
+                                                            <span class="icon text-white-0">
+                                                              <i class="far fa-arrow-alt-circle-up"></i>
+                                                            </span>
+                                                            <span class="text">Delete Vehicle</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="col-md-3" style="float:right">
+                                                        <button id="sendBtn" onclick="modifyVehicle(); return false;" class="btn btn-outline-danger  btn-block">
+                                                            <span class="icon text-white-0">
+                                                              <i class="far fa-arrow-alt-circle-up"></i>
+                                                            </span>
+                                                            <span class="text">Update Vehicle</span>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+            <!-- /.container-fluid -->
+
+        </div>
+        <!-- End of Main Content -->
+
+        <!-- Modal -->
+        <div class="modal fade" id="saveSuccessModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Message</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Save vehicle successfully!
+                    </div>
+                    <div class="modal-footer">
+                        <a type="button" class="btn btn-primary" data-dismiss="modal">Close</a>
+                        <a type="button" class="btn btn-primary" th:href="@{/vehicle/toAddPage}">Add More</a>
+                        <a type="button" id="vehicleInfoBtn" class="btn btn-primary" data-id="" onclick="checkVehicleInfo(); return false;">Check Infomation</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div id="footer"></div>
+        <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+</div>
+<!-- End of Page Wrapper -->
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<!-- Logout Modal-->
+<div id="logout"></div>
+<!-- Bootstrap core JavaScript-->
+<div id="jsinclude"></div>
+
+</body>
+<script type="text/javascript">
+
+    function blockRender() {
+        $("#meta").load("/static/meta.htm");
+        $("#cssinclude").load("/static/cssinclude.htm");
+        $("#footer").load("/static/footer.htm");
+        $("#logout").load("/static/logout.htm");
+        $("#jsinclude").load("/static/jsinclude.htm");
+    }
+
+    $(function () {
+        blockRender();
+    });
+
+</script>
+</html>

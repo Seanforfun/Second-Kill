@@ -52,6 +52,9 @@ public interface VehicleDao {
             "WHERE v.id = #{id};")
     VehicleDetail getVehicleById(@Param("id") Long id);
 
+    @Select("Select count(id) from vehicle where vin = #{vin}")
+    Long getVehicleNumByVin(@Param("vin") String vin);
+
     /**
      * Insert
      */

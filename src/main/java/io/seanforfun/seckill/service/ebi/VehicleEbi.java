@@ -77,4 +77,11 @@ public interface VehicleEbi {
      * @return
      */
     List<Image> getVehicleImagesById(Long id) throws Exception;
+
+    /**
+     * Check if given vin exists.
+     * @param vin
+     * @return
+     */
+    boolean vehicleCheckVin(String vin);
 }

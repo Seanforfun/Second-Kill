@@ -162,4 +162,13 @@ public class VehicleService implements VehicleEbi {
     public List<Image> getVehicleImagesById(Long vehicleId) throws Exception {
         return (List<Image>)imageService.getImageListByVehicleId(vehicleId);
     }
+
+    @Override
+    public boolean vehicleCheckVin(String vin) {
+        Boolean vinExists = redisService.get(VehicleKey.vehicleVinExists, vin, Boolean.class);
+        if(vinExists != null) return vinExists;
+        vinExists = vehicleDao.getVehicleNumByVin(vin) > 0;
+        redisService.set(VehicleKey.vehicleVinExists, vin, vinExists);
+        return !vinExists;
+    }
 }

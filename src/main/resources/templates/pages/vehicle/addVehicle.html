@@ -20,7 +20,7 @@
     <!-- Custom css and js file for register.html-->
     <script type="text/javascript" src="/js/form-validation.js"></script>
     <script type="text/javascript" src="/js/mdb.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="/css/form-validation.css" />
+    <!--<link rel="stylesheet" type="text/css" href="/css/form-validation.css" />-->
     <link rel="stylesheet" type="text/css" href="/css/mdb.min.css" />
 
     <div id="cssinclude"></div>
@@ -63,7 +63,7 @@
                                     <div class="col-lg-12">
                                         <div class="p-5">
                                             <form id="addVehicleForm"  class="needs-validation" enctype="multipart/form-data" novalidate>
-                                                <div class="row">
+                                                <div class="form-row">
                                                     <div class="col-md-6 mb-3">
                                                         <label for="make">Make</label>
                                                         <select class="custom-select form-control" id="make" onchange="changeMake()" required>
@@ -94,7 +94,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="row">
+                                                <div class="form-row">
                                                     <div class="col-md-6 mb-3">
                                                         <label for="year">Year</label>
                                                         <div class="input-group">
@@ -122,7 +122,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="row">
+                                                <div class="form-row">
                                                     <div class="col-md-6 mb-3">
                                                         <label for="transmission">Transmission</label>
                                                         <div class="input-group">
@@ -167,11 +167,11 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="row">
+                                                <div class="form-row">
                                                     <div class="col-md-6 mb-3">
                                                         <label for="zip">ZIP</label>
                                                         <div class="input-group">
-                                                            <input type="text" class="form-control" id="zip" placeholder="Zip of current Location" minlength="1">
+                                                            <input type="text" class="form-control" id="zip" placeholder="Zip of current Location" minlength="1" required>
                                                             <div class="invalid-feedback">
                                                                 Valid zip is required. (Minimum equal to 1 characters.)
                                                             </div>
@@ -180,7 +180,7 @@
                                                     <div class="col-md-6 mb-3">
                                                         <label for="mileage">Mileage</label>
                                                         <div class="input-group">
-                                                            <input type="text" class="form-control" id="mileage" placeholder="Mileleage of Vehicle (Km)" minlength="1">
+                                                            <input type="text" class="form-control" id="mileage" placeholder="Mileleage of Vehicle (Km)" minlength="1" required>
                                                             <div class="invalid-feedback">
                                                                 Valid mileage is required. (Minimum equal to 1 characters.)
                                                             </div>
@@ -188,7 +188,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="row">
+                                                <div class="form-row">
                                                     <div class="col-md-6 mb-3">
                                                         <label for="seatNum">Seat Number(Optional)</label>
                                                         <div class="input-group">
@@ -223,7 +223,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="row">
+                                                <div class="form-row">
                                                     <div class="col-md-12 mb-6">
                                                         <div id="exteriorColor">Exterior Color(Optional)</div>
                                                         <div class="form-check">
@@ -351,7 +351,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="row">
+                                                <div class="form-row">
                                                     <div class="col-md-6 mb-3">
                                                         <label for="driveTrain">Drive Train(Optional)</label>
                                                         <div class="input-group">
@@ -379,7 +379,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="row">
+                                                <div class="form-row">
                                                     <div class="col-md-6 mb-3">
                                                         <label for="engine">Engine(Optional)</label>
                                                         <div class="input-group">
@@ -415,14 +415,14 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="row">
+                                                <div class="form-row">
                                                     <div class="form-group col-md-12 mb-6">
                                                         <label for="description">Description(Optional)</label>
                                                         <textarea class="form-control" id="description" rows="6"></textarea>
                                                     </div>
                                                 </div>
 
-                                                <div class="row">
+                                                <div class="form-row">
                                                     <div class="form-group  col-md-12 mb-6">
                                                         <label for="upload">Upload Images(Optional)</label>
                                                         <input type="file" class="form-control-file btn btn-outline-primary" id="upload" multiple="multiple">
@@ -464,6 +464,28 @@
 
         </div>
         <!-- End of Main Content -->
+
+        <!-- Modal -->
+        <div class="modal fade" id="saveSuccessModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Message</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Save vehicle successfully!
+                    </div>
+                    <div class="modal-footer">
+                        <a type="button" class="btn btn-primary" data-dismiss="modal">Close</a>
+                        <a type="button" class="btn btn-primary" th:href="@{/vehicle/toAddPage}">Add More</a>
+                        <a type="button" id="vehicleInfoBtn" class="btn btn-primary" data-id="" onclick="checkVehicleInfo(); return false;">Check Infomation</a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Footer -->
         <div id="footer"></div>
@@ -517,6 +539,11 @@
         $("#year").append($(yearOptions));
         changeMake();
     });
+
+    function  checkVehicleInfo(){
+        var vehicleId =  $("#vehicleInfoBtn").attr("data-id");
+        window.location.href="/vehicle/toVehicleInfo/" + vehicleId;
+    }
     
     function checkVehicleUploadProgress(vehicleId) {
         $.ajax({
@@ -527,14 +554,17 @@
             success: function (data) {
                 if(data.code == 0){
                     var progress = parseFloat(data.data).toFixed(2);
-                    if(progress == -1.00){
+                    if(progress < 0){
                         // Upload failed
-                        $("#upload-percentage-span").html(0 + " %");
+                        $("#upload-percentage-span").html("Failed");
                         $("#upload-percentage-bar").addClass("bg-danger");
+                        $("#upload-percentage-bar").css("width", 100 + "%").css("aria-valuenow", "100");
                     }else if(progress == 1.00){
                         // Upload success
-                        $("#upload-percentage-span").html(progress + " %");
+                        $("#upload-percentage-span").html(progress * 100 + " %");
                         $("#upload-percentage-bar").css("width", progress * 100 + "%").css("aria-valuenow", "" + parseFloat(progress * 100).toFixed(0));
+                        $("#vehicleInfoBtn").attr("data-id", vehicleId);
+                        $("#saveSuccessModal").modal("show");
                     }else{
                         // Check progress again. Update the progress.
                         $("#upload-percentage-span").html(progress + " %");
@@ -550,28 +580,92 @@
             }
         })
     }
+    var canSubmit = true;
+    function checkEmpty(data, error, length) {
+        if (length != null){
+            if (data == null || data == '' ||data == undefined || data.length < length){
+                layer.closeAll();
+                layer.msg(error, {
+                    time: 3000
+                });
+                canSubmit = false;
+                return false;
+            }
+            return true;
+        }else{
+            if (data == null || data == '' || data == undefined){
+                layer.closeAll();
+                layer.msg(error, {
+                    time: 3000
+                });
+                canSubmit = false;
+                return false;
+            }
+            return true;
+        }
+    }
 
     function saveVehicle() {
         var formData = new FormData();
         var make = $("#make").val();
+        if(!checkEmpty(make, "EMPTY MAKE", null)){
+            canSubmit = false;
+            return;
+        }
         formData.append("make", make);
         var model = $("#model").val();
+        if(!checkEmpty(model, "EMPTY MODEL", null)){
+            canSubmit = false;
+            return;
+        }
         formData.append("model", model);
         var vin = $("#vin").val();
+        if(!checkEmpty(vin, "EMPTY MODEL", 17)){
+            canSubmit = false;
+            return;
+        }
         formData.append("vin", vin);
         var year = $("#year").val();
+        if(!checkEmpty(year, "EMPTY YEAR", null)){
+            canSubmit = false;
+            return;
+        }
         formData.append("year", year);
         var status = $("#status").val();
+        if(!checkEmpty(status, "EMPTY STATUS", null)){
+            canSubmit = false;
+            return;
+        }
         formData.append("status", status);
         var transmission = $("#transmission").val();
+        if(!checkEmpty(transmission, "EMPTY TRANSMISSION", null)){
+            canSubmit = false;
+            return;
+        }
         formData.append("transmission", transmission);
         var process = $("#process").val();
+        if(!checkEmpty(process, "EMPTY PROCESS", null)){
+            canSubmit = false;
+            return;
+        }
         formData.append("process", process);
         var price = $("#price").val();
+        if(!checkEmpty(price, "EMPTY PRICE", null)){
+            canSubmit = false;
+            return;
+        }
         formData.append("price", price);
         var zip = $("#zip").val();
+        if(!checkEmpty(zip, "EMPTY ZIP", 1)){
+            canSubmit = false;
+            return;
+        }
         formData.append("zip", zip);
         var mileage = $("#mileage").val();
+        if(!checkEmpty(mileage, "EMPTY MILEAGE", 1)){
+            canSubmit = false;
+            return;
+        }
         formData.append("mileage", mileage);
         var seatNum = $("#seatNum").val();
         formData.append("seatNum", seatNum == null || seatNum == "" || seatNum == undefined ? NOT_GIVEN: seatNum);
@@ -632,7 +726,6 @@
                     checkVehicleUploadProgress(vehicleId);
                 }else{
                     layer.msg(data.msg);
-                    window.location.reload();
                 }
             },
             error: function (data) {

@@ -2,6 +2,7 @@ package io.seanforfun.seckill.service;
 
 import io.seanforfun.seckill.dao.ImageDao;
 import io.seanforfun.seckill.entity.domain.Image;
+import io.seanforfun.seckill.entity.enums.ImageFormat;
 import io.seanforfun.seckill.entity.enums.ImageSource;
 import io.seanforfun.seckill.entity.enums.ImageType;
 import io.seanforfun.seckill.exceptions.GlobalException;
@@ -20,6 +21,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.print.DocFlavor;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -55,6 +57,8 @@ public abstract class AbstractImageService implements ImageEbi<Image, Image> {
     public Image getInitializedImage(String name, ImageSource imageSource, byte[] imageBytes,
                                         ImageType imageType, Long associateId){
         Image emptyImage = imageFactory.getObject();
+        String suffix = name.substring(name.lastIndexOf('.') + 1);
+        emptyImage.setFormat(checkImageFormat(suffix));
         emptyImage.setId(SnowFlakeUtils.getSnowFlakeId());
         emptyImage.setName(name);
         emptyImage.setSource(imageSource);
@@ -63,6 +67,18 @@ public abstract class AbstractImageService implements ImageEbi<Image, Image> {
         emptyImage.setAssociateId(associateId);
         emptyImage.setExist(Image.IMAGE_EXIST);
         return emptyImage;
+    }
+
+    public static ImageFormat checkImageFormat(String suffix){
+        String uppercaseSuffix = suffix.toUpperCase();
+        switch (uppercaseSuffix) {
+            case "PNG":
+                return ImageFormat.PNG_IMAGE;
+            case "GIF":
+                return ImageFormat.GIF_IMAGE;
+            default:
+                return ImageFormat.JPEG_IMAGE;
+        }
     }
 
     protected String getLinkFromImage(Image image, ImageSource imageSource){

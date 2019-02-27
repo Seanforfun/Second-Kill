@@ -18,15 +18,15 @@ import java.util.List;
 public interface ImageDao {
 
     // Save images
-    @Insert("Insert into Image (id, link, name, source, type, associateId, deleteHash, imageHash, exist) " +
-            "values (#{id}, #{link}, #{name}, #{source}, #{type}, #{associateId}, #{deleteHash}, #{imageHash}, #{exist})")
+    @Insert("Insert into Image (id, link, name, source, type, associateId, deleteHash, imageHash, exist, imageFormat) " +
+            "values (#{id}, #{link}, #{name}, #{source}, #{type}, #{associateId}, #{deleteHash}, #{imageHash}, #{exist}, #{imageFormat})")
     void saveImageInfo(Image image);
 
     // Load image information.
-    @Select("Select id, link, name, source, type, associateId, deleteHash from Image where id = #{id}")
+    @Select("Select id, link, name, source, type, associateId, deleteHash, imageFormat from Image where id = #{id}")
     Image getImageById(@Param("id") Long id);
 
-    @Select("Select id, link, name, source, type, associateId, deleteHash, exists from Image where associateId = #{vehicleId} ")
+    @Select("Select id, link, name, source, type, associateId, deleteHash, exists, imageFormat from Image where associateId = #{vehicleId} ")
     List<Image> getImagesByVehicleId(@Param("vehicleId") Long vehicleId);
 
     // Update image information.

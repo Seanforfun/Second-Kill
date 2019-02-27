@@ -100,7 +100,7 @@ public class VehicleController {
     @Value("${image.source}")
     private String source;
 
-    public static final Float UPLOAD_VEHICLE_FAILED = -1F;
+    public static final float UPLOAD_VEHICLE_FAILED = -1.00F;
 
     public static final ExecutorService SAVE_VEHICLE_THREAD_POOL = Executors.newCachedThreadPool();
 
@@ -159,24 +159,40 @@ public class VehicleController {
         return html;
     }
 
+    @RequestMapping("/toVehicleInfo/{id}")
+    public String toVehicleInfo(User user, List<Message> messages,
+                                @PathParam("id") Long id, HttpServletRequest request,
+                                Model model) throws Exception {
+        String html = null;
+        html = redisService.get(PageKey.getPageByName, "/toVehicleInfo/" + id, String.class);
+        if(html != null){
+            return html;
+        }
+        VehicleInfoVo vehicleInfoVo = getVehicleInfoVo(user, messages, id);
+        model.addAttribute("vehicleInfoVo", vehicleInfoVo);
+//        redisService.get(, , )
+        return "pages/vehicle/vehicleInfo";
+    }
+
     @RequestMapping(value = "/uploadPercentage/{id}", method = RequestMethod.GET)
     @ResponseBody
     public Result<Float> checkUploadById(@PathVariable("id") Long id){
         String uploadPercentage = redisService.get(VehicleKey.getVehicleUploadPercentageById, "" + id, String.class);
         if(uploadPercentage == null){
-            redisService.set(VehicleKey.getVehicleUploadPercentageById, "" + id, 0F);
             return Result.success(0F);
         }
         Float aFloat = Float.parseFloat(uploadPercentage);
-        if(aFloat.equals(UPLOAD_VEHICLE_FAILED)){
-            return Result.error(CodeMsg.VEHICLE_ADD_ERROR_MSG);
-        }
         return Result.success(aFloat);
     }
 
-    @RequestMapping("/info/{id}")
+    @RequestMapping("/mobile/info/{id}")
     @ResponseBody
     public Result<VehicleInfoVo> vehicleInfo(User user, List<Message> messages, @PathVariable("id") Long id) throws Exception {
+        VehicleInfoVo vehicleInfoVo = getVehicleInfoVo(user, messages, id);
+        return Result.success(vehicleInfoVo);
+    }
+
+    private VehicleInfoVo getVehicleInfoVo(User user, List<Message> messages, Long id) throws Exception {
         //Step 1: Create an empty vehicleVo object.
         VehicleInfoVo vehicleInfoVo = vehicleInfoVoFactory.getObject();
         //Step 2: Insert user related information.
@@ -192,7 +208,7 @@ public class VehicleController {
         //Step 3.4: Get Qr code for vehicle
         String qrCode = vehicleService.getBase64QrCodeById(id);
         vehicleInfoVo.setBase64QRString(qrCode);
-        return Result.success(vehicleInfoVo);
+        return vehicleInfoVo;
     }
 
     /**
@@ -212,6 +228,9 @@ public class VehicleController {
     @RequestMapping(value = "/addVehicle", method = RequestMethod.POST)
     @ResponseBody
     public Result<String> addVehicle(User user, @Valid VehicleDetail vehicleDetail, MultipartHttpServletRequest request ) {
+//        if(!vehicleService.vehicleCheckVin(vehicleDetail.getVin())){
+//            throw new GlobalException(CodeMsg.DUPLICATE_VEHICLE_VIN_MSG);
+//        }
         // Get all uploaded files.
         Map<String, MultipartFile> fileMap = request.getFileMap();
         Set<Map.Entry<String, MultipartFile>> entries = fileMap.entrySet();
@@ -237,6 +256,7 @@ public class VehicleController {
         // Save vehicle using another thread.
         CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
             try {
+//                throw new RuntimeException();
                 vehicleService.saveVehicle(vehicleDetail, user.getId(), imageList);
             } catch (Exception e) {
                 e.printStackTrace();

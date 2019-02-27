@@ -1,5 +1,6 @@
 package io.seanforfun.seckill.entity.domain;
 
+import io.seanforfun.seckill.entity.enums.ImageFormat;
 import io.seanforfun.seckill.entity.enums.ImageSource;
 import io.seanforfun.seckill.entity.enums.ImageType;
 import lombok.Getter;
@@ -35,4 +36,5 @@ public class Image {
     private Integer exist;
     private byte[] imageByte;
     private String imageBase64String;
+    private ImageFormat format;
 }

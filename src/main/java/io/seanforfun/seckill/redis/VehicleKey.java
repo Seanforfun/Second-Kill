@@ -22,6 +22,7 @@ public class VehicleKey extends BasePrefix {
     public static VehicleKey getGetKeyForList = new VehicleKey(VEHICLE_EXPIRE_SECOND, "list");
     public static VehicleKey getVehicleById = new VehicleKey(VEHICLE_EXPIRE_SECOND, "vehicle_id");
     public static VehicleKey getVehicleUploadPercentageById = new VehicleKey(VEHICLE_EXPIRE_SECOND, "uploadPercent");
+    public static VehicleKey vehicleVinExists = new VehicleKey(NEVER_EXPIRE, "vinExist");
 
     public static VehicleKey getQRById = new VehicleKey(VEHICLE_QR_EXPIRE_SECOND, "vehicle_qr");
 }
