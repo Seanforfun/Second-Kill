@@ -18,8 +18,8 @@ import java.util.List;
 public interface ImageDao {
 
     // Save images
-    @Insert("Insert into Image (id, link, name, source, type, associateId, deleteHash, imageHash) " +
-            "values (#{id}, #{link}, #{name}, #{source}, #{type}, #{associateId}, #{deleteHash}, #{imageHash})")
+    @Insert("Insert into Image (id, link, name, source, type, associateId, deleteHash, imageHash, exist) " +
+            "values (#{id}, #{link}, #{name}, #{source}, #{type}, #{associateId}, #{deleteHash}, #{imageHash}, #{exist})")
     void saveImageInfo(Image image);
 
     // Load image information.

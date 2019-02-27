@@ -1,30 +1,28 @@
 package io.seanforfun.seckill.controller;
 
-import com.rabbitmq.client.Channel;
 import io.seanforfun.seckill.config.EnvironmentConfigBean;
 import io.seanforfun.seckill.entity.domain.Image;
 import io.seanforfun.seckill.entity.domain.Message;
 import io.seanforfun.seckill.entity.domain.User;
 import io.seanforfun.seckill.entity.domain.VehicleDetail;
+import io.seanforfun.seckill.entity.enums.ImageSource;
+import io.seanforfun.seckill.entity.enums.ImageType;
 import io.seanforfun.seckill.entity.vo.VehicleInfoVo;
 import io.seanforfun.seckill.entity.vo.VehicleVo;
 import io.seanforfun.seckill.exceptions.GlobalException;
-import io.seanforfun.seckill.rabbitmq.MqConfigure;
 import io.seanforfun.seckill.redis.PageKey;
 import io.seanforfun.seckill.redis.RedisService;
 import io.seanforfun.seckill.redis.VehicleKey;
 import io.seanforfun.seckill.result.CodeMsg;
 import io.seanforfun.seckill.result.Result;
+import io.seanforfun.seckill.service.LocalImageService;
+import io.seanforfun.seckill.service.ebi.ImageEbi;
 import io.seanforfun.seckill.service.ebi.VehicleEbi;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
+import io.seanforfun.seckill.utils.SnowFlakeUtils;
 import org.springframework.amqp.core.AmqpTemplate;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.rabbit.annotation.RabbitHandler;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.ApplicationContext;
@@ -45,9 +43,14 @@ import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 /**
  * @author: Seanforfun
@@ -60,11 +63,15 @@ import java.util.Set;
 @RequestMapping("/vehicle")
 @Configuration
 @ConfigurationProperties
-@PropertySource(value="classpath:/properties/pagination.properties")
+@PropertySource(value= {"classpath:/properties/pagination.properties", "classpath:/properties/image.properties"})
 public class VehicleController {
 
     @Autowired
     private VehicleEbi vehicleService;
+
+    @Autowired
+    @Qualifier("localImageService")
+    private ImageEbi imageService;
 
     @Autowired
     private VehicleVo vehicleVo;
@@ -90,7 +97,12 @@ public class VehicleController {
     @Autowired
     private AmqpTemplate amqpTemplate;
 
+    @Value("${image.source}")
+    private String source;
+
     public static final Float UPLOAD_VEHICLE_FAILED = -1F;
+
+    public static final ExecutorService SAVE_VEHICLE_THREAD_POOL = Executors.newCachedThreadPool();
 
     @RequestMapping(value = {"/list"})
     public String listVehicles(Model model, User user, List<Message> messages){
@@ -150,14 +162,16 @@ public class VehicleController {
     @RequestMapping(value = "/uploadPercentage/{id}", method = RequestMethod.GET)
     @ResponseBody
     public Result<Float> checkUploadById(@PathVariable("id") Long id){
-        Float uploadPercentage = redisService.get(VehicleKey.getVehicleUploadPercentageById, "" + id, Float.class);
+        String uploadPercentage = redisService.get(VehicleKey.getVehicleUploadPercentageById, "" + id, String.class);
         if(uploadPercentage == null){
             redisService.set(VehicleKey.getVehicleUploadPercentageById, "" + id, 0F);
             return Result.success(0F);
-        }else if(uploadPercentage.equals(UPLOAD_VEHICLE_FAILED)){
+        }
+        Float aFloat = Float.parseFloat(uploadPercentage);
+        if(aFloat.equals(UPLOAD_VEHICLE_FAILED)){
             return Result.error(CodeMsg.VEHICLE_ADD_ERROR_MSG);
         }
-        return Result.success(uploadPercentage);
+        return Result.success(aFloat);
     }
 
     @RequestMapping("/info/{id}")
@@ -197,7 +211,7 @@ public class VehicleController {
      */
     @RequestMapping(value = "/addVehicle", method = RequestMethod.POST)
     @ResponseBody
-    public Result<Long> addVehicle(User user, @Valid VehicleDetail vehicleDetail, MultipartHttpServletRequest request ) throws Exception {
+    public Result<String> addVehicle(User user, @Valid VehicleDetail vehicleDetail, MultipartHttpServletRequest request ) {
         // Get all uploaded files.
         Map<String, MultipartFile> fileMap = request.getFileMap();
         Set<Map.Entry<String, MultipartFile>> entries = fileMap.entrySet();
@@ -209,48 +223,35 @@ public class VehicleController {
                 throw new GlobalException(CodeMsg.FILE_NOT_IMAGE_MSG);
             }
         }
-        String msg = AddVehicleMessage.build(vehicleDetail, user.getId(), fileMap);
-        amqpTemplate.convertAndSend(MqConfigure.SAVE_VEHICLE_QUEUE_NAME, msg);
-        return Result.success(vehicleDetail.getId());
-    }
-
-    @RabbitListener(queues = {MqConfigure.SAVE_VEHICLE_QUEUE_NAME})
-    @RabbitHandler
-    public void addVehicleReceiver(String receive, Channel channel, org.springframework.amqp.core.Message message) throws Exception {
-        AddVehicleMessage addVehicleMessage = null;
-        try {
-            addVehicleMessage = RedisService.stringToBean(receive, AddVehicleMessage.class);
-            vehicleService.saveVehicle(addVehicleMessage.getVehicleDetail(),
-                    addVehicleMessage.getCreatorId(),
-                    addVehicleMessage.getFileMap());
-            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
-        } catch (Exception e) {
-            e.printStackTrace();
-            channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, false);
-            // Set up redis value to fail.
-            if(addVehicleMessage == null){
+        ImageSource imageSource = imageService.getImageSource(source);
+        vehicleDetail.setId(SnowFlakeUtils.getSnowFlakeId());
+        List<Image> imageList = fileMap.values().parallelStream().map((mFile) -> {
+            Image image = null;
+            try {
+                image = imageService.getInitializedImage(mFile.getName(), imageSource, mFile.getBytes(), ImageType.VEHICLE_IMAGE, vehicleDetail.getId());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return image;
+        }).collect(Collectors.toList());
+        // Save vehicle using another thread.
+        CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+            try {
+                vehicleService.saveVehicle(vehicleDetail, user.getId(), imageList);
+            } catch (Exception e) {
+                e.printStackTrace();
+                redisService.set(VehicleKey.getVehicleUploadPercentageById, vehicleDetail.getId() + "", UPLOAD_VEHICLE_FAILED);
                 throw new GlobalException(CodeMsg.VEHICLE_ADD_ERROR_MSG);
             }
-            redisService.set(VehicleKey.getVehicleUploadPercentageById, addVehicleMessage.getVehicleDetail().getId() + "", UPLOAD_VEHICLE_FAILED);
-        }
-    }
-
-    // Message Entity
-    @Slf4j
-    @Setter
-    @Getter
-    private static class AddVehicleMessage{
-        public VehicleDetail vehicleDetail;
-        public Long creatorId;
-        public Map<String, MultipartFile> fileMap;
-        private AddVehicleMessage(VehicleDetail vehicleDetail, Long creatorId, Map<String, MultipartFile> fileMap) {
-            this.vehicleDetail = vehicleDetail;
-            this.creatorId = creatorId;
-            this.fileMap = fileMap;
-        }
-        public static String build(VehicleDetail vehicleDetail, Long creatorId, Map<String, MultipartFile> fileMap){
-            AddVehicleMessage message = new AddVehicleMessage(vehicleDetail, creatorId, fileMap);
-            return RedisService.beanToString(message);
-        }
+        }, SAVE_VEHICLE_THREAD_POOL);
+        future.handle((r, e) -> {
+            if (e != null) {
+                e.printStackTrace();
+                redisService.set(VehicleKey.getVehicleUploadPercentageById, vehicleDetail.getId() + "", UPLOAD_VEHICLE_FAILED);
+                throw new GlobalException(CodeMsg.VEHICLE_ADD_ERROR_MSG);
+            }
+            return r;
+        });
+        return Result.success(vehicleDetail.getId() + "");
     }
 }

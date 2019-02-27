@@ -21,8 +21,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.reactive.function.BodyInserter;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -35,7 +33,7 @@ import java.net.URL;
 @Service
 @Configuration
 @PropertySource(value = "classpath:/properties/image.properties")
-public class ImgurService extends AbstractImageService implements ImageEbi<MultipartFile, Image> {
+public class ImgurService extends AbstractImageService implements ImageEbi<Image, Image> {
 
     private static final String IMGUR_IMAGE_OPERATION_URL = "https://api.imgur.com/3/image/";
 
@@ -56,10 +54,7 @@ public class ImgurService extends AbstractImageService implements ImageEbi<Multi
 
     //Save method
     @Override
-    public Image uploadImage(MultipartFile multipartFile, ImageType imageType, Long associateId) throws Exception {
-        // Set initial Image information.
-        Image emptyImage = getInitializedImage(multipartFile.getName(), ImageSource.IMAGE_FROM_IMGUR,
-                multipartFile.getBytes(), imageType, associateId);
+    public Image uploadImage(Image image, ImageType imageType, Long associateId) throws Exception {
         // Upload Image to imgur.
         /**
          * request:
@@ -105,7 +100,7 @@ public class ImgurService extends AbstractImageService implements ImageEbi<Multi
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         headers.add("Authorization", "Client-ID " + clientId);
         MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
-        map.add("image", new String(Base64.encodeBase64(multipartFile.getBytes())));
+        map.add("image", new String(Base64.encodeBase64(image.getImageByte())));
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
         ResponseEntity<String> responseEntity = restTemplate.postForEntity(IMGUR_IMAGE_OPERATION_URL, request, String.class);
         if(responseEntity.getStatusCode() != HttpStatus.OK){
@@ -119,19 +114,19 @@ public class ImgurService extends AbstractImageService implements ImageEbi<Multi
             String link = JsonUtils.get(responseJson, "data.link", String.class);
             String deleteHash = JsonUtils.get(responseJson, "data.deletehash", String.class);
             String imageHash = JsonUtils.get(responseJson, "data.id", String.class);
-            emptyImage.setLink(link);
-            emptyImage.setDeleteHash(deleteHash);
-            emptyImage.setImageHash(imageHash);
+            image.setLink(link);
+            image.setDeleteHash(deleteHash);
+            image.setImageHash(imageHash);
         }
-        imageDao.saveImageInfo(emptyImage);
-        return emptyImage;
+        imageDao.saveImageInfo(image);
+        return image;
     }
 
     /**
      * This method is not perfect asynchronous since we want to save some of the fields from the
      * response to database wo we need to get the response from Imgur first then fill the fields in
      * Image object before saving it into database.
-     * @param multipartFile
+     * @param image
      * @param imageType
      * @param associateId
      * @return
@@ -140,14 +135,12 @@ public class ImgurService extends AbstractImageService implements ImageEbi<Multi
     //TODO Need to test
     @Override
     @Transactional
-    public Image uploadImageAsync(MultipartFile multipartFile, ImageType imageType, Long associateId) throws Exception {
-        Image emptyImage = getInitializedImage(multipartFile.getName(), ImageSource.IMAGE_FROM_IMGUR,
-                multipartFile.getBytes(), imageType, associateId);
+    public Image uploadImageAsync(Image image, ImageType imageType, Long associateId) throws Exception {
         Mono<String> response = webClient.method(HttpMethod.POST)
                 .uri(IMGUR_IMAGE_OPERATION_URL)
                 .contentType(MediaType.MULTIPART_FORM_DATA)
                 .header("Authorization", "Client-ID " + clientId)
-                .attribute("image", new String(Base64.encodeBase64(multipartFile.getBytes())))
+                .attribute("image", new String(Base64.encodeBase64(image.getImageByte())))
                 .retrieve().bodyToMono(String.class);
         response.doOnError(e -> {
             e.printStackTrace();
@@ -156,12 +149,12 @@ public class ImgurService extends AbstractImageService implements ImageEbi<Multi
             String link = JsonUtils.get(responseJson, "data.link", String.class);
             String deleteHash = JsonUtils.get(responseJson, "data.deletehash", String.class);
             String imageHash = JsonUtils.get(responseJson, "data.id", String.class);
-            emptyImage.setLink(link);
-            emptyImage.setDeleteHash(deleteHash);
-            emptyImage.setImageHash(imageHash);
-            imageDao.saveImageInfo(emptyImage);
+            image.setLink(link);
+            image.setDeleteHash(deleteHash);
+            image.setImageHash(imageHash);
+            imageDao.saveImageInfo(image);
         });
-        return emptyImage;
+        return image;
     }
 
     // Get method

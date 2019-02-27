@@ -2,7 +2,6 @@ package io.seanforfun.seckill.service;
 
 import io.seanforfun.seckill.dao.ImageDao;
 import io.seanforfun.seckill.entity.domain.Image;
-import io.seanforfun.seckill.entity.domain.Vehicle;
 import io.seanforfun.seckill.entity.enums.ImageSource;
 import io.seanforfun.seckill.entity.enums.ImageType;
 import io.seanforfun.seckill.exceptions.GlobalException;
@@ -11,19 +10,25 @@ import io.seanforfun.seckill.redis.RedisService;
 import io.seanforfun.seckill.redis.VehicleKey;
 import io.seanforfun.seckill.result.CodeMsg;
 import io.seanforfun.seckill.service.ebi.ImageEbi;
-import io.seanforfun.seckill.utils.JsonUtils;
 import io.seanforfun.seckill.utils.SnowFlakeUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-public abstract class AbstractImageService implements ImageEbi<MultipartFile, Image> {
+@Slf4j
+@Configuration
+@ConfigurationProperties
+@PropertySource(value="classpath:/properties/image.properties")
+public abstract class AbstractImageService implements ImageEbi<Image, Image> {
 
     @Autowired
     private ObjectFactory<Image> imageFactory;
@@ -46,7 +51,8 @@ public abstract class AbstractImageService implements ImageEbi<MultipartFile, Im
         }
     }
 
-    protected Image getInitializedImage(String name, ImageSource imageSource, byte[] imageBytes,
+    @Override
+    public Image getInitializedImage(String name, ImageSource imageSource, byte[] imageBytes,
                                         ImageType imageType, Long associateId){
         Image emptyImage = imageFactory.getObject();
         emptyImage.setId(SnowFlakeUtils.getSnowFlakeId());
@@ -75,19 +81,19 @@ public abstract class AbstractImageService implements ImageEbi<MultipartFile, Im
 
     @Override
     @Transactional
-    public List<Image> uploadImages(Collection<MultipartFile> images, ImageType imageType, Long associateId) throws Exception {
+    public List<Image> uploadImages(Collection<Image> images, ImageType imageType, Long associateId) throws Exception {
         List<Image> imageList = null;
         int imageNum = images.size();
         float count = 0F;
         // Step 1: Set initial percentage
         redisService.set(VehicleKey.getVehicleUploadPercentageById, "" + associateId, 0F);
-        for(MultipartFile image : images){
-            Image savedImage = uploadImage(image, imageType, associateId);
+        for(Image image : images){
+            Image savedImage = uploadImageAsync(image, imageType, associateId);
             if(imageList == null){
                 imageList = new LinkedList<>();
             }
             imageList.add(savedImage);
-            redisService.set(VehicleKey.getVehicleUploadPercentageById, "" + associateId, ++count / imageNum);
+            redisService.set(VehicleKey.getVehicleUploadPercentageById, "" + associateId, (++count) / (float)imageNum);
         }
         return imageList;
     }

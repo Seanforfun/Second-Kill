@@ -18,12 +18,12 @@ import org.springframework.stereotype.Service;
 public class MqConfigure {
 
     // Message Queue configure
-    public final static String SAVE_VEHICLE_QUEUE_NAME = "VEHICLE ADD QUEUE";
-
-    @Bean
-    public Queue getSaveVehicleQueue(){
-        return new Queue(SAVE_VEHICLE_QUEUE_NAME, true);
-    }
+//    public final static String SAVE_VEHICLE_QUEUE_NAME = "VEHICLE ADD QUEUE";
+//
+//    @Bean
+//    public Queue getSaveVehicleQueue(){
+//        return new Queue(SAVE_VEHICLE_QUEUE_NAME, true);
+//    }
 
     public static final String DIRECT_QUEUE = "DIRECT QUEUE";
 

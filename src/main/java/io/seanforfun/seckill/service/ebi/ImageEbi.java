@@ -1,6 +1,7 @@
 package io.seanforfun.seckill.service.ebi;
 
 import io.seanforfun.seckill.entity.domain.Image;
+import io.seanforfun.seckill.entity.enums.ImageSource;
 import io.seanforfun.seckill.entity.enums.ImageType;
 
 import java.util.Collection;
@@ -99,4 +100,22 @@ public interface ImageEbi<T, R> {
      * @throws Exception
      */
     boolean imageExists(Image image) throws Exception;
+
+    /**
+     * Create a image instance.
+     * @param name
+     * @param source
+     * @param ImageByte
+     * @param type
+     * @param associateId
+     * @return
+     */
+    Image getInitializedImage(String name, ImageSource source, byte[] ImageByte, ImageType type, Long associateId);
+
+    default ImageSource getImageSource(String source){
+        if(source == null) return null;
+        else if(source.equals("local")) return ImageSource.IMAGE_FROM_LOCAL;
+        else if(source.equals("imgur")) return ImageSource.IMAGE_FROM_IMGUR;
+        else return ImageSource.IMAGE_FROM_FROM_AWS;
+    }
 }

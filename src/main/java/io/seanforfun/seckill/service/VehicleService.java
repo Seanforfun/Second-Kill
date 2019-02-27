@@ -14,6 +14,7 @@ import io.seanforfun.seckill.result.CodeMsg;
 import io.seanforfun.seckill.service.ebi.ImageEbi;
 import io.seanforfun.seckill.service.ebi.VehicleEbi;
 import io.seanforfun.seckill.utils.SnowFlakeUtils;
+import lombok.Getter;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -77,9 +79,8 @@ public class VehicleService implements VehicleEbi {
 
     @Override
     @Transactional
-    public void saveVehicle(VehicleDetail vehicleDetail, Long creatorId, Map<String, MultipartFile> imageMap) throws Exception {
+    public Long saveVehicle(VehicleDetail vehicleDetail, Long creatorId, Collection<Image> files) throws Exception {
         // Step 1: Fill vehicle detail object
-        vehicleDetail.setId(SnowFlakeUtils.getSnowFlakeId());
         vehicleDetail.setCreatorId(creatorId);
         vehicleDetail.setCreateTime(System.currentTimeMillis());
         vehicleDetail.setLastModifierId(Vehicle.VEHICLE_NEVER_MODIFIED_USER);
@@ -90,12 +91,13 @@ public class VehicleService implements VehicleEbi {
         // Step 2: Save image info to database.
         List<Image> images = null;
         try {
-            images = imageService.uploadImages(imageMap.values(), ImageType.VEHICLE_IMAGE, vehicleDetail.getId());
+            images = imageService.uploadImages(files, ImageType.VEHICLE_IMAGE, vehicleDetail.getId());
             if(images == null || images.size() == 0){
                 throw new GlobalException(CodeMsg.NO_VEHICLE_IMAGE_SAVED_ERROR_MSG);
             }
             vehicleDao.saveVehicle(vehicleDetail);
             vehicleDao.saveVehicleDetail(vehicleDetail);
+            return vehicleDetail.getId();
         }catch (Exception e){
             // Step 1: Roll back for images.
             if(images != null){

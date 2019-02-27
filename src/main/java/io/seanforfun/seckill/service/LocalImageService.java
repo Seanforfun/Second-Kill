@@ -26,8 +26,10 @@ import java.nio.channels.FileChannel;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * @author: Seanforfun
@@ -40,12 +42,12 @@ import java.util.concurrent.TimeUnit;
 @Service
 @Configuration
 @PropertySource(value = "classpath:/properties/image.properties")
-public class LocalImageService extends AbstractImageService implements ImageEbi<MultipartFile, Image> {
+public class LocalImageService extends AbstractImageService implements ImageEbi<Image, Image> {
 
     @Value("${image.local.path}")
     @Getter
     @Setter
-    private String path;
+    private String localFilePath;
 
     @Value("${image.local.dict-num}")
     @Getter
@@ -66,51 +68,49 @@ public class LocalImageService extends AbstractImageService implements ImageEbi<
     // Create methods
     @Override
     @Transactional
-    public Image uploadImageAsync(MultipartFile image, ImageType imageType, Long associateId) throws Exception {
-        Image emptyImage = createLocalImage(image, imageType, associateId);
+    public Image uploadImageAsync(Image image, ImageType imageType, Long associateId) throws Exception {
         //Save Image to file system
-        Path imagePath = getImagePath(emptyImage);
+        Path imagePath = getImagePath(image);
         AsynchronousFileChannel imageChannel = null;
         try {
             imageChannel = AsynchronousFileChannel.open(imagePath, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
-            ByteBuffer imageBuffer = ByteBuffer.allocate(emptyImage.getImageByte().length);
-            imageBuffer.put(emptyImage.getImageByte());
+            ByteBuffer imageBuffer = ByteBuffer.allocate(image.getImageByte().length);
+            imageBuffer.put(image.getImageByte());
             imageBuffer.flip();
             Future<Integer> writeAction = imageChannel.write(imageBuffer, 0);
             // Save image information into database.
-            imageDao.saveImageInfo(emptyImage);
+            imageDao.saveImageInfo(image);
             // Set 3 Seconds as timeout.
-            writeAction.get(3000L, TimeUnit.MICROSECONDS);
-        }catch (Exception e){
+            writeAction.get(3000L, TimeUnit.MILLISECONDS);
+        } catch (IOException | InterruptedException | ExecutionException | TimeoutException e) {
             e.printStackTrace();
             throw new GlobalException(CodeMsg.LOCAL_FILE_IMAGE_UPLOAD_ERROR_MSG);
-        }finally {
-            if(imageChannel != null){
+        } finally {
+            if (imageChannel != null) {
                 imageChannel.close();
             }
         }
-        return emptyImage;
+        return image;
     }
 
     // TODO Need to test.
     @Override
     @Transactional
-    public Image uploadImage(MultipartFile image, ImageType imageType, Long associateId) throws Exception {
-        Image emptyImage = createLocalImage(image, imageType, associateId);
+    public Image uploadImage(Image image, ImageType imageType, Long associateId) throws Exception {
         //Save Image to file system
-        Path imagePath = getImagePath(emptyImage);
+        Path imagePath = getImagePath(image);
         OutputStream fileOutputStream = null;
         try {
-            fileOutputStream = new FileOutputStream(new File(emptyImage.getLink()));
-            fileOutputStream.write(emptyImage.getImageByte());
-            imageDao.saveImageInfo(emptyImage);
+            fileOutputStream = new FileOutputStream(new File(image.getLink()));
+            fileOutputStream.write(image.getImageByte());
+            imageDao.saveImageInfo(image);
         }catch (Exception e){
             e.printStackTrace();
             throw new GlobalException(CodeMsg.LOCAL_FILE_IMAGE_UPLOAD_ERROR_MSG);
         }finally {
             if(fileOutputStream != null) fileOutputStream.close();
         }
-        return emptyImage;
+        return image;
     }
 
     //Get method
@@ -157,6 +157,17 @@ public class LocalImageService extends AbstractImageService implements ImageEbi<
         return image;
     }
 
+    @Override
+    public Image getInitializedImage(String name, ImageSource source, byte[] imageBytes, ImageType imageType, Long associateId){
+        // Check parameters
+        checkImage(name, localFilePath, imageBytes);
+        // Set Image detail
+        Image emptyImage = super.getInitializedImage(name, ImageSource.IMAGE_FROM_LOCAL,
+                imageBytes, imageType, associateId);
+        emptyImage.setLink(MD5Utils.localImagePath(name, "" + emptyImage.getId(), localFilePath, dictNum, ImageType.VEHICLE_IMAGE));
+        return emptyImage;
+    }
+
     private Image deleteImage(String link, Long id) throws Exception {
         File imageFile = new File(link);
         if(imageFile.exists()){
@@ -164,18 +175,6 @@ public class LocalImageService extends AbstractImageService implements ImageEbi<
         }
         imageDao.updateImageExistById(id,Image.IMAGE_NOT_EXIST);
         return null;
-    }
-
-    private Image createLocalImage(MultipartFile image, ImageType imageType, Long associateId) throws IOException {
-        // Check parameters
-        String name = image.getName();
-        byte[] imageBytes = image.getBytes();
-        checkImage(name, path, imageBytes);
-        // Set Image detail
-        Image emptyImage = getInitializedImage(name, ImageSource.IMAGE_FROM_LOCAL,
-                imageBytes, imageType, associateId);
-        emptyImage.setLink(MD5Utils.localImagePath(name, "" + emptyImage.getId(), path, dictNum, ImageType.VEHICLE_IMAGE));
-        return emptyImage;
     }
 
     private Path getImagePath(Image image) throws IOException {

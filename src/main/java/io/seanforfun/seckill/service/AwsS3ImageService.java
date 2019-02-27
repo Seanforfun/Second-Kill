@@ -45,7 +45,7 @@ import java.util.concurrent.CompletableFuture;
 @Service
 @Configuration
 @PropertySource(value = "classpath:/properties/image.properties")
-public class AwsS3ImageService extends AbstractImageService implements ImageEbi<MultipartFile, Image> {
+public class AwsS3ImageService extends AbstractImageService implements ImageEbi<Image, Image> {
 
     @Autowired
     private AmazonS3 s3Client;
@@ -71,15 +71,14 @@ public class AwsS3ImageService extends AbstractImageService implements ImageEbi<
 
     // Add image
     @Override
-    public Image uploadImage(MultipartFile file, ImageType imageType, Long associateId) throws Exception {
+    public Image uploadImage(Image image, ImageType imageType, Long associateId) throws Exception {
         // Step 1: Get initialized message instance.
-        Image image = getInitializedImage(file.getName(), ImageSource.IMAGE_FROM_FROM_AWS,
-                file.getBytes(), imageType, associateId);
+        // Did that in controller level
         // Step 2: Upload image to AWS.
         InputStream is = null;
-        String bucketName = null;
+        String bucketName;
         try{
-            is = file.getInputStream();
+            is = new ByteArrayInputStream(image.getImageByte());
             bucketName = imageType == ImageType.USER_IMAGE ? userBucketName : vehicleBucketName;
             ObjectMetadata meta = new ObjectMetadata();
             meta.setContentLength(is.available());
@@ -104,13 +103,12 @@ public class AwsS3ImageService extends AbstractImageService implements ImageEbi<
 
     @Override
     @Transactional
-    public Image uploadImageAsync(MultipartFile file, ImageType imageType, Long associateId) throws IOException {
+    public Image uploadImageAsync(Image image, ImageType imageType, Long associateId) throws IOException {
         // Step 1: Get initialized message instance.
-        Image image = getInitializedImage(file.getName(), ImageSource.IMAGE_FROM_FROM_AWS,
-                file.getBytes(), imageType, associateId);
+        // Already did that in controller level.
         // Step 2: Upload image to AWS.
         String bucketName = null;
-        byte[] imageBytes = file.getBytes();
+        byte[] imageBytes = image.getImageByte();
         try {
             ByteBuffer byteBuffer = ByteBuffer.allocate(imageBytes.length);
             byteBuffer.put(imageBytes);

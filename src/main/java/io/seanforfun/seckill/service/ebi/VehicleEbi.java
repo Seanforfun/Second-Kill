@@ -6,6 +6,7 @@ import io.seanforfun.seckill.entity.vo.VehicleVo;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -46,9 +47,9 @@ public interface VehicleEbi {
      * Save vehicle information.
      * @param vehicleDetail
      * @param creatorId
-     * @param imageMap
+     * @param images
      */
-    void saveVehicle(VehicleDetail vehicleDetail, Long creatorId, Map<String, MultipartFile> imageMap) throws Exception;
+    Long saveVehicle(VehicleDetail vehicleDetail, Long creatorId, Collection<Image> images) throws Exception;
 
     /**
      * Get byte array of vehicle's QR code according to vehicle's id.
