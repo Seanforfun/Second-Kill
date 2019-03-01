@@ -155,7 +155,7 @@ public class VehicleService implements VehicleEbi {
             return vehicleInfo;
         }
         vehicleInfo = vehicleDao.getVehicleById(id);
-        redisService.set(VehicleKey.getVehicleById, "" + id, VehicleDetail.class);
+        redisService.set(VehicleKey.getVehicleById, "" + id, vehicleInfo);
         return vehicleInfo;
     }
 

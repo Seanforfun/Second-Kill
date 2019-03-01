@@ -161,7 +161,7 @@ public class VehicleController {
 
     @RequestMapping("/toVehicleInfo/{id}")
     public String toVehicleInfo(User user, List<Message> messages,
-                                @PathParam("id") Long id, HttpServletRequest request,
+                                @PathVariable("id") Long id, HttpServletRequest request,
                                 Model model) throws Exception {
         String html = null;
         html = redisService.get(PageKey.getPageByName, "/toVehicleInfo/" + id, String.class);
@@ -170,6 +170,7 @@ public class VehicleController {
         }
         VehicleInfoVo vehicleInfoVo = getVehicleInfoVo(user, messages, id);
         model.addAttribute("vehicleInfoVo", vehicleInfoVo);
+
 //        redisService.get(, , )
         return "pages/vehicle/vehicleInfo";
     }
