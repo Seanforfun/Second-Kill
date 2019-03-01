@@ -36,5 +36,5 @@ public class Image {
     private Integer exist;
     private byte[] imageByte;
     private String imageBase64String;
-    private ImageFormat format;
+    private ImageFormat imageFormat;
 }

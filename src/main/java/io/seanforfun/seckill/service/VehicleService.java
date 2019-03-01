@@ -149,6 +149,7 @@ public class VehicleService implements VehicleEbi {
 
     @Override
     public VehicleDetail getVehicleInfoById(Long id) {
+        //TODO Bug here, fast json cannot serialize this object correctly.
         VehicleDetail vehicleInfo = redisService.get(VehicleKey.getVehicleById, "" + id, VehicleDetail.class);
         if(vehicleInfo != null){
             return vehicleInfo;

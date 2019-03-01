@@ -606,6 +606,7 @@
     }
 
     function saveVehicle() {
+        $("#progressBar").empty();
         var formData = new FormData();
         var make = $("#make").val();
         if(!checkEmpty(make, "EMPTY MAKE", null)){

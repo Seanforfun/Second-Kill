@@ -3,6 +3,7 @@ package io.seanforfun.seckill.entity.domain;
 import io.seanforfun.seckill.utils.VehicleUtils;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,6 +19,7 @@ import java.util.List;
  */
 @Slf4j
 @Getter
+@ToString
 public class VehicleDetail extends Vehicle{
     /**
      * 	CREATE TABLE vehicle_detail(

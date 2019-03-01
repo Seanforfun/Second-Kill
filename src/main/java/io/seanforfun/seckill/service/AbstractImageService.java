@@ -58,7 +58,7 @@ public abstract class AbstractImageService implements ImageEbi<Image, Image> {
                                         ImageType imageType, Long associateId){
         Image emptyImage = imageFactory.getObject();
         String suffix = name.substring(name.lastIndexOf('.') + 1);
-        emptyImage.setFormat(checkImageFormat(suffix));
+        emptyImage.setImageFormat(checkImageFormat(suffix));
         emptyImage.setId(SnowFlakeUtils.getSnowFlakeId());
         emptyImage.setName(name);
         emptyImage.setSource(imageSource);

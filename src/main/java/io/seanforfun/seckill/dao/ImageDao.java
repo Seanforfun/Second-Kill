@@ -26,7 +26,7 @@ public interface ImageDao {
     @Select("Select id, link, name, source, type, associateId, deleteHash, imageFormat from Image where id = #{id}")
     Image getImageById(@Param("id") Long id);
 
-    @Select("Select id, link, name, source, type, associateId, deleteHash, exists, imageFormat from Image where associateId = #{vehicleId} ")
+    @Select("Select id, link, name, source, type, associateId, deleteHash, exist, imageformat from Image where associateId = #{vehicleId} ")
     List<Image> getImagesByVehicleId(@Param("vehicleId") Long vehicleId);
 
     // Update image information.
